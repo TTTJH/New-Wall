@@ -1,0 +1,36 @@
+.register-box{
+    width: 30vw;
+    position: absolute;
+    padding: 20px;
+    left: 50%;
+    top: 50%;
+    transform: translate3d(-50%,-50%,0);
+    border-radius: 20px;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+}
+
+.register-box label{
+    width: 100px;
+    text-align: right;
+}
+
+.register-box-btn{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.gotoLoginP{
+    margin: 0;
+    text-align: right;
+}
+
+/* 重写antd */
+.register-box .ant-switch{
+    background-color: #ffd5d5;
+}
+/* 重写antd */
+.register-box .ant-switch-checked{
+    background-color: #7ad9f5;
+}

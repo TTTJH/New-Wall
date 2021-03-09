@@ -1,0 +1,27 @@
+.sidemenu{
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+/* 重写antd的样式 */
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: #fddb3a !important;
+    color: white;
+}
+
+/* 重写antd的样式 */
+.sidemenu ul{
+    width: 64px;
+    height: 100vh;
+}
+
+/* 重写antd的样式 */
+.sidemenu ul li{
+    border-radius: 5px;
+}
+
+/* 重写antd的样式 */
+.sidemenu{
+    height: 100vh;
+}
+

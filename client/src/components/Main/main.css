@@ -1,0 +1,46 @@
+.clearfix::after,
+.clearfix::before{
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.main-container{
+    display: flex;
+}
+
+.main-left-box{
+    margin-left: 20px;
+}
+
+.recommend-box-title{
+    font-size: 18px;
+    font-weight: bold;
+    color: #69606b;
+}
+
+.main-card-box{
+    margin-top: 100px;
+    padding: 0 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.main-card-box-textarea-title,
+.main-card-box-title{
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    color: #69606b;
+    margin: 0;
+    margin-top: 20px;
+}
+.main-card-box-textarea-title{
+    margin-bottom: 10px;
+}
+
+.loading{
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+}

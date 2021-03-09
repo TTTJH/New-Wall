@@ -1,0 +1,240 @@
+.user-box{
+    width: 18vw;
+    margin: 20px auto;
+    /* height: 30vh; */
+    /* margin: 20px; */
+    /* margin-top: 20px;
+    margin-left: 50px; */
+    position: relative;
+    padding-top: 20px;
+    color: #69606b;
+    text-align: center;
+    border-radius: 30px;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+    transition-duration: 2s;
+}
+
+.user-avatar-img{
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+}
+.exit-btn{
+    width: 20px;
+    display: block;
+    position: absolute;
+    cursor: pointer;
+    right: 10px;
+    top: 10px;
+}
+.user-avatar-img-logo{
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    line-height: 70px;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+    color: white;
+    background-color: #fddb3a;
+}
+.default-avatar{
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    line-height: 70px;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+    color: white;
+    background-color: #fddb3a;
+}
+
+
+.tag-input-box{
+    position: absolute;
+    width: 80%;
+    left: 50%;
+    transform: translate(-50%,-10px);
+    margin: 10px 0;
+    animation-duration: 1s;
+    visibility: hidden;
+}
+
+.tag-input-box-show{
+    animation-name: tagInputBoxShow;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-delay: 0.4s;
+}
+
+@keyframes tagInputBoxShow{
+    0%{
+        visibility: hidden;
+        opacity: 0;
+    }
+    100%{
+        visibility: visible;
+        opacity: 1;
+    }
+}
+.tag-input-box-hidden{
+    animation-name: tagInputBoxHidden;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes tagInputBoxHidden{
+    0%{
+        visibility: visible;
+        opacity: 1;
+    }
+    100%{
+        visibility: hidden;
+        opacity: 0;
+    }
+}
+
+.user-tag-box{
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.tag-box-down{
+    animation-name: tagBoxDown;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+}
+
+@keyframes tagBoxDown{
+    0%{
+        
+    }
+    100%{
+        margin-top: 50px;
+    }
+}
+.tag-box-up{
+    animation-name: tagBoxUp;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+}
+@keyframes tagBoxUp{
+    0%{
+        margin-top: 50px;
+    }
+    100%{
+        margin-top: 0px;
+    }
+}
+/* 此处有修改antd的Input的样式 */
+#tag-input{
+    border-radius: 43.5px;
+    height: 28px;
+    color:#69606b;
+}
+.tag-input-btn-box{
+    width: 30%;
+    height: 24px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 3px;
+    display: flex;
+    justify-content: space-between;
+    /* background-color: #fddb3a; */
+}
+
+/* 此处有重写antd的button样式 */
+.tag-input-btn-cancel,
+.tag-input-btn-submit{
+    flex-basis: 48%;
+    padding: 0 !important;
+    height: 100% !important;
+    background-color:  #fddb3a;
+}
+
+/* 此处有重写antd的button样式 */
+.tag-input-btn-cancel{
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+/* 此处有重写antd的button样式 */
+.tag-input-btn-submit{
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+/* 此处有重写antd的button样式 */
+.tag{
+    width: unset !important;
+    height: unset !important;
+    display: inline-block !important;
+    font-size: 12px !important;
+    margin: 3px !important;
+    padding: 2px 4px !important;
+    color: black !important;
+    border-radius: 5px !important;
+    background-color: #fddb3a !important;
+}
+
+.tag-add-btn{
+    padding: 2px 5px !important;
+    cursor: pointer !important;
+    vertical-align: middle !important;
+}
+
+.tag-add-btn span{
+    font-size: unset !important;
+}
+
+/* 重写antd */
+.userbox-popover  .ant-popover-content  .ant-popover-arrow{
+    border-top-color: unset !important;
+    border-bottom-color: unset !important;
+    border-left-color: unset !important;
+    border-right-color: unset !important;
+    border-color: #fddb3a !important;
+}
+.userbox-popover .ant-popover-content .ant-popover-inner{
+    border-radius: 5px;
+    background-color: #fddb3a;
+    cursor: pointer;
+}
+.userbox-popover .ant-popover-inner .ant-popover-inner-content {
+    padding: 3px;
+    border-radius: 5px;
+    background-color: #fddb3a;
+    cursor: pointer;
+}
+.user-btn{
+    width: 80%;
+    height: 40px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: #fddb3a;
+}
+/* 隐藏antd的上传组件的进度条 */
+.user-avatar span .ant-upload-list{
+    display: none;
+}

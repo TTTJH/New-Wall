@@ -1,0 +1,41 @@
+.yellow-header{
+    width: 100vw;
+    height: 20vh;
+    z-index: -1;
+    position: fixed;
+    border-radius: 0 0 0 40%;
+    background-color: #fddb3a;
+}
+
+.main-header{
+    padding-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.main-header-item{
+    flex-grow: 1;
+    display: flex;
+    margin: 0;
+    justify-content: flex-end;
+}
+
+.main-header-item li{
+    flex-basis: 10%;
+    list-style: none;
+}
+.logo{
+    width: 40px;
+    vertical-align: middle;
+}
+
+.web-title{
+    margin-left: 20px;
+    margin-right: 80px;
+}
+
+.web-title span{
+    /* font-weight: bold; */
+    vertical-align: middle;
+    font-size: 16px;
+}

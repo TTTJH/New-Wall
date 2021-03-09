@@ -1,0 +1,19 @@
+.textarea-box{
+    width: 100%;
+    position: relative;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+}
+
+/* 重写ant design */
+.textarea-box .ant-input{
+    margin: 10px 0;
+}
+
+
+.textarea-box button{
+    width: 100%;
+}

@@ -1,0 +1,21 @@
+/* 重写antd */
+/* .card ul{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+} */
+/* 重写antd */
+.card .ant-card-meta{
+}
+
+.card{
+    width: 20vw;
+    /* height: 25vw; */
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+}
+
+

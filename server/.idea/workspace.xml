@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="45926ff9-988d-4a73-a857-8dff1e122e0f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/tokenVerify.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tokenVerify.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1jjBSu2CyxmdUN5JzueNPkC0eYw" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../acm-rank" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="45926ff9-988d-4a73-a857-8dff1e122e0f" name="Default Changelist" comment="" />
+      <created>1604307623464</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1604307623464</updated>
+      <workItem from="1604307624622" duration="7531000" />
+      <workItem from="1604367118333" duration="7543000" />
+      <workItem from="1604385696232" duration="6961000" />
+      <workItem from="1604472673966" duration="3402000" />
+      <workItem from="1604823775463" duration="5841000" />
+      <workItem from="1604881461329" duration="2498000" />
+      <workItem from="1604913922047" duration="2904000" />
+      <workItem from="1604967224726" duration="1141000" />
+      <workItem from="1605618213693" duration="3610000" />
+      <workItem from="1605683293777" duration="4938000" />
+      <workItem from="1606477888769" duration="1517000" />
+      <workItem from="1606525537724" duration="611000" />
+      <workItem from="1606782203588" duration="694000" />
+      <workItem from="1608017079266" duration="3665000" />
+      <workItem from="1608293964473" duration="1063000" />
+      <workItem from="1608811328810" duration="2000" />
+      <workItem from="1608979814617" duration="611000" />
+      <workItem from="1609028417369" duration="2079000" />
+      <workItem from="1609206564898" duration="5348000" />
+      <workItem from="1614667195716" duration="2490000" />
+      <workItem from="1614756682553" duration="3108000" />
+      <workItem from="1614928817509" duration="5145000" />
+      <workItem from="1614993230996" duration="1366000" />
+      <workItem from="1615012191801" duration="9100000" />
+      <workItem from="1615184581385" duration="3682000" />
+      <workItem from="1615273298281" duration="509000" />
+      <workItem from="1615275322027" duration="1486000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="891" y="510" width="663" height="261" key="#Custom_Plugin_Repositories" timestamp="1614667288745">
+      <screen x="0" y="44" width="2160" height="1334" />
+    </state>
+    <state x="891" y="510" width="663" height="261" key="#Custom_Plugin_Repositories/0.44.2160.1334@0.44.2160.1334" timestamp="1614667288745" />
+    <state x="754" y="481" width="641" height="470" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1615012851682">
+      <screen x="0" y="38" width="2160" height="1340" />
+    </state>
+    <state x="754" y="481" width="641" height="470" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.38.2160.1340@0.38.2160.1340" timestamp="1615012851682" />
+    <state x="755" y="353" width="640" height="726" key="FileChooserDialogImpl" timestamp="1608103904541">
+      <screen x="0" y="44" width="2160" height="1334" />
+    </state>
+    <state x="755" y="353" width="640" height="726" key="FileChooserDialogImpl/0.44.2160.1334@0.44.2160.1334" timestamp="1608103904541" />
+    <state x="247" y="199" width="1541" height="1090" key="SettingsEditor" timestamp="1614667388352">
+      <screen x="0" y="44" width="2160" height="1334" />
+    </state>
+    <state x="247" y="199" width="1541" height="1090" key="SettingsEditor/0.44.2160.1334@0.44.2160.1334" timestamp="1614667388352" />
+  </component>
+</project>
