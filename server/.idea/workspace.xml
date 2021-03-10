@@ -22,7 +22,6 @@
     <list default="true" id="45926ff9-988d-4a73-a857-8dff1e122e0f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/tokenVerify.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tokenVerify.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,6 +87,7 @@
       <workItem from="1615184581385" duration="3682000" />
       <workItem from="1615273298281" duration="509000" />
       <workItem from="1615275322027" duration="1486000" />
+      <workItem from="1615339750416" duration="3303000" />
     </task>
     <servers />
   </component>

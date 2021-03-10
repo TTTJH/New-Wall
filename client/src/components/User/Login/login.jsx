@@ -22,10 +22,8 @@ class Login extends Component{
         wrapperCol: { offset: 8, span: 16 },
     };
     onFinish = values => {
-        console.log(values)
         loginAjax(values)
             .then((val) => {
-                console.log(val)
                 if(val.data.code == 200){
                     let {token} = val.data.data
                     localStorage.setItem("token",token)
@@ -36,7 +34,6 @@ class Login extends Component{
                 }
             })
             .catch((err) => {
-                console.log(err)
                 message.warn("错误啦！")
             })
     };

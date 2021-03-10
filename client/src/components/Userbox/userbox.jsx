@@ -49,7 +49,6 @@ class Userbox extends Component{
                     message.warning("还未进行用户登入噢🙊")
                     // this.props.history.push("/login")
                 }else{
-                    console.log(val)
                     this.setState({userInfo:val.data.data})//更新state
                 }
             })
@@ -58,7 +57,6 @@ class Userbox extends Component{
             })
     }
     gotoLogin = () => {
-        console.log(this)
         this.props.history.push("/login")
     }
     logoutConfirm = () => {

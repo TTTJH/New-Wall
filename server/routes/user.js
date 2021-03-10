@@ -216,7 +216,18 @@ user.post("/tag",async (ctx,next) => {
                 ctx.body = {code:100,msg:"服务器出错🚫🚫🚫"}
             })
     }
+})
 
+// classmate同学推荐路由
+user.get("/classmate",async (ctx,next) => {
+    //数据库操作
+    await UserModel.aggregate([{$sample:{size:8}}])
+        .then(val => {
+            ctx.body = {code:200,data:val}
+        })
+        .catch(err => {
+            ctx.body = {code:100,msg:"获取同学推荐失败！"}
+        })
 })
 //-----------子路由导出----------------------
 module.exports = user
