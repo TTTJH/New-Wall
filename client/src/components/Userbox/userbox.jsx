@@ -40,6 +40,8 @@ class Userbox extends Component{
         tagBoxClass:"",
         tagInputValue:"",
         userPopvers:[],
+        tagIndex:"",//用于删除tag时的索引
+        tagDelSubmiting:false,//防止tagdelajax重复提交
     }
     componentDidMount(){
         let token = localStorage.getItem("token")
@@ -55,6 +57,7 @@ class Userbox extends Component{
             .catch(err => {
                 message.error("服务器宕机啦!请稍候再试")
             })
+
     }
     gotoLogin = () => {
         this.props.history.push("/login")
@@ -125,43 +128,47 @@ class Userbox extends Component{
     }
 
     tagDel = (index) => {
-        //延时获取userPopover的dom，否则dom还未生成获取为null
+        //注意这里addEventLister的事件绑定有问题，使用闭包未能解决，这里使用了标志位的做法
         //注意这里的dom获取顺序问题
-        setTimeout(() => {
             let userPopvers = document.querySelectorAll(".userbox-popover")
-            console.log(userPopvers)
             if(userPopvers.length){
-                this.setState({userPopvers})
-                this.state.userPopvers[this.state.userPopvers.length-1].addEventListener("click",() => delHandle(index))
-                let delHandle = (index) => {
-                    //发起tag相关的ajax请求
-                    let token = localStorage.getItem("token")
-                    tagHandleAjax({delTagIndex:index},token)
-                        .then(val => {
-                            console.log(val)
-                            message.success("删除tag成功")
-                            //获取最新的userInfo
+                this.setState({userPopvers,tagIndex:index},() => {
+                    // this.state.userPopvers[this.state.userPopvers.length-1].removeEventListener("click",() => delHandle(index))
+                    this.state.userPopvers[this.state.userPopvers.length-1].addEventListener("click",delHandleOuter)
+                    // this.state.userPopvers[this.state.userPopvers.length-1].onclick = () => delHandleOuter(index)
+                })
+                let delHandleOuter = () => {
+                    if(!this.state.tagDelSubmiting){
+                        this.setState({tagDelSubmiting:true},() => {
+                            //发起tag相关的ajax请求
                             let token = localStorage.getItem("token")
-                            getUserInfoAjax(token)//获取用户信息接口
+                            tagHandleAjax({delTagIndex:this.state.tagIndex},token)
                                 .then(val => {
-                                    if(val.data.code == 100){//token过期
-                                        message.warning("还未进行用户登入噢🙊")
-                                        // this.props.history.push("/login")
-                                    }else{
-                                        console.log(val)
-                                        this.setState({userInfo:val.data.data})//更新state
-                                    }
+                                    this.setState({tagDelSubmiting:false})//更新提交标识位
+                                    message.success("删除tag成功")
+                                    //获取最新的userInfo
+                                    let token = localStorage.getItem("token")
+                                    getUserInfoAjax(token)//获取用户信息接口
+                                        .then(val => {
+                                            if(val.data.code == 100){//token过期
+                                                message.warning("还未进行用户登入噢🙊")
+                                                // this.props.history.push("/login")
+                                            }else{
+                                                this.setState({userInfo:val.data.data})//更新state
+                                            }
+                                        })
+                                        .catch(err => {
+                                            this.setState({tagDelSubmiting:false})//更新提交标识位
+                                            message.error("服务器宕机啦!请稍候再试")
+                                        })
                                 })
                                 .catch(err => {
-                                    message.error("服务器宕机啦!请稍候再试")
+                                    message.error("删除失败，请稍候再试")
                                 })
-                        })
-                        .catch(err => {
-                            message.error("删除失败，请稍候再试")
-                        })
+                       })
+                    }
                 }
             }
-        },500)
     }
      render() {
         const props = {
@@ -231,14 +238,13 @@ class Userbox extends Component{
                 </div>
             </div>
             <div className={`user-tag-box ${this.state.tagBoxClass}`}>
-            <Popover  
+            {/* <Popover  
             overlayClassName="userbox-popover" 
             content={<DeleteOutlined />}
             color="red" 
             title="" >
                 <span className="tag">🐷</span>
-            </Popover>
-            
+            </Popover> */}
             {
                 Object.keys(this.state.userInfo).length
                 ?

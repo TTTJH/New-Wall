@@ -9,6 +9,17 @@
     display: flex;
 }
 
+.userdetail-box-title{
+    font-size: 18px;
+    font-weight: bold;
+    color: #69606b;
+    margin: 3px 0;
+}
+
+.userdetail-box{
+    width: 100%;
+}
+
 .main-left-box{
     margin-left: 20px;
 }

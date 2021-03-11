@@ -8,6 +8,7 @@ const nicknameCheckRoute = baseUrl+"/user/nickname_check"
 const getUserInfoRoute = baseUrl + "/user/getInfo"
 const avatarUploadRoute = baseUrl + "/user/avatar"
 const tagHandleRoute = baseUrl + "/user/tag"
+const getClassmateRoute = baseUrl + "/user/classmate"
 
 export const loginAjax = (data) => {
     return ajax(loginRoute,"POST",data)
@@ -35,4 +36,8 @@ export const avatarUploadAjax = (token) => {
 
 export const tagHandleAjax = (data,token) => {
     return ajax(tagHandleRoute,"POST",data,token)
+}
+
+export const getClassmateAjax = () => {
+    return ajax(getClassmateRoute,"GET")
 }
