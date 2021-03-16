@@ -17,8 +17,8 @@
 }
 
 .userdetail-box{
-    width: 50%;
-    /* width: 100%; */
+    /* width: 50%; */
+    width: 100%;
 }
 
 .main-left-box{
@@ -36,7 +36,7 @@
     padding: 0 40px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 .main-card-box-textarea-title,
 .main-card-box-title{

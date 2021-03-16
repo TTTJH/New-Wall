@@ -3,8 +3,10 @@
     min-height: 200px;
     position: relative;
     padding: 15px;
+    padding-bottom: 25px;
     border-radius: 10px;
     display: flex;
+    flex-wrap: wrap;
     background-color: white;
     border: 1px solid #f0f0f0;
     box-shadow: 0 0 30px #f0f0f0;
@@ -15,8 +17,8 @@
 }
 
 .userdetail-box-1{
-    flex-basis: 50%;
-    /* flex-basis: 20%; */
+    /* flex-basis: 50%; */
+    flex-basis: 20%;
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #f0f0f0;
@@ -183,4 +185,33 @@
     position: absolute !important;
     top: 5px;
     left: 10px;
+}
+
+.userdetail-card{
+    margin-top: 10px;
+}
+
+.userdetail-card-load-more{
+    position: absolute;
+    width: 100%;
+    bottom:5px;
+    left: 0;
+    text-align: center;
+    color: #69606b;
+}
+
+.userdetail-card-load-more p{
+    margin: 0;
+    cursor: pointer;
+}
+
+.userdetail-card-load-more p span{
+    vertical-align: middle;
+}
+
+/* 此处修改antd的button */
+.userdetail-chat-box-back2{
+    position: absolute !important;
+    top: 5px;
+    left: 5px;
 }

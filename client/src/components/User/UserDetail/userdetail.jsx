@@ -11,6 +11,8 @@ import {
     FrownOutlined,
     SendOutlined,
     CaretLeftOutlined,
+    CaretDownOutlined,
+
 } from '@ant-design/icons'
 
 import Card from '../../Card/card'
@@ -36,7 +38,7 @@ class UserDetail extends Component{
                     </div>
                 </div>
 
-                <div className="userdetail-box-2 userdetail-box">
+                {/* <div className="userdetail-box-2 userdetail-box">
                     <div className="userdetail-box-2-box">
                         <CommentOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                         <p>发送私信</p>
@@ -53,9 +55,9 @@ class UserDetail extends Component{
                         <FrownOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                         <p>屏蔽用户</p>
                     </div>
-                </div>
-
-                {/* <div className="userdetail-chat-box">
+                </div> */}
+{/* 
+                 <div className="userdetail-chat-box">
                     <div className="userdetail-chat-box-box1">
                         与 tutu 的聊天
                     </div>
@@ -84,7 +86,41 @@ class UserDetail extends Component{
                     </Button>
 
                     <Button size="small" className="userdetail-chat-box-back" shape="circle" type="primary" icon={<CaretLeftOutlined />}/>
-                </div> */}
+                </div>  */}
+
+                <div className="userdetail-card">
+                    <Card/>
+                </div>
+
+                <div className="userdetail-card">
+                    <Card/>
+                </div>
+
+                <div className="userdetail-card">
+                    <Card/>
+                </div>
+
+                <div className="userdetail-card">
+                    <Card/>
+                </div>
+
+                <div className="userdetail-card">
+                    <Card/>
+                </div>
+
+                <div className="userdetail-card">
+                    <Card/>
+                </div>
+
+                <div className="userdetail-card-load-more">
+                    <Button size="small" shape="round" type="primary" icon={<CaretDownOutlined />}>
+                    加载更多
+                    </Button>
+                </div>
+
+                <Button size="small" className="userdetail-chat-box-back2" shape="round" type="primary" icon={<CaretLeftOutlined />}>
+                    返回
+                </Button>
 
             </div>
         )
