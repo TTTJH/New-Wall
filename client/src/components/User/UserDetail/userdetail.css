@@ -6,7 +6,7 @@
     padding-bottom: 25px;
     border-radius: 10px;
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     background-color: white;
     border: 1px solid #f0f0f0;
     box-shadow: 0 0 30px #f0f0f0;
@@ -17,8 +17,8 @@
 }
 
 .userdetail-box-1{
-    /* flex-basis: 50%; */
-    flex-basis: 20%;
+    flex-basis: 50%;
+    /* flex-basis: 20%; */
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #f0f0f0;

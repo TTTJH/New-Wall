@@ -34,10 +34,10 @@ class Main extends Component{
                     </div>
                    
                     <div className="main-card-box">
-                            <div className="userdetail-box">
+                            {/* <div className="userdetail-box">
                                 <p className="userdetail-box-title">UserDetail:</p>
                                 <UserDetail/>
-                            </div>
+                            </div> */}
                         <p className="main-card-box-textarea-title">Textarea:</p>
                         <Textarea
                             mainGetCard={this.mainGetCard}

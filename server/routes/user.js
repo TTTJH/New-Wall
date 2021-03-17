@@ -6,10 +6,13 @@ const fs = require("fs")//nodejs的文件模块
 const multiparty = require("multiparty")//解析文件上传模块
 const util = require("util")//工具模块
 const Jwt = require("../utils/jwt")
+const tokenParse = require("../utils/tokenParse")//token解析函数
 const {UserModel,} = require("../database/schema&model")//导入Model对象
 
 const user = new Router()
+//-----------使用中间件----------------------
 user.use(koaBodyParser())
+
 //--------------获取用户个人信息路由--------------------
 user.get("/getInfo",async (ctx) => {
     let {token} =  ctx.request.headers
@@ -85,7 +88,6 @@ user.post("/register",async (ctx) => {
      //这里使用Model.save()的Promise链式调用方法，因为回调函数的写法在函数内部无法进行ctx.body使得路由返回结果为not found
      await user.save()
          .then((val) => {
-              console.log(val)
               let data = {
                    userId:val._id,
                    username:val.username,
@@ -138,9 +140,7 @@ user.post("/nickname_check",async (ctx) => {
 //------------头像上传路由-------------------
 user.post('/avatar',async (ctx,next) => {
     //token解析操作
-    let {token} =  ctx.request.headers
-    let jwt = new Jwt()//实例化一个jwt对象来进行token验证
-    let userInfo = jwt.verifyToken(token).data
+    let userInfo = tokenParse(ctx.request.headers.token)
     //multiparty模块的使用
     let form = new multiparty.Form({uploadDir: './uploads'})
     form.parse(ctx.req, async (err,fields,files) => {
@@ -159,9 +159,7 @@ user.post('/avatar',async (ctx,next) => {
 //获取个性tags路由
 user.get("/get_tags",async (ctx,next) => {
     //token解析
-    let {token} =  ctx.request.headers
-    let jwt = new Jwt()//实例化一个jwt对象来进行token验证
-    let userInfo = jwt.verifyToken(token).data
+    let userInfo = tokenParse(ctx.request.headers.token)
 
     //数据库操作
     await UserModel.findOne({username:userInfo.username})
@@ -177,9 +175,7 @@ user.get("/get_tags",async (ctx,next) => {
 // 个性tag增删路由
 user.post("/tag",async (ctx,next) => {
     //token解析
-    let {token} =  ctx.request.headers
-    let jwt = new Jwt()//实例化一个jwt对象来进行token验证
-    let userInfo = jwt.verifyToken(token).data
+    let userInfo = tokenParse(ctx.request.headers.token)
     let query = ctx.request.body //post数据获取
     if(query.addTagValue){
         //增加tag操作

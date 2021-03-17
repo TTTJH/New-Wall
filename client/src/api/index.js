@@ -9,6 +9,7 @@ const getUserInfoRoute = baseUrl + "/user/getInfo"
 const avatarUploadRoute = baseUrl + "/user/avatar"
 const tagHandleRoute = baseUrl + "/user/tag"
 const getClassmateRoute = baseUrl + "/user/classmate"
+const cardSubmitRoute = baseUrl + "/card/submit"
 
 export const loginAjax = (data) => {
     return ajax(loginRoute,"POST",data)
@@ -40,4 +41,8 @@ export const tagHandleAjax = (data,token) => {
 
 export const getClassmateAjax = () => {
     return ajax(getClassmateRoute,"GET")
+}
+
+export const cardSubmiAjax = (data,token) => {
+    return ajax(cardSubmitRoute,"POST",data,token)
 }
