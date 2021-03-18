@@ -14,6 +14,10 @@
 }
 
 
-.textarea-box button{
+.textarea-box-btn{
     width: 100%;
+}
+
+.textarea-tags-btn{
+    margin-right: 5px;
 }

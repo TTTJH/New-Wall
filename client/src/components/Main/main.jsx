@@ -8,16 +8,26 @@ import Card from '../Card/card'
 import RecommendCard from '../Recommendcard/recommendcard'
 import Textarea from '../Textarea/textarea'
 import UserDetail from '../User/UserDetail/userdetail'
+import {
+    getCardListAjax,
+} from '../../api/index'
 
 import "./main.css"
 
 class Main extends Component{
     state = {
      userInfo:{},
-     cardList:[]
+     cardList:[],
     }
     componentDidMount(){
-
+        //首次调用getCardListAjax
+        getCardListAjax(1)
+            .then(val => {
+                this.setState({cardList:val.data.data})
+            })
+            .catch(err => {
+                message.error("获取卡片列表失败请重试")
+            })
     }
 
     render() {
@@ -44,10 +54,17 @@ class Main extends Component{
                         />
                         {/* <div className="card-box"> */}
                         <p className="main-card-box-title">Card:</p>
-                        {
+                        {/* {
                             new Array(1,2,3,4,5,6,7,8,9,10).map((item,index) => {
                                 return (
                                     <Card key={index}/>
+                                )
+                            })
+                        } */}
+                        {
+                            this.state.cardList.map((item,index) => {
+                                return(
+                                    <Card key={index} cardData={item} />
                                 )
                             })
                         }

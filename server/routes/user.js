@@ -37,6 +37,19 @@ user.get("/getInfo",async (ctx) => {
     }
 })
 
+//根据id获取userInfo
+user.get("/getInfoById",async (ctx,next) => {
+    let {userId} = ctx.request.query
+    //查询数据库
+    await  UserModel.findOne({_id:userId})
+        .then(val => {
+            ctx.body = {code:200,data:val}
+        })
+        .catch(err => {
+            ctx.body = {code:100,msg:"获取userinfo失败，请重试"}
+        })
+})
+
 //--------------用户登入路由--------------------
 user.post("/login",async (ctx) => {
      let {username,password} = ctx.request.body

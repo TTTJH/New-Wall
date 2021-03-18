@@ -6,10 +6,12 @@ const registerRoute = baseUrl+"/user/register"
 const usernameCheckRoute = baseUrl+"/user/username_check"
 const nicknameCheckRoute = baseUrl+"/user/nickname_check"
 const getUserInfoRoute = baseUrl + "/user/getInfo"
+const getUserInfoByIdRoute = baseUrl + "/user/getInfoById?userId="
 const avatarUploadRoute = baseUrl + "/user/avatar"
 const tagHandleRoute = baseUrl + "/user/tag"
 const getClassmateRoute = baseUrl + "/user/classmate"
 const cardSubmitRoute = baseUrl + "/card/submit"
+const cardListRouter = baseUrl + "/card/list?page="
 
 export const loginAjax = (data) => {
     return ajax(loginRoute,"POST",data)
@@ -31,6 +33,10 @@ export const getUserInfoAjax = (token) => {
     return ajax(getUserInfoRoute,"GET",{},token)
 }
 
+export const getUserInfoByIdAjax = (userId) => {
+    return ajax(getUserInfoByIdRoute+userId,"GET")
+}
+
 export const avatarUploadAjax = (token) => {
     return ajax(avatarUploadRoute,"POST",{},token)
 }
@@ -45,4 +51,8 @@ export const getClassmateAjax = () => {
 
 export const cardSubmiAjax = (data,token) => {
     return ajax(cardSubmitRoute,"POST",data,token)
+}
+
+export const getCardListAjax = (data) => {
+    return ajax(cardListRouter+data,"GET")
 }

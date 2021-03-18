@@ -55,5 +55,32 @@ card.post("/submit",async (ctx,next) => {
         })
 })
 
+//获取卡片路由
+card.get("/list",async (ctx,next) => {
+    let {page} = ctx.request.query
+    //这里的话采取首次查询查卡片前9张，然后前端下拉更新再进行查询
+    //所以根据传递的查询页面来进行数据库调用
+    //直接查询数据库
+    if(page == 1){
+        //首页查询
+        await CardModel.find().limit(9).sort({date:-1})
+            .then(val => {
+                ctx.body = {code:200,data:val}
+            })
+            .catch(err => {
+                ctx.body = {code:200,data:"获取卡片列表失败，请稍候再试"}
+            })
+    }else{
+        //非首页查询
+        await CardModel.find().limit(9).skip((page-1) * 9).sort({date:-1})
+            .then(val => {
+                ctx.body = {code:200,data:val}
+            })
+            .catch(err => {
+                ctx.body = {code:200,data:"获取卡片列表失败，请稍候再试"}
+            })
+    }
+})
+
 //-----------子路由导出----------------------
 module.exports = card

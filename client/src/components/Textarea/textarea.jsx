@@ -9,7 +9,11 @@ import {
 
        } from 'antd';
 
-import { PlusOutlined } from '@ant-design/icons';
+import { 
+  PlusOutlined,
+  HeartOutlined,
+  RobotOutlined,
+ } from '@ant-design/icons';
 
 import {
   cardSubmiAjax,
@@ -114,6 +118,56 @@ class Textarea extends Component{
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </>
+            <div className="textarea-tags-box">
+              {/* <span className="tag">捞人卡</span>
+              <span className="tag">照片卡</span>
+              <span className="tag">寻物卡</span>
+              <span className="tag">日记卡</span>
+              <span className="tag">吐槽卡</span> */}
+                  <Button className="textarea-tags-btn" type="dashed" size="small">
+                    <HeartOutlined />捞人卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  <RobotOutlined />寻物卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  寻人卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  日记卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  心事卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  吐槽卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  提问卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  交友卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  开黑卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  科普卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  安利卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  组队卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  相亲卡
+                  </Button>
+                  <Button  className="textarea-tags-btn"  type="dashed"size="small">
+                  学习卡
+                  </Button>
+                  
+            </div>
             <TextArea value={this.state.content} ref="textarea" onChange={this.textareaChange}  className="textarea" rows={4} placeholder="在此输入内容发布你的卡片吧😝"/>
             <Button onClick={this.submit} className="textarea-box-btn" type="primary">发布🚀</Button>
             </div>
