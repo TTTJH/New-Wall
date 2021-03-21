@@ -18,6 +18,8 @@ const CardSchema = new Schema({
     content:String, //卡片内容
     img:Array, // 卡片附带图片
     date:String,
+    ISODate:Date, // 发布日期
+    type:String, // 卡片类型
 })
 //---------------结束定义Schema------------------------
 

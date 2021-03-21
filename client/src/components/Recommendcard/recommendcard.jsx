@@ -33,7 +33,7 @@ class Recommendcard extends Component{
                     ?
                     this.state.classmateList.map((item,index) => {
                         return (
-                        <div className="recommend-card" key={index}>
+                        <div className="recommend-card" key={item._id}>
                             <img src={`http://localhost:3030/${item.avatar}`} alt=""/>
                             <div className="recommend-txt-box">
                                 <p>{item.nickname}</p>

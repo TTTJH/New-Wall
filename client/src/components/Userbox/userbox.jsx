@@ -57,7 +57,6 @@ class Userbox extends Component{
             .catch(err => {
                 message.error("服务器宕机啦!请稍候再试")
             })
-
     }
     gotoLogin = () => {
         this.props.history.push("/login")

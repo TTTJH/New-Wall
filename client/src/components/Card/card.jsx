@@ -19,13 +19,18 @@ class Mycard extends Component{
     state = {
       ModalVisible:false,
       largeImgUrl:"http://www.tttjh.com.cn/imgs/avatar.jpg",
-      userInfo:"",
+      userInfo:{
+        nickname:"",
+        avatar:""
+      },
     }
     componentDidMount(){
       console.log(this.props)
         getUserInfoByIdAjax(this.props.cardData.userId)
           .then(val => {
             this.setState({userInfo:val.data.data})
+            console.log("------------------------")
+            console.log(val)
           })
           .catch(err => {
             message.error("获取卡片发布者信息失败！请重试！")

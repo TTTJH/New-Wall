@@ -23,6 +23,7 @@ class Main extends Component{
         //首次调用getCardListAjax
         getCardListAjax(1)
             .then(val => {
+                console.log(val)
                 this.setState({cardList:val.data.data})
             })
             .catch(err => {

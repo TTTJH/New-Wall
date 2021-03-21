@@ -240,5 +240,32 @@ user.get("/classmate",async (ctx,next) => {
             ctx.body = {code:100,msg:"获取同学推荐失败！"}
         })
 })
+
+//test路由
+user.get("/test",async (ctx,next) => {
+    let test = 1
+    let promise = new Promise( (resolve,reject) => {
+         fs.readFile("/home/tttjh/Code/new-wall/server/uploads/avatar.jpg",(err,data) => {
+            if(err){
+                console.log(err)
+                reject(err)
+            }else{
+                resolve(data)
+            }
+        })
+    })
+
+    await promise
+        .then( val => {
+            ctx.response.status = 200
+            console.log(val)
+             ctx.body =  ({msg:"cool !!!"})
+        })
+        .catch( err => {
+            console.log(":(")
+            ctx.response.status = 200
+            ctx.body =  ({msg:"something wrong !"})
+        })
+})
 //-----------子路由导出----------------------
 module.exports = user
