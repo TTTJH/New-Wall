@@ -27,6 +27,7 @@ import {
 
 import {
   cardSubmiAjax,
+  cardDelUploadAjax,
 } from '../../api/index'
 import './textarea.css'
 
@@ -43,6 +44,7 @@ function getBase64(file) {
 class Textarea extends Component{
     state = {
         cardId:"",
+        imgArr:[], //保存每次上传的图片名字
         previewVisible: false,
         previewImage: '',
         previewTitle: '',
@@ -96,13 +98,18 @@ class Textarea extends Component{
           message.error("发布失败请稍候重试")
         })
     }
-    handleCancel = () => this.setState({ previewVisible: false });
+    handleCancel = () => {
+      this.setState({ previewVisible: false })
+    }
+    handleRemove = async (file) => {
+      // console.log(file)
+    }
 
     handlePreview = async file => {
       if (!file.url && !file.preview) {
         file.preview = await getBase64(file.originFileObj);
       }
-  
+      
       this.setState({
         previewImage: file.url || file.preview,
         previewVisible: true,
@@ -110,12 +117,58 @@ class Textarea extends Component{
       });
     };
     handleChange = ({ fileList }) => {
-      console.log(fileList)
-      if(fileList[0].response){
-        //保存该条card的id
-        this.setState({cardId:fileList[0].response.data._id})
+      let delImgName = ""
+      if(fileList.length){//fileList有长度
+      if(fileList[fileList.length-1].status == 'done'){//状态判断
+        let imgArr = this.state.imgArr
+        let fileImgArr = fileList[fileList.length-1].response.data.img
+        this.setState({cardId:fileList[fileList.length-1].response.data._id})
+
+            if(imgArr.length >= fileImgArr.length){//进行了删除操作
+              //需要找到删除了的img的名称
+              imgArr.map((item,index) => {
+                if(!fileImgArr.includes(item)){
+                  delImgName = item
+                }
+              })
+              // console.log("有图片被删除")
+              //更新imgArr
+              imgArr.splice(imgArr.indexOf(delImgName),1)
+              this.setState({imgArr})
+              //触发ajax
+              cardDelUploadAjax({imageName:delImgName,cardId:this.state.cardId})
+              .then(val => {
+                // console.log("删除成功")
+              })
+              .catch(err => {
+                // console.log("删除失败")
+              })
+            }else if(imgArr.length < fileImgArr.length){//进行了添加操作
+              let fileImgLastItem = fileImgArr[fileImgArr.length-1] //fileList最后一项最后一张Img
+              // console.log("最新添加的imgName")
+              imgArr.push(fileImgLastItem)
+              this.setState({imgArr})
+            }
       }
-      this.setState({ fileList })
+    }else{
+      //fileList没有项了
+      //那么这种情况delImgName就是this.state.imgArr的最后一项(它也就剩一项了)
+      // console.log("有图片被删除了")
+      let imgArr = this.state.imgArr
+      //更新imgArr
+      delImgName = imgArr.pop()
+      this.setState({imgArr})
+
+      //触发ajax
+      cardDelUploadAjax({imageName:delImgName,cardId:this.state.cardId})
+        .then(val => {
+          console.log("删除成功")
+        })
+        .catch(err => {
+          console.log("删除失败")
+        })
+    }
+      this.setState({fileList})
     }
     cardTypeChange = (index) => {
       this.setState({cardTypeIndex:index})
@@ -147,6 +200,7 @@ class Textarea extends Component{
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          onRemove={this.handleRemove}
         >
           {fileList.length >= 6 ? null : uploadButton}
         </Upload>

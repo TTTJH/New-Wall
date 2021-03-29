@@ -6,6 +6,7 @@
     padding-bottom: 25px;
     border-radius: 10px;
     display: flex;
+    justify-content: space-between;
     /* flex-wrap: wrap; */
     background-color: white;
     border: 1px solid #f0f0f0;
@@ -17,9 +18,11 @@
 }
 
 .userdetail-box-1{
-    flex-basis: 50%;
-    /* flex-basis: 20%; */
+    /* flex-basis: 50%; */
+    height: 100%;
+    flex-basis: 19%;
     padding: 20px;
+    display: inline-block;
     border-radius: 10px;
     border: 1px solid #f0f0f0;
     box-shadow: 0 0 30px #f0f0f0;
@@ -76,7 +79,7 @@
 }
 
 .userdetail-chat-box{
-    flex-basis: 80%;
+    flex-basis: 79%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -89,17 +92,24 @@
 
 .userdetail-chat-box-box1{
     height: 30px;
+    width: 100%;
+    position: absolute;
+    top:0;
     text-align: center;
     line-height: 30px;
     color: #69606b;
+    background-color: white;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .userdetail-message-box{
-    min-height: 100px;
+    /* min-height: 100px; */
     margin-bottom: 10px;
+    padding-top: 20px;
+    max-height: 700px;
+    overflow-y: auto;
 }
 
 .userdetail-chat-box-from{
@@ -172,6 +182,7 @@
 .userdetail-chat-box-textarea{
     /* position: absolute !important;
     bottom: 0; */
+    border-radius: 5px !important;
 }
 
 /* 此处修改antd的button */

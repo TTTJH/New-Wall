@@ -20,13 +20,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45926ff9-988d-4a73-a857-8dff1e122e0f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../client/src/api/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/api/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/Card/card.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Card/card.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/components/Card/card.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Card/card.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Textarea/textarea.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Textarea/textarea.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/Main/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Main/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/Main/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Main/main.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/components/Textarea/textarea.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Textarea/textarea.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/schema&amp;model.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/schema&amp;model.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/card.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/card.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/user.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +105,14 @@
       <workItem from="1616136781000" duration="5673000" />
       <workItem from="1616222310209" duration="2924000" />
       <workItem from="1616285850353" duration="11235000" />
+      <workItem from="1616309677635" duration="3350000" />
+      <workItem from="1616376165091" duration="618000" />
+      <workItem from="1616400758015" duration="660000" />
+      <workItem from="1616482448225" duration="607000" />
+      <workItem from="1616733682692" duration="609000" />
+      <workItem from="1616806098258" duration="1284000" />
+      <workItem from="1616829608853" duration="4677000" />
+      <workItem from="1616979667489" duration="3302000" />
     </task>
     <servers />
   </component>
@@ -129,13 +140,10 @@
       <screen x="0" y="38" width="2160" height="1340" />
     </state>
     <state x="754" y="481" width="641" height="470" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.38.2160.1340@0.38.2160.1340" timestamp="1615012851682" />
-    <state x="755" y="353" width="640" height="726" key="FileChooserDialogImpl" timestamp="1608103904541">
-      <screen x="0" y="44" width="2160" height="1334" />
+    <state x="247" y="194" width="1541" height="1090" key="SettingsEditor" timestamp="1616979791803">
+      <screen x="0" y="38" width="2160" height="1340" />
     </state>
-    <state x="755" y="353" width="640" height="726" key="FileChooserDialogImpl/0.44.2160.1334@0.44.2160.1334" timestamp="1608103904541" />
-    <state x="247" y="199" width="1541" height="1090" key="SettingsEditor" timestamp="1614667388352">
-      <screen x="0" y="44" width="2160" height="1334" />
-    </state>
+    <state x="247" y="194" key="SettingsEditor/0.38.2160.1340@0.38.2160.1340" timestamp="1616979791802" />
     <state x="247" y="199" width="1541" height="1090" key="SettingsEditor/0.44.2160.1334@0.44.2160.1334" timestamp="1614667388352" />
     <state x="393" y="115" width="1364" height="1199" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1616144014023">
       <screen x="0" y="38" width="2160" height="1340" />

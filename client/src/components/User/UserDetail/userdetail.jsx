@@ -25,7 +25,7 @@ class UserDetail extends Component{
         const { TextArea } = Input;
         return(
             <div className="userdetail">
-                <div className="userdetail-box-1 userdetail-box">
+                <div className="userdetail-box-1">
                 <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
                     <p className="userdetail-nickname-box">tutu</p>
                     <div className="userdetail-tag-box">
@@ -38,7 +38,7 @@ class UserDetail extends Component{
                     </div>
                 </div>
 
-                <div className="userdetail-box-2 userdetail-box">
+                {/* <div className="userdetail-box-2 userdetail-box">
                     <div className="userdetail-box-2-box">
                         <CommentOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                         <p>发送私信</p>
@@ -55,14 +55,14 @@ class UserDetail extends Component{
                         <FrownOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                         <p>屏蔽用户</p>
                     </div>
-                </div>
-{/* 
+                </div> */}
+
                  <div className="userdetail-chat-box">
+
+                    <div className="userdetail-message-box">
                     <div className="userdetail-chat-box-box1">
                         与 tutu 的聊天
                     </div>
-
-                    <div className="userdetail-message-box">
                         <div className="userdetail-chat-box-from">
                             <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
                             <p>Hello World</p> 
@@ -78,17 +78,62 @@ class UserDetail extends Component{
                             <p>Hello World !</p>
                             <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
                         </div>
+                        <div className="userdetail-chat-box-from">
+                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
+                            <p>Hello World</p> 
+                            <div>
+                            <span>10:48AM</span>
+                            </div>
+                        </div>
+                        <div className="userdetail-chat-box-to">
+                        <div>
+                            <span>10:48AM</span>
+                            </div>
+                            <p>Hello World !</p>
+                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
+                        </div>
+                        <div className="userdetail-chat-box-from">
+                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
+                            <p>Hello World</p> 
+                            <div>
+                            <span>10:48AM</span>
+                            </div>
+                        </div>
+                        <div className="userdetail-chat-box-to">
+                        <div>
+                            <span>10:48AM</span>
+                            </div>
+                            <p>Hello World !</p>
+                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
+                        </div>
+                        <div className="userdetail-chat-box-from">
+                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
+                            <p>Hello World</p> 
+                            <div>
+                            <span>10:48AM</span>
+                            </div>
+                        </div>
+
+                        <div className="userdetail-chat-box-to">
+                        <div>
+                            <span>10:48AM</span>
+                            </div>
+                            <p>Hello World !</p>
+                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
+                        </div>
+                        </div>
+
+                    <div className="userdetail-chat-box-handle">
+                        <TextArea placeholder="请输入内容" className="userdetail-chat-box-textarea" rows={2} />
+                        <Button className="userdetail-chat-box-submit" type="primary" shape="round">
+                            发送        
+                        </Button>
                     </div>
 
-                    <TextArea placeholder="请输入内容" className="userdetail-chat-box-textarea" rows={2} />
-                    <Button className="userdetail-chat-box-submit" type="primary" shape="round">
-                        发送        
-                    </Button>
-
                     <Button size="small" className="userdetail-chat-box-back" shape="circle" type="primary" icon={<CaretLeftOutlined />}/>
-                </div>  */}
-
-                {/* <div className="userdetail-card">
+                </div> 
+{/* 
+                <div className="userdetail-card">
                     <Card/>
                 </div>
 

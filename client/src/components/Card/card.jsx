@@ -6,7 +6,22 @@ import {
         Modal,
         message,
 } from 'antd';
-import { EditOutlined, MessageOutlined, LikeOutlined } from '@ant-design/icons';
+import { EditOutlined,
+         MessageOutlined, 
+         PlusOutlined,
+         HeartOutlined,
+         RobotOutlined,
+         ReadOutlined,
+         LockOutlined,
+         MehOutlined,
+         QuestionCircleOutlined,
+         SmileOutlined,
+         CarOutlined,
+         LikeOutlined,
+         LaptopOutlined,
+         FrownOutlined,
+         DislikeOutlined,
+         } from '@ant-design/icons';
 import {
   getUserInfoByIdAjax,
 } from '../../api'
@@ -14,31 +29,45 @@ import "./card.css"
 
 const { Meta } = Card;
 
-
 class Mycard extends Component{
     state = {
+      top:"",
+      left:"",
       ModalVisible:false,
       largeImgUrl:"http://www.tttjh.com.cn/imgs/avatar.jpg",
       userInfo:{
         nickname:"",
         avatar:""
       },
+      cardType:[
+        <p><HeartOutlined /> 捞人卡</p>,
+        <p><RobotOutlined /> 寻物卡</p>,
+        <p><ReadOutlined /> 日记卡</p>,
+        <p><LockOutlined /> 心事卡</p>,
+        <p><FrownOutlined /> 吐槽卡</p>,
+        <p><QuestionCircleOutlined /> 提问卡</p>,
+        <p><SmileOutlined /> 交友卡</p>,
+        <p><CarOutlined /> 开黑卡</p>,
+        <p><LikeOutlined /> 安利卡</p>,
+        <p><LaptopOutlined /> 学习卡</p>,
+        <p><MehOutlined /> 无聊卡</p>,
+      ],
     }
     componentDidMount(){
-      console.log(this.props)
         getUserInfoByIdAjax(this.props.cardData.userId)
           .then(val => {
             this.setState({userInfo:val.data.data})
-            console.log("------------------------")
-            console.log(val)
           })
           .catch(err => {
             message.error("获取卡片发布者信息失败！请重试！")
           })
+        
+          // if(this.props.cardData.userId && !this.props.cardData.img){
+          //   let cards = document.querySelectorAll(".post-card")
+          //   this.setState({top:cards[this.props.index].clientHeight,left:(this.props.index % 3) * 350})
+          // }
     }
     showModal = (e) => {
-      console.log(e)
-      console.log(e.target)
       this.setState({ModalVisible:true,largeImgUrl:e.target.src})
     };
   
@@ -49,8 +78,23 @@ class Mycard extends Component{
     handleCancel = () => {
       this.setState({ModalVisible:false})
     };
+
+    // //最后一张图片加载完毕执行父组件传递的getCardHeight函数
+    // imgOnload = () => {
+    //   let cards = document.querySelectorAll(".post-card")
+    //   this.props.getCardHeight(this.props.index,cards[this.props.index].clientHeight)
+    // }
+  
+    //card无图片直接执行父组件传递的getCardHeight函数
+    cardOnload = () => {
+      // let cards = document.querySelectorAll(".post-card")
+      // if(cards[this.props.index]) {
+      //   this.props.getCardHeight(this.props.index,cards[this.props.index].clientHeight)
+      // }
+    }
+
     render() {
-      let {content,date,img,userId} = this.props.cardData
+      let {content,date,img,userId,type,top,left} = this.props.cardData
         return (
           //   <Card
             
@@ -75,15 +119,16 @@ class Mycard extends Component{
           //   />
           // </Card>
 
-        <div id='cards' className='cards-wrapper'>
+        <React.Fragment>
+        {/* <div className='cards-wrapper'> */}
           {/* 图片放大显示的弹窗 */}
           <Modal title="" visible={this.state.ModalVisible} onCancel={this.handleCancel} footer={null} closable={false} >
             <img className="largeImg" src={this.state.largeImgUrl} alt=""/>
           </Modal>
-          <div className='cards-container'>
-                  <div className='post-card'>
+          {/* <div className='cards-container'> */}
+                  <div className={this.props.special ? "post-card special-post-card" : "post-card"} style={{"left":left,"top":top}}>
                   <div className='card-tag'>
-                      捞人卡  <MessageOutlined/>
+                    {this.state.cardType[type]}
                   </div>
                   <div className="card-content-img-Box">
                   <div className='post-content'>
@@ -91,24 +136,22 @@ class Mycard extends Component{
                   </div>
                   {/* 卡片的图片渲染 */}
                   {
-                    console.log(this.props)
-                  }
-                  {
-                    img.length != 0
+                    img.length != 0 && userId 
                     ?
                     <div className='post-img-Box'>
                     {
                       img.map((item,index) => {
                         return(
                           <div   className='post-img-box'>
-                          <img src={`http://localhost:3030/${item}`} alt="" onClick={this.showModal}/>
+                          <img  src={`http://localhost:3030/${item}`} alt="" onClick={this.showModal}/>
                           </div>
                         )
                       })
                     }
                   </div>
                   :
-                  null
+                  //当card没有图片的时候触发
+                  this.cardOnload()
                   }
                   </div>
 
@@ -120,9 +163,9 @@ class Mycard extends Component{
                           <p className="card-date">{date}</p>
                   </div>
                   <div className='post-handles'>
+                      <div className="post-handle" ><LikeOutlined />&nbsp;<span>48</span></div>
                       <div className="post-handle" ><MessageOutlined/>&nbsp;<span>48</span></div>
-                      <div className="post-handle" ><MessageOutlined/>&nbsp;<span>48</span></div>
-                      <div className="post-handle" ><MessageOutlined/>&nbsp;<span>88</span></div>
+                      <div className="post-handle" ><DislikeOutlined />&nbsp;<span>88</span></div>
                   </div>
               </div>
               {/* //     <div onClick={() => {this.toUser(item._id)}} key={index} className='cards-box'>
@@ -149,9 +192,9 @@ class Mycard extends Component{
               //       </div>
               //     </div>
               // </div>       */}
-          </div>
-        </div>
-  
+          {/* </div> */}
+        {/* </div> */}
+        </React.Fragment>
         )
     }
 }

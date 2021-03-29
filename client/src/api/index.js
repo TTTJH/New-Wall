@@ -12,6 +12,7 @@ const tagHandleRoute = baseUrl + "/user/tag"
 const getClassmateRoute = baseUrl + "/user/classmate"
 const cardSubmitRoute = baseUrl + "/card/submit"
 const cardListRouter = baseUrl + "/card/list?page="
+const cardDelUploadRouter = baseUrl + "/card/delupload"
 
 export const loginAjax = (data) => {
     return ajax(loginRoute,"POST",data)
@@ -55,4 +56,8 @@ export const cardSubmiAjax = (data,token) => {
 
 export const getCardListAjax = (data) => {
     return ajax(cardListRouter+data,"GET")
+}
+
+export const cardDelUploadAjax = (data) => {
+    return ajax(cardDelUploadRouter,"POST",data,)
 }

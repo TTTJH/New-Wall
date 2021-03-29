@@ -54,15 +54,18 @@ card.post("/upload",async (ctx,next) => {
                     .then(async doc => {
                             let {img} = doc[0]
                             img.push(imageName)
-                            await CardModel.update({_id:cardId},{img},(err,doc) => {
-                                if(err){
-                                    ctx.body = {code:101,msg:"图片提交失败，请重试"}
-                                }else{
-                                    console.log("----------------")
-                                    console.log(doc)
-                                    ctx.body = {code:200,doc}
-                                }
-                            })
+                            await CardModel.update({_id:cardId},{img})
+                                .then(async val => {
+                                        console.log("----------------")
+                                        await CardModel.find({_id:cardId})
+                                            .then(val => {
+                                                ctx.body = {code:200,data:val[0]}
+                                            })
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    ctx.body = {code:102,msg:"图片提交失败，请重试"}
+                                })
                     })
                     .catch((err) => {
                         console.log(err)
@@ -89,25 +92,36 @@ card.post("/upload",async (ctx,next) => {
     // }
 })
 
+//删除刚刚上传的图片
+card.post("/delupload",async (ctx,next) => {
+    let {imageName,cardId} = ctx.request.body //解析post数据
+    console.log(imageName)
+    console.log(cardId)
+    //操作数据库，查找到该card doc,删除img字段中的imageName
+    await CardModel.find({_id:cardId})
+        .then(async doc => {
+            let {img} = doc
+            img.splice(img.indexOf(imageName))
+            await CardModel.updateOne({_id:cardId}, {img})
+                .then(val => {
+                    ctx.body = {code:200,data:"删除成功"}
+                })
+                .catch(err => {
+                    ctx.body = {code:100,msg:"删除有误"}
+                })
+        })
+        .catch(err => {
+            console.log(err)
+            ctx.body = {code:100,msg:"删除有误"}
+        })
+})
+
 //卡片提交
 card.post("/submit",async (ctx,next) => {
     console.log("submit submit submit")
     //token解析操作
     let userInfo = tokenParse(ctx.request.headers.token)
     let {content,typeIndex,cardId} = ctx.request.body //解析post数据
-    let types = [
-        "捞人卡",
-        "寻物卡",
-        "日记卡",
-        "心事卡",
-        "吐槽卡",
-        "提问卡",
-        "交友卡",
-        "开黑卡",
-        "安利卡",
-        "学习卡",
-        "无聊卡",
-    ]
     //操作数据库
     let mydate = new Date()
     if(cardId){
@@ -118,7 +132,7 @@ card.post("/submit",async (ctx,next) => {
             userId:userInfo.userId,
             content,
             date:`${mydate.toLocaleDateString()} ${mydate.getHours()}:${mydate.getMinutes()}`,
-            type:types[typeIndex],
+            type:typeIndex,
             ISODate:new Date()
             })
             .then(val => {
@@ -134,7 +148,7 @@ card.post("/submit",async (ctx,next) => {
             content,
             date:`${mydate.toLocaleDateString()} ${mydate.getHours()}:${mydate.getMinutes()}`,
             img:imgsArr,
-            type:types[typeIndex],
+            type:typeIndex,
             ISODate:new Date()
         })
 

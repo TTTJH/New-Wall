@@ -9,7 +9,8 @@
     display: flex;
 }
 
-.userdetail-box-title{
+.userdetail-box-title,
+.carddetail-box-title{
     font-size: 18px;
     font-weight: bold;
     color: #69606b;
@@ -17,12 +18,28 @@
 }
 
 .userdetail-box{
-    width: 50%;
-    /* width: 100%; */
+    /* width: 50%; */
+    padding:0 40px;
+    margin-top: 40px;
+}
+
+.carddetail-box{
+    width: 100%;
 }
 
 .main-left-box{
     margin-left: 20px;
+}
+
+.main-textarea-box{
+    padding: 0 40px;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.main-carddetail-box{
+    padding: 0 40px;
+    margin-top: 40px;
 }
 
 .recommend-box-title{
@@ -32,11 +49,20 @@
 }
 
 .main-card-box{
-    margin-top: 100px;
+    margin-top: 40px;
     padding: 0 40px;
-    display: flex;
+    position: relative;
+}
+.main-card-inner-box{
+    /* display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    justify-content: space-around; */
+    position: absolute;
+    /* 这里inner-box的宽度是通过卡片witd和卡片间隙计算 */
+    /* 300+300+300+20+20+20 */
+    width: 960px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .main-card-box-textarea-title,
 .main-card-box-title{
@@ -55,4 +81,13 @@
     width: 150px;
     height: 150px;
     margin: 0 auto;
+}
+
+/* 修改了antd的button */
+.more-card-btn{
+    border-radius: 30px !important;
+    /* border-bottom-left-radius: 30px !important; */
+    /* border-top-right-radius: 30px !important; */
+    width: 300px;
+    position: absolute !important;
 }

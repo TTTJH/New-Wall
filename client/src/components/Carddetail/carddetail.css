@@ -1,0 +1,99 @@
+.carddetail{
+    width: 100%;
+    display: flex;
+    position: relative;
+    padding: 0 10px;
+    border-radius: 10px;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+}
+
+.carddetail-right-box{
+    /* flex-grow: 1; */
+    flex-basis: 65%;
+    margin: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 0;
+    border-radius: 20px;
+    background-color: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+}
+.carddetail-comment-Box{
+    max-height: 700px;
+    overflow-y: auto;
+}
+.carddetail-right-box-title{
+    font-size: 18px;
+    font-weight: bold;
+    color: #69606b;
+    margin: 5px 10px;
+}
+
+.carddetail-comment-box{
+    display: flex;
+    margin-bottom: 10px;
+}
+.carddetail-comment-talk-icon{
+    margin-left: 10px;
+}
+.carddetail-comment-avatar{
+    width: 45px;
+    height: 45px;
+    margin-left: 10px;
+    border-radius: 50%;
+    border: 1px solid #f0f0f0;
+    cursor: pointer;
+}
+
+.carddetail-comment-box-right-box{
+    flex-grow: 1;
+    display: flex;
+    align-items: flex-end;
+}
+
+.carddetail-comment-nickname{
+    text-align: center;
+}
+.carddetail-comment-nickname,
+.carddetail-comment-content{
+    margin: 0;
+}
+.carddetail-comment-input{
+    position: relative;
+}
+
+/* 此处修改antd的textarea */
+.carddetail-comment-textarea{
+    border-radius: 5px !important;
+}
+.carddetail-comment-content{
+    display: inline-block;
+    margin-left:10px;
+    margin-right: 5px;
+    /* max-width: 89%; */
+    color: #69606b;
+    margin-top: 10px;
+    box-sizing: content-box;
+    padding: 2px 10px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 0 30px #f0f0f0;
+    border-top-right-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+
+/* 修改antd的button */
+.carddetail-comment-btn{
+    position: absolute !important;
+    right: 5px;
+    bottom: 5px;    
+}
+
+.carddetail-comment-btn1,
+.carddetail-comment-btn2{
+    margin-right: 5px;
+}
