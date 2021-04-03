@@ -36,6 +36,11 @@
 
 .web-title span{
     /* font-weight: bold; */
+    /* font-size: 16px; */
+}
+.title{
+    font-size: 18px;
     vertical-align: middle;
-    font-size: 16px;
+    font-weight: bold;
+    color: #69606b;
 }

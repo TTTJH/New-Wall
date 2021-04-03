@@ -96,6 +96,7 @@ user.post("/register",async (ctx) => {
           nickname,
           gender,
          avatar:`avatar${Math.round(Math.random()*2)+1}.jpg`,//注册默认头像
+          // avatar:`avatar.jpg`,//注册默认头像
          tags:["萌新入驻"],//注册默认tag
      })
      //这里使用Model.save()的Promise链式调用方法，因为回调函数的写法在函数内部无法进行ctx.body使得路由返回结果为not found
@@ -106,7 +107,7 @@ user.post("/register",async (ctx) => {
                    username:val.username,
                    nickname:val.nickname,
                    gender:val.gender,
-                  avatar:"avatar.jpg",//注册默认头像
+                  avatar:val.avatar,//注册默认头像
               }
               let jwt = new Jwt(data,"user-secret")
               let token = jwt.generToken()

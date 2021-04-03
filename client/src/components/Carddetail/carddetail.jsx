@@ -27,7 +27,7 @@ class CardDetail extends Component{
 
                         <p className="carddetail-right-box-title">回复板:</p>
 
-                        <div className="carddetail-comment-box">
+                        {/* <div className="carddetail-comment-box">
                             <div className="carddetail-comment-box-left-box">
                             <Tooltip title="tutu" color="gold">
                                 <img className="carddetail-comment-avatar" src="http://localhost:3030/avatar3.jpg" alt=""/>
@@ -61,6 +61,7 @@ class CardDetail extends Component{
                               
                             </div>
                         </div>
+
                         <div className="carddetail-comment-box">
                             <div className="carddetail-comment-box-left-box">
                             <Tooltip title="tutu" color="gold">
@@ -82,7 +83,6 @@ class CardDetail extends Component{
                             </div>
                         </div>
 
-
                         <div className="carddetail-comment-box">
                             <div className="carddetail-comment-box-left-box">
                             <Tooltip title="tutu" color="gold">
@@ -96,7 +96,7 @@ class CardDetail extends Component{
                                 <Button className="carddetail-comment-btn1" size="small" shape="circle" icon={<LikeOutlined />} />
                                 <Button className="carddetail-comment-btn2" size="small" shape="circle" icon={<MessageOutlined />} />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="carddetail-comment-box">
                             <div className="carddetail-comment-box-left-box">
@@ -134,6 +134,7 @@ class CardDetail extends Component{
                             </div>
                         </div>
                         </div>
+
                         <div className="carddetail-comment-input">
                             <TextArea rows={2} className="carddetail-comment-textarea"/>
                             <Button className="carddetail-comment-btn"  shape="shape" type="primary" shape="round">回复</Button>

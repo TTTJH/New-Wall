@@ -24,6 +24,7 @@ import { EditOutlined,
          } from '@ant-design/icons';
 import {
   getUserInfoByIdAjax,
+  cardLikeAjax,
 } from '../../api'
 import "./card.css"
 
@@ -39,6 +40,7 @@ class Mycard extends Component{
         nickname:"",
         avatar:""
       },
+      likeChoose:false,//决定是否被点赞
       cardType:[
         <p><HeartOutlined /> 捞人卡</p>,
         <p><RobotOutlined /> 寻物卡</p>,
@@ -53,21 +55,30 @@ class Mycard extends Component{
         <p><MehOutlined /> 无聊卡</p>,
       ],
     }
+
     componentDidMount(){
-        getUserInfoByIdAjax(this.props.cardData.userId)
-          .then(val => {
-            this.setState({userInfo:val.data.data})
-          })
-          .catch(err => {
-            message.error("获取卡片发布者信息失败！请重试！")
-          })
+        if(this.props.userInfo){//用户已登入
+          
+        }
+        //根据props的userData获取userinfo放在render()渲染函数内部完成
+        // getUserInfoByIdAjax(this.props.cardData.userId)
+        //   .then(val => {
+        //     this.setState({userInfo:val.data.data})
+        //   })
+        //   .catch(err => {
+        //     message.error("获取卡片发布者信息失败！请重试！")
+        //   })
         
           // if(this.props.cardData.userId && !this.props.cardData.img){
           //   let cards = document.querySelectorAll(".post-card")
           //   this.setState({top:cards[this.props.index].clientHeight,left:(this.props.index % 3) * 350})
           // }
     }
+
     showModal = (e) => {
+      //阻止事件冒泡
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
       this.setState({ModalVisible:true,largeImgUrl:e.target.src})
     };
   
@@ -93,8 +104,48 @@ class Mycard extends Component{
       // }
     }
 
+    //展示用户详细
+    userInfoShow = (e) => {
+        //阻止事件冒泡
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+    }
+
+    //点赞函数
+    like = (e) => {
+        //阻止事件冒泡
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+
+        //点赞反转
+        this.setState({likeChoose:!this.state.likeChoose},() => {
+          if(this.state.likeChoose){//进行了点赞
+            let cardId = this.props.cardData._id //准备传递数据
+            let token = localStorage.getItem("token") //获取token
+
+            cardLikeAjax({cardId},token)
+              .then(val => {
+                console.log(val)
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }else{//取消了点赞
+              
+          }
+        })
+
+    }
     render() {
       let {content,date,img,userId,type,top,left} = this.props.cardData
+      //根据props的userData获取userinfo放在render()渲染函数内部完成
+      getUserInfoByIdAjax(this.props.cardData.userId)
+          .then(val => {
+            this.setState({userInfo:val.data.data})
+          })
+          .catch(err => {
+            message.error("获取卡片发布者信息失败！请重试！")
+          })
         return (
           //   <Card
             
@@ -126,7 +177,7 @@ class Mycard extends Component{
             <img className="largeImg" src={this.state.largeImgUrl} alt=""/>
           </Modal>
           {/* <div className='cards-container'> */}
-                  <div className={this.props.special ? "post-card special-post-card" : "post-card"} style={{"left":left,"top":top}}>
+                  <div onClick={() => this.props.showModal(this.props.index1,this.props.index2)} className={this.props.special ? "post-card special-post-card" : "post-card"} style={{"left":left,"top":top}}>
                   <div className='card-tag'>
                     {this.state.cardType[type]}
                   </div>
@@ -155,7 +206,7 @@ class Mycard extends Component{
                   }
                   </div>
 
-                  <div className='post-avatar-box'>
+                  <div className='post-avatar-box' onClick={this.props.showModal2}>
                           <div className='post-avatar'>
                           <img src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
                           </div>
@@ -163,7 +214,7 @@ class Mycard extends Component{
                           <p className="card-date">{date}</p>
                   </div>
                   <div className='post-handles'>
-                      <div className="post-handle" ><LikeOutlined />&nbsp;<span>48</span></div>
+                      <div className="post-handle" onClick={this.like} style={this.state.likeChoose ? {color:"#fddb3a"} : {}}><LikeOutlined />&nbsp;<span>48</span></div>
                       <div className="post-handle" ><MessageOutlined/>&nbsp;<span>48</span></div>
                       <div className="post-handle" ><DislikeOutlined />&nbsp;<span>88</span></div>
                   </div>

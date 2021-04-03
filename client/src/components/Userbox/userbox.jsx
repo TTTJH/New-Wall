@@ -52,6 +52,8 @@ class Userbox extends Component{
                     // this.props.history.push("/login")
                 }else{
                     this.setState({userInfo:val.data.data})//更新state
+                    //调用main组件传递的函数，将userInfo传递给main组件
+                    this.props.getUserInfoFromUserBox(val.data.data)
                 }
             })
             .catch(err => {

@@ -1,5 +1,6 @@
 .userdetail{
     /* width: 100%; */
+    width: 40vw;
     min-height: 200px;
     position: relative;
     padding: 15px;
@@ -18,9 +19,9 @@
 }
 
 .userdetail-box-1{
-    /* flex-basis: 50%; */
+    flex-basis: 50%;
     height: 100%;
-    flex-basis: 19%;
+    /* flex-basis: 19%; */
     padding: 20px;
     display: inline-block;
     border-radius: 10px;

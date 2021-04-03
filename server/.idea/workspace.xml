@@ -19,18 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45926ff9-988d-4a73-a857-8dff1e122e0f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../client/src/api/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/api/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Card/card.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Card/card.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Card/card.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Card/card.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Main/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Main/main.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Main/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Main/main.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/Textarea/textarea.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/Textarea/textarea.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.css" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/components/User/UserDetail/userdetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/card.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/card.js" afterDir="false" />
-    </list>
+    <list default="true" id="45926ff9-988d-4a73-a857-8dff1e122e0f" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -113,6 +102,7 @@
       <workItem from="1616806098258" duration="1284000" />
       <workItem from="1616829608853" duration="4677000" />
       <workItem from="1616979667489" duration="3302000" />
+      <workItem from="1617089820781" duration="456000" />
     </task>
     <servers />
   </component>

@@ -20,7 +20,7 @@
 .userdetail-box{
     /* width: 50%; */
     padding:0 40px;
-    margin-top: 40px;
+    margin: 20px 0;
 }
 
 .carddetail-box{
@@ -39,7 +39,7 @@
 
 .main-carddetail-box{
     padding: 0 40px;
-    margin-top: 40px;
+    margin: 40px 0;
 }
 
 .recommend-box-title{
@@ -90,4 +90,38 @@
     /* border-top-right-radius: 30px !important; */
     width: 300px;
     position: absolute !important;
+}
+
+/* 修改了antd 的 Modal */
+.cardDetailModal .ant-modal-content{
+    width: 80vw !important;
+    position: absolute !important;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px !important;
+}
+/* 修改了antd 的 Modal */
+.cardDetailModal .ant-modal-content .ant-modal-body{
+    padding: 0 !important;
+}
+/* 修改了antd 的 Modal */
+.cardDetailModal .ant-modal-content .ant-modal-header{
+    border-radius: 10px !important;
+}
+
+/* 修改了antd 的 Modal */
+.userDetailModal .ant-modal-content{
+    /* width: 80vw !important; */
+    position: absolute !important;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px !important;
+}
+/* 修改了antd 的 Modal */
+.userDetailModal .ant-modal-content .ant-modal-body{
+    padding: 0 !important;
+}
+/* 修改了antd 的 Modal */
+.userDetailModal .ant-modal-content .ant-modal-header{
+    border-radius: 10px !important;
 }

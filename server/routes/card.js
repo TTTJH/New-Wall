@@ -48,7 +48,6 @@ card.post("/upload",async (ctx,next) => {
             }else{
                 //非首张图片
                 //操作数据库
-                console.log(`cardId=${cardId}`)
                 await CardModel
                     .find({_id:cardId})
                     .then(async doc => {
@@ -95,12 +94,10 @@ card.post("/upload",async (ctx,next) => {
 //删除刚刚上传的图片
 card.post("/delupload",async (ctx,next) => {
     let {imageName,cardId} = ctx.request.body //解析post数据
-    console.log(imageName)
-    console.log(cardId)
     //操作数据库，查找到该card doc,删除img字段中的imageName
     await CardModel.find({_id:cardId})
         .then(async doc => {
-            let {img} = doc
+            let {img} = doc[0]
             img.splice(img.indexOf(imageName))
             await CardModel.updateOne({_id:cardId}, {img})
                 .then(val => {
@@ -118,7 +115,6 @@ card.post("/delupload",async (ctx,next) => {
 
 //卡片提交
 card.post("/submit",async (ctx,next) => {
-    console.log("submit submit submit")
     //token解析操作
     let userInfo = tokenParse(ctx.request.headers.token)
     let {content,typeIndex,cardId} = ctx.request.body //解析post数据
@@ -194,5 +190,45 @@ card.get("/list",async (ctx,next) => {
     }
 })
 
+//卡片点赞接口
+card.post("/like",async(ctx,next) => {
+  //token解析操作
+  let userInfo = tokenParse(ctx.request.headers.token)
+  let {cardId} = ctx.request.body //解析post数据
+  //数据库操作
+  await CardModel.find({_id:cardId})
+        .then(async doc => {
+          let likes = doc[0].likes
+          likes.push(userInfo.userId) //将最新的点赞用户id添加
+          await CardModel.updateOne({_id:cardId},{$set:{likes}})
+                .then(val => {
+                  ctx.body = {code:200,data:"点赞成功！"}
+                })
+                .catch(err => {
+                  console.log(err)
+                  ctx.body = {code:100,msg:"点赞模块出现问题请稍候再试"}
+                })
+        })
+        .catch(err => {
+          console.log(err)
+          ctx.body = {code:100,msg:"点赞模块出现问题请稍候再试"}
+        })
+
+})
+
+//卡片点赞检查接口
+card.post("/checklike",async(ctx,next) => {
+  let {userId,cardId} = ctx.request.body //解析post数据
+
+  //操作数据库
+  CardModel.find({_id:cardId})
+    .then(val => {
+
+    })
+    .catch(err => {
+      console.log(err)
+      ctx.body = {code:100,msg:"卡片数据获取出现问题请稍候再试"}
+    })
+})
 //-----------子路由导出----------------------
 module.exports = card

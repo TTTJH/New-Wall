@@ -1,7 +1,7 @@
 const Jwt = require("./jwt")
 
 async function tokenVerify (ctx, next){
-    let urlArr = ["/user/getInfo","/user/avatar","/user/tag"] //需要token的url数组
+    let urlArr = ["/user/getInfo","/user/avatar","/user/tag","/card/like"] //需要token的url数组
     if(urlArr.indexOf(ctx.request.url) !== -1){
         //该url在需要token的url数组中
         let {token} = ctx.request.headers

@@ -20,6 +20,7 @@ const CardSchema = new Schema({
     date:String,
     ISODate:Date, // 发布日期
     type:String, // 卡片类型
+    likes:Array,//点赞列表
 })
 //---------------结束定义Schema------------------------
 
