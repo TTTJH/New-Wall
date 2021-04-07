@@ -128,24 +128,58 @@ class Userbox extends Component{
         this.setState({tagInputBoxClass:"tag-input-box-hidden",tagBoxClass:"tag-box-up",tagInputValue:""})
     }
 
-    tagDel = (index) => {
-        //注意这里addEventLister的事件绑定有问题，使用闭包未能解决，这里使用了标志位的做法
-        //注意这里的dom获取顺序问题
-            let userPopvers = document.querySelectorAll(".userbox-popover")
-            if(userPopvers.length){
-                this.setState({userPopvers,tagIndex:index},() => {
-                    // this.state.userPopvers[this.state.userPopvers.length-1].removeEventListener("click",() => delHandle(index))
-                    this.state.userPopvers[this.state.userPopvers.length-1].addEventListener("click",delHandleOuter)
-                    // this.state.userPopvers[this.state.userPopvers.length-1].onclick = () => delHandleOuter(index)
-                })
-                let delHandleOuter = () => {
-                    if(!this.state.tagDelSubmiting){
-                        this.setState({tagDelSubmiting:true},() => {
+    getTagIndex = (index) => {
+            this.setState({tagIndex:index})
+            //注意这里addEventLister的事件绑定有问题，使用闭包未能解决，这里使用了标志位的做法
+            //注意这里的dom获取顺序问题
+            // let userPopvers = document.querySelectorAll(".userbox-popover")
+            // if(userPopvers.length){
+            //     this.setState({userPopvers,tagIndex:index},() => {
+            //         this.state.userPopvers[this.state.userPopvers.length-1].addEventListener("click",delHandleOuter)
+            //     })
+            //     let delHandleOuter = () => {
+            //         if(!this.state.tagDelSubmiting){
+            //             this.setState({tagDelSubmiting:true},() => {
+            //                 //发起tag相关的ajax请求
+            //                 let token = localStorage.getItem("token")
+            //                 tagHandleAjax({delTagIndex:this.state.tagIndex},token)
+            //                     .then(val => {
+            //                         this.setState({tagDelSubmiting:false})//更新提交标识位
+            //                         message.success("删除tag成功")
+            //                         //获取最新的userInfo
+            //                         let token = localStorage.getItem("token")
+            //                         getUserInfoAjax(token)//获取用户信息接口
+            //                             .then(val => {
+            //                                 if(val.data.code == 100){//token过期
+            //                                     message.warning("还未进行用户登入噢🙊")
+            //                                 }else{
+            //                                     this.setState({userInfo:val.data.data})//更新state
+            //                                 }
+            //                             })
+            //                             .catch(err => {
+            //                                 this.setState({tagDelSubmiting:false})//更新提交标识位
+            //                                 message.error("服务器宕机啦!请稍候再试")
+            //                             })
+            //                     })
+            //                     .catch(err => {
+            //                         message.error("删除失败，请稍候再试")
+            //                     })
+            //            })
+            //         }
+            //     }
+            // }
+    }
+
+    //popover的显示与隐藏回调函数，在该函数内部进行tags的删除操作
+    popChange = (visible) => {
+        if(visible){
+            let userPopvers = document.querySelectorAll(".userbox-popover") //抓取到所有popover的dom
+            Array.from(userPopvers).map((item,index) => {
+                item.onclick = () => {
                             //发起tag相关的ajax请求
                             let token = localStorage.getItem("token")
                             tagHandleAjax({delTagIndex:this.state.tagIndex},token)
                                 .then(val => {
-                                    this.setState({tagDelSubmiting:false})//更新提交标识位
                                     message.success("删除tag成功")
                                     //获取最新的userInfo
                                     let token = localStorage.getItem("token")
@@ -153,23 +187,21 @@ class Userbox extends Component{
                                         .then(val => {
                                             if(val.data.code == 100){//token过期
                                                 message.warning("还未进行用户登入噢🙊")
-                                                // this.props.history.push("/login")
                                             }else{
                                                 this.setState({userInfo:val.data.data})//更新state
                                             }
                                         })
                                         .catch(err => {
-                                            this.setState({tagDelSubmiting:false})//更新提交标识位
                                             message.error("服务器宕机啦!请稍候再试")
                                         })
                                 })
                                 .catch(err => {
                                     message.error("删除失败，请稍候再试")
                                 })
-                       })
-                    }
                 }
-            }
+            })
+        }
+
     }
      render() {
         const props = {
@@ -257,8 +289,9 @@ class Userbox extends Component{
                         overlayClassName="userbox-popover" 
                         content={<DeleteOutlined />}
                         color="red" 
+                        onVisibleChange={this.popChange}
                         title="" >
-                            <span onMouseEnter={() => this.tagDel(index)} className="tag">{item}</span>
+                            <span onMouseEnter={() => this.getTagIndex(index)} className="tag">{item}</span>
                         </Popover>
                     )
                 })

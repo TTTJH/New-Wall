@@ -21,10 +21,14 @@ import { EditOutlined,
          LaptopOutlined,
          FrownOutlined,
          DislikeOutlined,
+         StarOutlined,
          } from '@ant-design/icons';
 import {
   getUserInfoByIdAjax,
   cardLikeAjax,
+  cardCheckLikeAjax,
+  cardDelLikeAjax,
+  getcardLikeCountAjax,
 } from '../../api'
 import "./card.css"
 
@@ -41,6 +45,9 @@ class Mycard extends Component{
         avatar:""
       },
       likeChoose:false,//决定是否被点赞
+      likesCount:'*',//点赞数量
+      commentsCount:"*",//评论数量
+      starsCount:"*",//收藏数量
       cardType:[
         <p><HeartOutlined /> 捞人卡</p>,
         <p><RobotOutlined /> 寻物卡</p>,
@@ -57,22 +64,35 @@ class Mycard extends Component{
     }
 
     componentDidMount(){
+      //根据props的userData获取userinfo放在render()渲染函数内部完成
+      getUserInfoByIdAjax(this.props.cardData.userId)
+          .then(val => {
+            this.setState({userInfo:val.data.data})
+          })
+          .catch(err => {
+            message.error("获取卡片发布者信息失败！请重试！")
+          })
         if(this.props.userInfo){//用户已登入
-          
+          let token = localStorage.getItem("token")
+          //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
+          cardCheckLikeAjax({cardId:this.props.cardData._id},token)
+            .then(val => {
+              this.setState({likeChoose:val.data.data})
+            })
+            .catch(err => {
+              message.warn("获取点赞信息出现问题")
+            })
         }
-        //根据props的userData获取userinfo放在render()渲染函数内部完成
-        // getUserInfoByIdAjax(this.props.cardData.userId)
-        //   .then(val => {
-        //     this.setState({userInfo:val.data.data})
-        //   })
-        //   .catch(err => {
-        //     message.error("获取卡片发布者信息失败！请重试！")
-        //   })
-        
-          // if(this.props.cardData.userId && !this.props.cardData.img){
-          //   let cards = document.querySelectorAll(".post-card")
-          //   this.setState({top:cards[this.props.index].clientHeight,left:(this.props.index % 3) * 350})
-          // }
+
+        //获取card的点赞数量、评论数量、star数量
+        getcardLikeCountAjax({cardId:this.props.cardData._id})
+          .then(val => {
+            this.setState({likesCount:val.data.likesCount,commentsCount:val.data.commentsCount,starsCount:val.data.starsCount})
+          })
+          .catch(err => {
+            message.warning("卡片点赞数量获取出现问题请稍候再试")
+          })
+
     }
 
     showModal = (e) => {
@@ -119,33 +139,67 @@ class Mycard extends Component{
 
         //点赞反转
         this.setState({likeChoose:!this.state.likeChoose},() => {
+          let cardId = this.props.cardData._id //准备传递数据
+          let token = localStorage.getItem("token") //获取token
           if(this.state.likeChoose){//进行了点赞
-            let cardId = this.props.cardData._id //准备传递数据
-            let token = localStorage.getItem("token") //获取token
-
             cardLikeAjax({cardId},token)
               .then(val => {
-                console.log(val)
+                //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行该改变
+                cardCheckLikeAjax({cardId:this.props.cardData._id},token)
+                .then(val => {
+                  this.setState({likeChoose:val.data.data})
+
+                  //执行一下该ajax更新likecount
+                  getcardLikeCountAjax({cardId:this.props.cardData._id})
+                  .then(val => {
+                    this.setState({likesCount:val.data.likesCount})
+                  })
+                  .catch(err => {
+                    message.warning("卡片点赞数量获取出现问题请稍候再试")
+                  })
+
+                })
+                .catch(err => {
+                  message.warn("获取点赞信息出现问题")
+                })
               })
               .catch(err => {
                 console.log(err)
               })
           }else{//取消了点赞
-              
+            cardDelLikeAjax({cardId},token)
+            .then(val => {
+              //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行该改变
+              cardCheckLikeAjax({cardId:this.props.cardData._id},token)
+              .then(val => {
+                this.setState({likeChoose:val.data.data})
+                 //执行一下该ajax更新likecount
+                 getcardLikeCountAjax({cardId:this.props.cardData._id})
+                 .then(val => {
+                   this.setState({likesCount:val.data.likesCount})
+                 })
+                 .catch(err => {
+                   message.warning("卡片点赞数量获取出现问题请稍候再试")
+                 })
+              })
+              .catch(err => {
+                message.warn("获取点赞信息出现问题")
+              })
+            })
+            .catch(err => {
+              console.log(err)
+            }) 
           }
         })
+    }
 
+    //触发main组件传递的ShowModol函数
+    openCardDetail = () => {
+      this.props.showModal(this.props.index1,this.props.index2)
     }
     render() {
       let {content,date,img,userId,type,top,left} = this.props.cardData
-      //根据props的userData获取userinfo放在render()渲染函数内部完成
-      getUserInfoByIdAjax(this.props.cardData.userId)
-          .then(val => {
-            this.setState({userInfo:val.data.data})
-          })
-          .catch(err => {
-            message.error("获取卡片发布者信息失败！请重试！")
-          })
+
         return (
           //   <Card
             
@@ -177,7 +231,7 @@ class Mycard extends Component{
             <img className="largeImg" src={this.state.largeImgUrl} alt=""/>
           </Modal>
           {/* <div className='cards-container'> */}
-                  <div onClick={() => this.props.showModal(this.props.index1,this.props.index2)} className={this.props.special ? "post-card special-post-card" : "post-card"} style={{"left":left,"top":top}}>
+                  <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : "post-card"} style={{"left":left,"top":top}}>
                   <div className='card-tag'>
                     {this.state.cardType[type]}
                   </div>
@@ -214,9 +268,9 @@ class Mycard extends Component{
                           <p className="card-date">{date}</p>
                   </div>
                   <div className='post-handles'>
-                      <div className="post-handle" onClick={this.like} style={this.state.likeChoose ? {color:"#fddb3a"} : {}}><LikeOutlined />&nbsp;<span>48</span></div>
-                      <div className="post-handle" ><MessageOutlined/>&nbsp;<span>48</span></div>
-                      <div className="post-handle" ><DislikeOutlined />&nbsp;<span>88</span></div>
+                      <div className="post-handle" onClick={this.like} style={this.state.likeChoose ? {color:"#fddb3a"} : {}}><LikeOutlined />&nbsp;<span>{this.state.likesCount}</span></div>
+                      <div className="post-handle" ><MessageOutlined/>&nbsp;<span>{this.state.commentsCount}</span></div>
+                      <div className="post-handle" ><StarOutlined />&nbsp;<span>{this.state.starsCount}</span></div>
                   </div>
               </div>
               {/* //     <div onClick={() => {this.toUser(item._id)}} key={index} className='cards-box'>

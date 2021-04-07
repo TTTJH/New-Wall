@@ -15,6 +15,9 @@ import UserDetail from '../User/UserDetail/userdetail'
 import CardDetail from '../Carddetail/carddetail'
 import {
     getCardListAjax,
+    getUserInfoByIdAjax,
+    cardCommentAjax,
+    getCardCommentsAjax,
 } from '../../api/index'
 
 import "./main.css"
@@ -34,6 +37,7 @@ class Main extends Component{
      modalVisible2:false,
      chooseCardIndex1:0,//用来标识当前是哪个cardList项
      chooseCardIndex2:0,//用来标识当前是哪个cardList项的哪个项
+     cardData:{},//传递给cardDetail组件的数据
     }
     componentDidMount(){
         //首次调用getCardListAjax
@@ -66,7 +70,6 @@ class Main extends Component{
                             let {topNum1,topNum2,topNum3} = this.state
                             Array.from(cards).map((item,index) => {
                                     let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-                                    console.log(cardListItem)
                                     cardListItem[index].left = (index%3)*320 
                                     switch(index%3){
                                         case 0:{
@@ -116,8 +119,20 @@ class Main extends Component{
     }
 
     //carddetail model使用函数
-    showModal = (cardIndex1,cardIndex2) => {
-        this.setState({modalVisible:true,chooseCardIndex1:cardIndex1,chooseCardIndex2:cardIndex2})
+    showModal = async (cardIndex1,cardIndex2) => {//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
+        //在这里获取card的评论的用户信息并填塞进cardList
+        let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+        let cardData = cardList[cardIndex1][cardIndex2]
+        for(let i = 0;i < cardData.comments.length;i++){
+            await getUserInfoByIdAjax( cardData.comments[i].userId)
+            .then( val => {
+                cardData.comments[i].userInfo = val.data.data
+            })
+            .catch(err => {
+                message.warning("获取评论列表失败请重试!")
+            })
+        }
+        this.setState({modalVisible:true,chooseCardIndex1:cardIndex1,chooseCardIndex2:cardIndex2,cardList})
     };
     
     //carddetail model使用函数
@@ -225,6 +240,56 @@ class Main extends Component{
             })
     }
 
+    //评论提交函数----------需要传递给cardDetail组件
+    cardCommentSubmit = (content,cardId) => {
+        let token = localStorage.getItem("token")
+        cardCommentAjax({content,cardId},token)
+            .then(async val => {
+                message.success("评论成功！")
+                 // 再次获取评论列表
+                    //在这里获取card的评论的用户信息并填塞进cardList
+                    let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+                    let cardData = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
+                    await getCardCommentsAjax({cardId:cardData._id})
+                    .then(async val => {
+                        console.log(val)
+                        let newComment = val.data.data.comments[val.data.data.comments.length-1]
+                        console.log(newComment)
+                        await getUserInfoByIdAjax(val.data.data.comments[val.data.data.comments.length-1].userId)
+                            .then(val => {
+                                newComment.userInfo = val.data.data
+                            })
+                            .catch(err => {
+                                message.warning("获取评论列表失败请重试!")
+                            })
+                        console.log(newComment)
+                        cardData.comments.push(newComment)
+                        console.log(cardData)
+                        console.log(cardList)
+                        this.setState({cardList})                        // for(let i = 0;i < cardData.comments.length;i++){
+                        //     await getUserInfoByIdAjax( cardData.comments[i].userId)
+                        //     .then( val => {
+                        //         cardData.comments[i].userInfo = val.data.data
+                        //     })
+                        //     .catch(err => {
+                        //         message.warning("获取评论列表失败请重试!")
+                        //     })
+                        // }
+                        // console.log("cardList更新")
+                        // console.log(cardList)
+                        // this.setState({cardList})
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        message.warning("获取评论列表失败请重试!")
+                    })
+                   
+            })
+            .catch(err => {
+                message.warning("评论失败，请稍候重试!")
+            })
+    }
+
     render() {
         return (
             <div className="main clearfix">
@@ -301,8 +366,8 @@ class Main extends Component{
                 <Modal wrapClassName="cardDetailModal" footer={null} closable={false} visible={this.state.modalVisible} onOk={this.handleOk} onCancel={this.handleCancel}>
                     {/* 卡片详细模块 */}
                     <div className="main-carddetail-box">
-                        {/* <p className="carddetail-box-title">CardDetail:</p> */}
-                        <CardDetail cardData={this.state.cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]}/>
+                        <CardDetail  commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]}/>
+                        {/* <CardDetail commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardData}/> */}
                     </div>
                 </Modal>
 
