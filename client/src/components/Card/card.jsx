@@ -22,6 +22,7 @@ import { EditOutlined,
          FrownOutlined,
          DislikeOutlined,
          StarOutlined,
+         FileOutlined,
          } from '@ant-design/icons';
 import {
   getUserInfoByIdAjax,
@@ -49,9 +50,9 @@ class Mycard extends Component{
       commentsCount:"*",//评论数量
       starsCount:"*",//收藏数量
       cardType:[
+        <p><FileOutlined /> 普通卡</p>,
         <p><HeartOutlined /> 捞人卡</p>,
         <p><RobotOutlined /> 寻物卡</p>,
-        <p><ReadOutlined /> 日记卡</p>,
         <p><LockOutlined /> 心事卡</p>,
         <p><FrownOutlined /> 吐槽卡</p>,
         <p><QuestionCircleOutlined /> 提问卡</p>,
@@ -77,6 +78,7 @@ class Mycard extends Component{
           //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
           cardCheckLikeAjax({cardId:this.props.cardData._id},token)
             .then(val => {
+              console.log(val.data.data)
               this.setState({likeChoose:val.data.data})
             })
             .catch(err => {
@@ -92,8 +94,38 @@ class Mycard extends Component{
           .catch(err => {
             message.warning("卡片点赞数量获取出现问题请稍候再试")
           })
-
     }
+
+    shouldComponentUpdate(nextProps,nextState){
+      //判断一下likeChoose有没有改变从而决定要不要重新发送请求。  
+      if(nextState.likeChoose != this.state.likeChoose){
+        if(this.props.userInfo){//用户已登入
+          let token = localStorage.getItem("token")
+          //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
+          cardCheckLikeAjax({cardId:this.props.cardData._id},token)
+            .then(val => {
+              console.log(val.data.data)
+              this.setState({likeChoose:val.data.data})
+            })
+            .catch(err => {
+              message.warn("获取点赞信息出现问题")
+            })
+        }
+
+        //获取card的点赞数量、评论数量、star数量
+        getcardLikeCountAjax({cardId:this.props.cardData._id})
+          .then(val => {
+            this.setState({likesCount:val.data.likesCount,commentsCount:val.data.commentsCount,starsCount:val.data.starsCount})
+          })
+          .catch(err => {
+            message.warning("卡片点赞数量获取出现问题请稍候再试")
+          })
+      }else if(this.props.cardData.likeChoose != nextProps.cardData.likeChoose){
+        this.setState({likeChoose:nextProps.cardData.likeChoose,likesCount:nextProps.cardData.likesCount,commentsCount:nextProps.cardData.commentsCount,starsCount:nextProps.cardData.starsCount})
+      }
+      return true
+    }
+    
 
     showModal = (e) => {
       //阻止事件冒泡
@@ -247,7 +279,7 @@ class Mycard extends Component{
                     {
                       img.map((item,index) => {
                         return(
-                          <div   className='post-img-box'>
+                          <div key={index}  className='post-img-box'>
                           <img  src={`http://localhost:3030/${item}`} alt="" onClick={this.showModal}/>
                           </div>
                         )

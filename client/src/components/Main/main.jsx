@@ -18,6 +18,8 @@ import {
     getUserInfoByIdAjax,
     cardCommentAjax,
     getCardCommentsAjax,
+    cardCheckLikeAjax,
+    getcardLikeCountAjax,
 } from '../../api/index'
 
 import "./main.css"
@@ -98,8 +100,40 @@ class Main extends Component{
                             this.setState({cardList,topNum1,topNum2,topNum3})
                         })
                         .catch((err) => {
-                            console.log(err)
-                            message.warning("某图片加载失败，将影响瀑布流布局")
+                            // console.log(err)
+                            // message.warning("某图片加载失败，将影响瀑布流布局")
+                            let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
+                            let btns = document.querySelectorAll(".more-card-btn")
+                            let {cardList} = this.state
+                            let {topNum1,topNum2,topNum3} = this.state
+                            Array.from(cards).map((item,index) => {
+                                    let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
+                                    cardListItem[index].left = (index%3)*320 
+                                    switch(index%3){
+                                        case 0:{
+                                            cardListItem[index].top = topNum1 + 20
+                                            topNum1 +=  cards[index].clientHeight +20
+                                            break
+                                        }
+                                        case 1:{
+                                            cardListItem[index].top = topNum2 + 20
+                                            topNum2 +=  cards[index].clientHeight +20
+                                            break
+                                        }
+                                        case 2:{
+                                            cardListItem[index].top = topNum3 + 20
+                                            topNum3 +=  cards[index].clientHeight +20
+                                            break
+                                        }
+                                    }
+                            })
+                                btns[0].style.top = topNum1 + 20 + "px"
+                                btns[1].style.top = topNum2 + 20 + "px"
+                                btns[2].style.top = topNum3 + 20 + "px"
+                               Array.from(btns).map((item,index) => {
+                                   item.style.left = (index%3)*321 + "px"
+                               })
+                            this.setState({cardList,topNum1,topNum2,topNum3})
                         })
                 })
             })
@@ -141,8 +175,9 @@ class Main extends Component{
       };
     
     //carddetail model使用函数
-    handleCancel = () => {
-        this.setState({modalVisible:false})
+    handleCancel = async () => {
+        this.updateCardItemStatus()
+        this.setState({modalVisible:false,})//更新抹布状态和cardList
       };
 
     //useretail model使用函数
@@ -162,6 +197,37 @@ class Main extends Component{
     handleCancel2 = () => {
         this.setState({modalVisible2:false})
       };
+
+    //更新cardList互动状态函数
+    updateCardItemStatus = async () => {
+        let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+        let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
+        //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
+        //也就是更新cardList的某一项
+        if(this.state.userInfo){//用户已登入
+            let token = localStorage.getItem("token")
+            //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
+            await cardCheckLikeAjax({cardId:item._id},token)
+              .then(val => {
+                item.likeChoose = val.data.data //更新item的是否点赞状态
+              })
+              .catch(err => {
+                message.warn("获取点赞信息出现问题")
+              })
+          }
+
+        //获取card的点赞数量、评论数量、star数量
+        await getcardLikeCountAjax({cardId:item._id})
+        .then(val => {
+            item.likesCount = val.data.likesCount //更新点赞数量
+            item.commentsCount = val.data.commentsCount //更新评论数量
+            item.starsCount = val.data.starsCount //更新收藏数量
+        })
+        .catch(err => {
+          message.warning("卡片点赞数量获取出现问题请稍候再试")
+        })
+        this.setState({cardList})
+    }
 
     //加载更多函数
     loadMore = () => {
@@ -230,8 +296,40 @@ class Main extends Component{
                                this.setState({cardList,topNum1,topNum2,topNum3})
                         })
                         .catch((err) => {
-                            console.log(err)
-                            message.warning("某图片加载失败，将影响瀑布流布局")
+                            // console.log(err)
+                            // message.warning("某图片加载失败，将影响瀑布流布局")
+                            let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
+                            let btns = document.querySelectorAll(".more-card-btn")
+                            let {cardList} = this.state
+                            let {topNum1,topNum2,topNum3} = this.state
+                            Array.from(cards).map((item,index) => {
+                                    let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
+                                    cardListItem[index].left = (index%3)*320 
+                                    switch(index%3){
+                                        case 0:{
+                                            cardListItem[index].top = topNum1 + 20
+                                            topNum1 +=  cards[index].clientHeight +20
+                                            break
+                                        }
+                                        case 1:{
+                                            cardListItem[index].top = topNum2 + 20
+                                            topNum2 +=  cards[index].clientHeight +20
+                                            break
+                                        }
+                                        case 2:{
+                                            cardListItem[index].top = topNum3 + 20
+                                            topNum3 +=  cards[index].clientHeight +20
+                                            break
+                                        }
+                                    }
+                            })
+                                btns[0].style.top = topNum1 + 20 + "px"
+                                btns[1].style.top = topNum2 + 20 + "px"
+                                btns[2].style.top = topNum3 + 20 + "px"
+                               Array.from(btns).map((item,index) => {
+                                   item.style.left = (index%3)*321 + "px"
+                               })
+                            this.setState({cardList,topNum1,topNum2,topNum3})
                         })
                 })
             })
@@ -252,9 +350,7 @@ class Main extends Component{
                     let cardData = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
                     await getCardCommentsAjax({cardId:cardData._id})
                     .then(async val => {
-                        console.log(val)
                         let newComment = val.data.data.comments[val.data.data.comments.length-1]
-                        console.log(newComment)
                         await getUserInfoByIdAjax(val.data.data.comments[val.data.data.comments.length-1].userId)
                             .then(val => {
                                 newComment.userInfo = val.data.data
@@ -262,11 +358,34 @@ class Main extends Component{
                             .catch(err => {
                                 message.warning("获取评论列表失败请重试!")
                             })
-                        console.log(newComment)
                         cardData.comments.push(newComment)
-                        console.log(cardData)
-                        console.log(cardList)
-                        this.setState({cardList})                        // for(let i = 0;i < cardData.comments.length;i++){
+                        let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
+                        //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
+                        //也就是更新cardList的某一项
+                        if(this.state.userInfo){//用户已登入
+                            let token = localStorage.getItem("token")
+                            //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
+                            await cardCheckLikeAjax({cardId:item._id},token)
+                              .then(val => {
+                                item.likeChoose = val.data.data //更新item的是否点赞状态
+                              })
+                              .catch(err => {
+                                message.warn("获取点赞信息出现问题")
+                              })
+                          }
+                
+                        //获取card的点赞数量、评论数量、star数量
+                        await getcardLikeCountAjax({cardId:item._id})
+                        .then(val => {
+                            item.likesCount = val.data.likesCount //更新点赞数量
+                            item.commentsCount = val.data.commentsCount //更新评论数量
+                            item.starsCount = val.data.starsCount //更新收藏数量
+                        })
+                        .catch(err => {
+                          message.warning("卡片点赞数量获取出现问题请稍候再试")
+                        })
+                        this.setState({cardList})
+                                                // for(let i = 0;i < cardData.comments.length;i++){
                         //     await getUserInfoByIdAjax( cardData.comments[i].userId)
                         //     .then( val => {
                         //         cardData.comments[i].userInfo = val.data.data
@@ -331,11 +450,11 @@ class Main extends Component{
                             {
                                 this.state.cardList.map((item1,index1) => {
                                     return(
-                                        <div className={`cardListItem${index1+1}`}>
+                                        <div key={index1} className={`cardListItem${index1+1}`}>
                                             {
                                                 item1.map((item2,index2) => {
                                                     return(
-                                                        <Card  getCardHeight={this.getCardHeight} userInfo={this.state.userInfo} key={index2} cardData={item2} index1={index1}index2={index2} showModal={this.showModal} showModal2={this.showModal2}/>
+                                                        <Card  getCardHeight={this.getCardHeight} userInfo={this.state.userInfo} key={item2._id} cardData={item2} index1={index1}index2={index2} showModal={this.showModal} showModal2={this.showModal2}/>
                                                     )
                                                 })
                                             }
@@ -366,7 +485,7 @@ class Main extends Component{
                 <Modal wrapClassName="cardDetailModal" footer={null} closable={false} visible={this.state.modalVisible} onOk={this.handleOk} onCancel={this.handleCancel}>
                     {/* 卡片详细模块 */}
                     <div className="main-carddetail-box">
-                        <CardDetail  commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]}/>
+                        <CardDetail   commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]}/>
                         {/* <CardDetail commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardData}/> */}
                     </div>
                 </Modal>

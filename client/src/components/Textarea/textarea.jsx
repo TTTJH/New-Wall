@@ -22,6 +22,7 @@ import {
   LikeOutlined,
   LaptopOutlined,
   FrownOutlined,
+  FileOutlined,
   createFromIconfontCN,
  } from '@ant-design/icons';
 
@@ -56,9 +57,9 @@ class Textarea extends Component{
         url:"",
         content:"",
         cardType:[
+          <p><FileOutlined /> 普通卡</p>,
           <p><HeartOutlined /> 捞人卡</p>,
           <p><RobotOutlined /> 寻物卡</p>,
-          <p><ReadOutlined /> 日记卡</p>,
           <p><LockOutlined /> 心事卡</p>,
           <p><FrownOutlined /> 吐槽卡</p>,
           <p><QuestionCircleOutlined /> 提问卡</p>,
@@ -72,7 +73,6 @@ class Textarea extends Component{
       };
 
     componentDidMount(){
-        console.log(":)")
     }
 
     textareaChange = (e) => {
@@ -123,17 +123,27 @@ class Textarea extends Component{
         let imgArr = this.state.imgArr
         let fileImgArr = fileList[fileList.length-1].response.data.img
         this.setState({cardId:fileList[fileList.length-1].response.data._id})
-
             if(imgArr.length >= fileImgArr.length){//进行了删除操作
+              console.log("有图片被删除")
+              let imgArr2 = JSON.parse(JSON.stringify(imgArr))
+              let fileImgArr2 = JSON.parse(JSON.stringify(fileImgArr))
+              console.log(imgArr2)
+              console.log(fileImgArr2) 
               //需要找到删除了的img的名称
               imgArr.map((item,index) => {
                 if(!fileImgArr.includes(item)){
                   delImgName = item
                 }
               })
-              // console.log("有图片被删除")
-              //更新imgArr
-              imgArr.splice(imgArr.indexOf(delImgName),1)
+
+              if(delImgName){
+                imgArr.splice(imgArr.indexOf(delImgName),1)//更新imgArr
+              }else{
+                console.log("!!!")
+                //更新imgArr   当delImgName在map了imgArr之后仍未空则表面删除的是第一张（目前仍有图片）
+                delImgName = imgArr.splice(0,1)
+              }
+
               this.setState({imgArr})
               //触发ajax
               cardDelUploadAjax({imageName:delImgName,cardId:this.state.cardId})
@@ -157,6 +167,7 @@ class Textarea extends Component{
       let imgArr = this.state.imgArr
       //更新imgArr
       delImgName = imgArr.pop()
+      console.log(delImgName)
       this.setState({imgArr})
 
       //触发ajax
@@ -223,7 +234,7 @@ class Textarea extends Component{
                 //遍历state中的card type 供用户进行卡片类型选择
                 this.state.cardType.map((item,index) => {
                   return(
-                    <Button className="textarea-tags-btn" type={this.state.cardTypeIndex == index ? "primary" : "dashed"} size="small" onClick={() => this.cardTypeChange(index)}>
+                    <Button key={index} className="textarea-tags-btn" type={this.state.cardTypeIndex == index ? "primary" : "dashed"} size="small" onClick={() => this.cardTypeChange(index)}>
                       {item}
                     </Button>
                   )

@@ -38,7 +38,7 @@ class UserDetail extends Component{
                     </div>
                 </div>
 
-                <div className="userdetail-box-2 userdetail-box">
+                {/* <div className="userdetail-box-2 userdetail-box">
                     <div className="userdetail-box-2-box">
                         <CommentOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                         <p>发送私信</p>
@@ -55,9 +55,9 @@ class UserDetail extends Component{
                         <FrownOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                         <p>屏蔽用户</p>
                     </div>
-                </div>
+                </div> */}
 
-                 {/* <div className="userdetail-chat-box">
+                 <div className="userdetail-chat-box">
 
                     <div className="userdetail-message-box">
                     <div className="userdetail-chat-box-box1">
@@ -131,7 +131,7 @@ class UserDetail extends Component{
                     </div>
 
                     <Button size="small" className="userdetail-chat-box-back" shape="circle" type="primary" icon={<CaretLeftOutlined />}/>
-                </div>  */}
+                </div> 
 
 
 {/* 

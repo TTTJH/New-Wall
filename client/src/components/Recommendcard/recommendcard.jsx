@@ -43,7 +43,7 @@ class Recommendcard extends Component{
                                         ?
                                         item.tags.map((item,index) => {
                                             return(
-                                                <span className="tag">{item}</span>
+                                                <span key={index} className="tag">{item}</span>
                                             )
                                         })
                                         :

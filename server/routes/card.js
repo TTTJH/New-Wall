@@ -98,8 +98,8 @@ card.post("/delupload",async (ctx,next) => {
     await CardModel.find({_id:cardId})
         .then(async doc => {
             let {img} = doc[0]
-            img.splice(img.indexOf(imageName))
-            await CardModel.updateOne({_id:cardId}, {img})
+            img.splice(img.indexOf(imageName),1)
+            await CardModel.updateOne({_id:cardId}, {$set:{img}})
                 .then(val => {
                     ctx.body = {code:200,data:"删除成功"}
                 })

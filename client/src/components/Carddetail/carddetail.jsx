@@ -39,7 +39,6 @@ class CardDetail extends Component{
     }
 
     componentWillReceiveProps(){
-        console.log(this.props)
         // this.getCommentsList() 
     }
 
@@ -73,7 +72,7 @@ class CardDetail extends Component{
     textareaChange =  (e) => {
         this.setState({content:e.target.value})
     }  
-
+    
     //评论提交函数-----来自main组件
     commentSubmit = () => {
         // let token = localStorage.getItem("token")
