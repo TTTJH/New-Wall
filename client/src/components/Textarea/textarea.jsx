@@ -44,7 +44,7 @@ function getBase64(file) {
 
 class Textarea extends Component{
     state = {
-        cardId:"",
+        cardId:"",//如果存在则表面上传过图片，数据库已经有card collection
         imgArr:[], //保存每次上传的图片名字
         previewVisible: false,
         previewImage: '',
@@ -91,7 +91,7 @@ class Textarea extends Component{
         .then(val => {
           this.setState({cardId:""})
           message.success("发布成功！")
-          this.setState({content:"",fileList:[],cardTypeIndex:0})
+          this.setState({content:"",fileList:[],cardTypeIndex:0,imgArr:[]})
         })
         .catch(err => {
           this.setState({cardId:""})

@@ -78,8 +78,9 @@ class Mycard extends Component{
           //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
           cardCheckLikeAjax({cardId:this.props.cardData._id},token)
             .then(val => {
-              console.log(val.data.data)
-              this.setState({likeChoose:val.data.data})
+              this.setState({likeChoose:val.data.data},() => {
+                console.log(this.state)
+              })
             })
             .catch(err => {
               message.warn("获取点赞信息出现问题")
@@ -104,7 +105,6 @@ class Mycard extends Component{
           //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
           cardCheckLikeAjax({cardId:this.props.cardData._id},token)
             .then(val => {
-              console.log(val.data.data)
               this.setState({likeChoose:val.data.data})
             })
             .catch(err => {
@@ -115,6 +115,7 @@ class Mycard extends Component{
         //获取card的点赞数量、评论数量、star数量
         getcardLikeCountAjax({cardId:this.props.cardData._id})
           .then(val => {
+            console.log(val)
             this.setState({likesCount:val.data.likesCount,commentsCount:val.data.commentsCount,starsCount:val.data.starsCount})
           })
           .catch(err => {
@@ -127,6 +128,7 @@ class Mycard extends Component{
     }
     
 
+    //放大卡片图片
     showModal = (e) => {
       //阻止事件冒泡
       e.stopPropagation();
@@ -227,7 +229,14 @@ class Mycard extends Component{
 
     //触发main组件传递的ShowModol函数
     openCardDetail = () => {
-      this.props.showModal(this.props.index1,this.props.index2)
+        if(this.props.banShowModal){
+          return null
+        }
+        this.props.userdetailCardData
+        ?
+        this.props.showModal(null,null,this.props.userdetailCardData)//表明该情况是userdetail中使用获取carddetail
+        :
+        this.props.showModal(this.props.index1,this.props.index2)//表明该情况是main中获取carddetail
     }
     render() {
       let {content,date,img,userId,type,top,left} = this.props.cardData
@@ -263,7 +272,7 @@ class Mycard extends Component{
             <img className="largeImg" src={this.state.largeImgUrl} alt=""/>
           </Modal>
           {/* <div className='cards-container'> */}
-                  <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : "post-card"} style={{"left":left,"top":top}}>
+                  <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : "post-card"} style={{"left":left,"top":top}}>
                   <div className='card-tag'>
                     {this.state.cardType[type]}
                   </div>
@@ -292,11 +301,12 @@ class Mycard extends Component{
                   }
                   </div>
 
-                  <div className='post-avatar-box' onClick={this.props.showModal2}>
-                          <div className='post-avatar'>
-                          <img src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
+                  <div className='post-avatar-box' >
+                          <div  className='post-avatar'>
+                            {/* //需要将被点击的user的userInfo传递 */}
+                          <img onClick={(e) => this.props.showModal2(this.state.userInfo,e)} src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
                           </div>
-                          <span >{this.state.userInfo.nickname}</span>
+                          <span onClick={(e) => this.props.showModal2(this.state.userInfo,e)} >{this.state.userInfo.nickname}</span>
                           <p className="card-date">{date}</p>
                   </div>
                   <div className='post-handles'>

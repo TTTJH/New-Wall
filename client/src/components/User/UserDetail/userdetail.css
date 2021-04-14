@@ -1,17 +1,32 @@
 .userdetail{
+    overflow-x: auto;/*用于userdetail的cardlist横向滚动*/
     /* width: 100%; */
-    width: 70vw;
     min-height: 200px;
     position: relative;
     padding: 15px;
     padding-bottom: 25px;
     border-radius: 10px;
     display: flex;
-    justify-content: space-between;
     /* flex-wrap: wrap; */
     background-color: white;
     border: 1px solid #f0f0f0;
     box-shadow: 0 0 30px #f0f0f0;
+    transition-duration: 0.6s;
+}
+
+.userdetail-standard-mode{
+    width: 40vw;
+    justify-content: space-between;
+}
+
+.userdetail-chatroom-mode{
+    width: 80vw;
+    justify-content: space-around;
+}
+
+.userdetail-cardlist-mode{
+    width: 80vw;
+    /* justify-content: space-around; */
 }
 
 .userdetail-box{
@@ -19,7 +34,6 @@
 }
 
 .userdetail-box-1{
-    flex-basis: 50%;
     height: 100%;
     /* flex-basis: 19%; */
     padding: 20px;
@@ -28,6 +42,13 @@
     border: 1px solid #f0f0f0;
     box-shadow: 0 0 30px #f0f0f0;
 }
+.userdetail-box-1-standard-mode{
+    flex-basis: 50%;
+}
+.userdetail-box-1-chatroom-mode{
+    flex-basis: 25%;
+}
+
 
 .userdetail-box-1 img{
     display: block;
@@ -80,7 +101,7 @@
 }
 
 .userdetail-chat-box{
-    flex-basis: 79%;
+    flex-basis: 65%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -92,9 +113,10 @@
 }
 
 .userdetail-chat-box-box1{
-    height: 30px;
+    height: 35px;
     width: 100%;
     position: absolute;
+    left: 0;
     top:0;
     text-align: center;
     line-height: 30px;
@@ -199,8 +221,16 @@
     left: 10px;
 }
 
+.userdetail-card-box{
+    /* width: 100%; */
+    /* overflow-x: auto; */
+}
+
 .userdetail-card{
     margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
 }
 
 .userdetail-card-load-more{
@@ -223,7 +253,7 @@
 
 /* 此处修改antd的button */
 .userdetail-chat-box-back2{
-    position: absolute !important;
+    position: fixed !important;
     top: 5px;
     left: 5px;
 }

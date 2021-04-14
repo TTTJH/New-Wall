@@ -12,9 +12,10 @@ import {
 } from '@ant-design/icons'
 
 import {
-    cardCommentAjax,
-    getCardCommentsAjax,
-    getUserInfoByIdAjax,
+    cardCommentAjax,//卡片评论ajax
+    getCardCommentsAjax,//获取卡片评论ajax
+    getUserInfoByIdAjax,//获取用户信息ajax
+    cardCommentLikeAjax,//卡片评论点赞ajax
 } from '../../api/index'
 
 import './carddetail.css'
@@ -27,90 +28,58 @@ class CardDetail extends Component{
         commentsList:[],
         commentsList2:[],
         done:false,
-    }
-
-    shouldComponentUpdate(){
-        return true
+        toUserId:"",
+        commentStatus:true,//回复模式,true为评论模式，false为评论直接的回复模式
     }
 
     componentDidMount(){
         this.setState({cardData:this.props.cardData})
-        // this.getCommentsList() //获取评论列表
     }
-
-    componentWillReceiveProps(){
-        // this.getCommentsList() 
-    }
-
-    //获取评论列表函数
-    // getCommentsList = () => {
-    //     //获取评论列表
-    //     getCardCommentsAjax({cardId:this.props.cardData._id})
-    //         .then( val => {
-    //              this.setState({commentsList:val.data.data.comments},  async () => {
-    //                     let commentsList = JSON.parse(JSON.stringify(this.state.commentsList))
-    //                     for(let i = 0;i < commentsList.length;i++){
-    //                         await getUserInfoByIdAjax(commentsList[i].userId)
-    //                         .then( val => {
-    //                             commentsList[i].userInfo = val.data.data
-    //                         })
-    //                         .catch(err => {
-    //                             message.warning("获取评论列表失败请重试!")
-    //                         })
-    //                     }
-    //                     this.setState({commentsList2:commentsList},() => {
-    //                         this.setState({done:true})
-    //                     })
-    //              })
-    //         })
-    //         .catch(err => {
-    //             message.warning("获取评论列表失败请重试!")
-    //         })
-    // }
 
     //文本域的onChange函数
     textareaChange =  (e) => {
+
         this.setState({content:e.target.value})
     }  
+
+    //文本域的键盘输入函数
+    textareaKeyDown = (e) => {
+        //通过键盘输入和value判断用户是否进行了取消回复
+        if((e.keyCode == 8 || e.keyCode == 46) && !this.state.content){
+            //需要进行回复取消
+            this.setState({commentStatus:true})
+        }
+    }
     
     //评论提交函数-----来自main组件
     commentSubmit = () => {
-        // let token = localStorage.getItem("token")
-        // cardCommentAjax({content:this.state.content,cardId:this.props.cardData._id},token)
-        //     .then(val => {
-        //             message.success("评论成功！")
-        //             this.setState({content:""})//清空content
-
-        //             // 再次获取评论列表
-        //                     //获取评论列表
-        //             getCardCommentsAjax({cardId:this.props.cardData._id})
-        //             .then(async val => {
-        //                 let newComments = val.data.data.comments[val.data.data.comments.length-1]
-        //                 let newUserInfo = ""
-        //                 await getUserInfoByIdAjax(val.data.data.comments[val.data.data.comments.length-1].userId)
-        //                     .then(val => {
-        //                         newComments.userInfo = val.data.data
-        //                     })
-        //                     .catch(err => {
-        //                         message.warning("获取评论列表失败请重试!")
-        //                     })
-        //                 let cardData = JSON.parse(JSON.stringify(this.state.cardData))
-        //                 cardData.comments.push(newComments)
-        //                 console.log(cardData)
-        //                 console.log(newComments)
-        //                 this.setState({cardData})
-        //             })
-        //             .catch(err => {
-        //                 message.warning("获取评论列表失败请重试!")
-        //             })
-        //     })
-        //     .catch(err => {
-        //         message.warning("评论失败，请稍候重试!")
-        //     })
         this.props.commentSubmit(this.state.content,this.props.cardData._id)
         this.setState({content:""})//清空content
     }
 
+    //评论点赞函数------来自main组件
+    commentLike = (commentIndex) => {
+        this.props.cardCommentLike(this.props.cardData._id,commentIndex)
+    }
+
+    //评论取消点赞函数------来自main组件
+    commentDelLike = (commentIndex) => {
+        this.props.cardCommentDisLike(this.props.cardData._id,commentIndex)
+    }
+
+    //评论回复函数------来自main组件
+    commentReply = () => {
+        this.props.cardCommentReply(this.props.cardData._id,this.state.content,this.state.toUserId)
+        this.setState({content:"",commentStatus:true})//清空content
+    }
+
+    //回复对象选择函数
+    toUserIdChange = (index) => {
+        let toUserId = this.props.cardData.comments[index].userId
+        let toUserNickname = this.props.cardData.comments[index].userInfo.nickname
+        this.setState({toUserId,toUserNickname,commentStatus:false})
+    }
+    
     render(){
 
         const { TextArea } = Input;
@@ -119,7 +88,14 @@ class CardDetail extends Component{
             return(
                 <div className="carddetail">
                     <h3>{this.props.test}</h3>
-                    <Card userInfo={this.props.userInfo} special="special" cardData={this.props.cardData}/>
+                    <Card 
+                        banShowModal={true}//用于标识目前是在carddetail中，showModal无效
+                        userInfo={this.props.userInfo}
+                        special="special"
+                        cardData={this.props.cardData}
+                        showModal={this.props.showModal} //main组件-->carddetail组件-->card组件(实现carddetail中点击卡片详细不报错)
+                        showModal2={this.props.showModal2} //main组件-->carddetail组件-->card组件(实现carddetail中点击avatar出现userdetail)
+                    />
                     <div className="carddetail-right-box">
                         <div className="carddetail-comment-Box">
                         <p className="carddetail-right-box-title">回复板:</p>
@@ -140,27 +116,67 @@ class CardDetail extends Component{
                         </div> */}
                         {
                             this.props.cardData.comments.map((item,index) => {
-                                    return(
-                                        <div className="carddetail-comment-box">
-                                            <div className="carddetail-comment-box-left-box">
-                                            <Tooltip title={item.userInfo.nickname} color="gold">
-                                                            <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
-                                             </Tooltip>  
+                                    if(!item.toUserId){
+                                        //该条评论为普通评论
+                                        return(
+                                            <div key={index} className="carddetail-comment-box">
+                                                <div className="carddetail-comment-box-left-box">
+                                                <Tooltip title={item.userInfo.nickname} color="gold">
+                                                                <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
+                                                 </Tooltip>  
+                                                </div>
+                                                <div className="carddetail-comment-box-right-box">
+                                                    <p className="carddetail-comment-content">
+                                                        {item.content}
+                                                    </p>
+                                                    {
+                                                        //点赞检查
+                                                        item.likes.includes(this.props.userInfo.userId)
+                                                        ?
+                                                        <Button onClick={() => this.commentDelLike(index)} className="carddetail-comment-btn2" type="primary"  size="small" shape="round" icon={< LikeOutlined/>} > {item.likes.length}</Button>
+                                                        :
+                                                        <Button onClick={() => this.commentLike(index)} className="carddetail-comment-btn2"  size="small" shape="round" icon={< LikeOutlined/>} > {item.likes.length}</Button>
+                                                    }
+                                                    <Button onClick={() => this.toUserIdChange(index)} className="carddetail-comment-btn1" size="small" shape="circle" icon={< MessageOutlined/>} />
+                                                </div>
                                             </div>
-                                            <div className="carddetail-comment-box-right-box">
-                                                <p className="carddetail-comment-content">
-                                                    {item.content}
-                                                </p>
-                                                <Button className="carddetail-comment-btn1" size="small" shape="circle" icon={<LikeOutlined />} />
-                                                <Button className="carddetail-comment-btn2" size="small" shape="circle" icon={<MessageOutlined />} />
-                                            </div>
-                                        </div>
-                                    )
+                                        )
+                                    }else{//该条评论为评论之间的回复
+                                        return(
+                                                <div key={index} className="carddetail-comment-box">
+                                                    <div className="carddetail-comment-box-left-box">
+                                                    <Tooltip title={item.userInfo.nickname} color="gold">
+                                                         <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
+                                                    </Tooltip>  
+                                                    <Tooltip title={` ${item.userInfo.nickname} 回复 ${item.toUserInfo.nickname}`} color="gold">
+                                                        <SendOutlined   className="carddetail-comment-talk-icon"/>
+                                                    </Tooltip>
+                                                    <Tooltip title={item.userInfo.nickname} color="gold">
+                                                        <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.toUserInfo.avatar}`} alt=""/>
+                                                    </Tooltip>
+                                                    </div>
+                                                    <div className="carddetail-comment-box-right-box">
+                                                        <p className="carddetail-comment-content">
+                                                            {item.content}
+                                                        </p>
+                                                        {
+                                                            //点赞检查
+                                                            item.likes.includes(this.props.userInfo.userId)
+                                                            ?
+                                                            <Button onClick={() => this.commentDelLike(index)} className="carddetail-comment-btn2" type="primary"  size="small" shape="round" icon={< LikeOutlined/>} > {item.likes.length}</Button>
+                                                            :
+                                                            <Button onClick={() => this.commentLike(index)} className="carddetail-comment-btn2"  size="small" shape="round" icon={< LikeOutlined/>} > {item.likes.length}</Button>
+                                                        }
+                                                        <Button onClick={() => this.toUserIdChange(index)} className="carddetail-comment-btn1" size="small" shape="circle" icon={< MessageOutlined/>} />
+                                                    </div>
+                                                </div>
+
+                                        )
+
+                                    }
                             })
                             
                         }
-
-                    
                         {/* <div className="carddetail-comment-box">
                             <div className="carddetail-comment-box-left-box2">
                             <Tooltip title="tutu" color="gold">
@@ -185,8 +201,15 @@ class CardDetail extends Component{
                         </div>
 
                         <div className="carddetail-comment-input">
-                            <TextArea rows={2} className="carddetail-comment-textarea" value={this.state.content} onChange={this.textareaChange}/>
-                            <Button onClick={this.commentSubmit} className="carddetail-comment-btn"  shape="shape" type="primary" shape="round">回复</Button>
+                            <TextArea onKeyDown={this.textareaKeyDown} placeholder={this.state.commentStatus ? "输入内容进行回复": `回复 ${this.state.toUserNickname} (退格键取消)`} rows={2} className="carddetail-comment-textarea" value={this.state.content} onChange={this.textareaChange}/>
+                            {
+                                //根据commentStatus不同的评论模式button绑定不同的提交事件
+                                this.state.commentStatus
+                                ?
+                                <Button onClick={this.commentSubmit} className="carddetail-comment-btn"  shape="shape" type="primary" shape="round">回复</Button>
+                                :
+                                <Button onClick={this.commentReply} className="carddetail-comment-btn"  shape="shape" type="primary" shape="round">回复</Button>
+                            }
                         </div>
                     </div>
                 </div>

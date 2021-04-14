@@ -18,7 +18,11 @@ const cardCheckLikeRouter = baseUrl + "/card/checklike"
 const cardDelLikeRouter = baseUrl + "/card/dellike"
 const cardGetCardLikeCountRouter = baseUrl + "/card/count"
 const cardCommentRouter = baseUrl + "/card/comment"
-const caerGetComments = baseUrl + "/card/getcomments"
+const cardGetComments = baseUrl + "/card/getcomments"
+const cardCommentLikeRouter = baseUrl + "/card/commentLike"
+const cardCommentDelLikeRouter = baseUrl + "/card/commentDelLike"
+const cardCommentReplyRouter = baseUrl + "/card/commentReply"
+const cardUserCardList = baseUrl + "/card/usercardlist"
 
 //登入路由
 export const loginAjax = (data) => {
@@ -100,8 +104,6 @@ export const cardDelLikeAjax = (data,token) => {
     return ajax(cardDelLikeRouter,"POST",data,token)
 }
 
-
-
 //卡片评论路由
 export const cardCommentAjax = (data,token) => {
     return ajax(cardCommentRouter,"POST",data,token)
@@ -109,5 +111,26 @@ export const cardCommentAjax = (data,token) => {
 
 //获取卡片评论路由
 export const getCardCommentsAjax = (data) => {
-    return ajax(caerGetComments,"GET",data)
+    return ajax(cardGetComments,"GET",data)
 }
+
+//卡片评论点赞路由
+export const cardCommentLikeAjax = (data,token) => {
+    return ajax(cardCommentLikeRouter,"POST",data,token)
+}
+
+//卡片评论取消点赞路由
+export const cardCommentDelLikeAjax = (data,token) => {
+    return ajax(cardCommentDelLikeRouter,"POST",data,token)
+}
+
+//卡片评论回复路由
+export const cardCommentReplyAjax = (data,token) => {
+    return ajax(cardCommentReplyRouter,"POST",data,token)
+}
+
+//根据用户ID获取其发布过的卡片
+export const getUserCardListAjax = (data) => {
+    return ajax(cardUserCardList,"GET",data)
+}
+

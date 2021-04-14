@@ -20,6 +20,9 @@ import {
     getCardCommentsAjax,
     cardCheckLikeAjax,
     getcardLikeCountAjax,
+    cardCommentLikeAjax,
+    cardCommentDelLikeAjax,
+    cardCommentReplyAjax,
 } from '../../api/index'
 
 import "./main.css"
@@ -40,6 +43,8 @@ class Main extends Component{
      chooseCardIndex1:0,//用来标识当前是哪个cardList项
      chooseCardIndex2:0,//用来标识当前是哪个cardList项的哪个项
      cardData:{},//传递给cardDetail组件的数据
+     objUserInfo:{},//传递给userDetail组件的数据
+     childs:{},
     }
     componentDidMount(){
         //首次调用getCardListAjax
@@ -153,20 +158,40 @@ class Main extends Component{
     }
 
     //carddetail model使用函数
-    showModal = async (cardIndex1,cardIndex2) => {//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
-        //在这里获取card的评论的用户信息并填塞进cardList
+    showModal = async (cardIndex1,cardIndex2,userCardData) => {//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
+        //如果userCardData该参数存在，证明获取carddetail是在userdetail的历史卡片中发生的，cardData不从main的cardlist中获取，而是直接传递
         let cardList = JSON.parse(JSON.stringify(this.state.cardList))
-        let cardData = cardList[cardIndex1][cardIndex2]
+        let cardData = ""
+        if(!userCardData){
+        // 不存在的情况则从cardList中获取
+        //在这里获取card的评论的用户信息并填塞进cardList
+            cardData = cardList[cardIndex1][cardIndex2]
+        }else{
+            //userCardData存在就直接使用
+            cardData = userCardData
+        }
+
         for(let i = 0;i < cardData.comments.length;i++){
             await getUserInfoByIdAjax( cardData.comments[i].userId)
-            .then( val => {
-                cardData.comments[i].userInfo = val.data.data
+            .then(val => {
+                cardData.comments[i].userInfo =val.data.data
             })
             .catch(err => {
                 message.warning("获取评论列表失败请重试!")
             })
+
+            if(cardData.comments[i].toUserId){
+                //证明该comment是一条回复，不仅要获取userInfo还要获取toUserInfo
+            await getUserInfoByIdAjax( cardData.comments[i].toUserId)
+            .then(val => {
+                cardData.comments[i].toUserInfo =val.data.data
+            })
+            .catch(err => {
+                message.warning("获取评论列表失败请重试!")
+            })
+            }
         }
-        this.setState({modalVisible:true,chooseCardIndex1:cardIndex1,chooseCardIndex2:cardIndex2,cardList})
+        this.setState({modalVisible:true,chooseCardIndex1:cardIndex1,chooseCardIndex2:cardIndex2,cardList,cardData})
     };
     
     //carddetail model使用函数
@@ -177,15 +202,17 @@ class Main extends Component{
     //carddetail model使用函数
     handleCancel = async () => {
         this.updateCardItemStatus()
+        this.state.childs.userdetail.cardlistMode()//调用userdetail子组件的函数更新其历史卡片cardlist
         this.setState({modalVisible:false,})//更新抹布状态和cardList
-      };
+    };
 
     //useretail model使用函数
-    showModal2 = (e) => {
+    showModal2 = (objUserInfo,e) => {
+        console.log(objUserInfo)
         //阻止事件冒泡
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
-        this.setState({modalVisible2:true})
+        this.setState({modalVisible2:true,objUserInfo})
       };
     
     //userdetail model使用函数
@@ -200,33 +227,34 @@ class Main extends Component{
 
     //更新cardList互动状态函数
     updateCardItemStatus = async () => {
-        let cardList = JSON.parse(JSON.stringify(this.state.cardList))
-        let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
-        //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
-        //也就是更新cardList的某一项
-        if(this.state.userInfo){//用户已登入
-            let token = localStorage.getItem("token")
-            //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
-            await cardCheckLikeAjax({cardId:item._id},token)
-              .then(val => {
-                item.likeChoose = val.data.data //更新item的是否点赞状态
-              })
-              .catch(err => {
-                message.warn("获取点赞信息出现问题")
-              })
-          }
-
-        //获取card的点赞数量、评论数量、star数量
-        await getcardLikeCountAjax({cardId:item._id})
-        .then(val => {
-            item.likesCount = val.data.likesCount //更新点赞数量
-            item.commentsCount = val.data.commentsCount //更新评论数量
-            item.starsCount = val.data.starsCount //更新收藏数量
-        })
-        .catch(err => {
-          message.warning("卡片点赞数量获取出现问题请稍候再试")
-        })
-        this.setState({cardList})
+            let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+            let item = JSON.parse(JSON.stringify(this.state.cardData))
+            // let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
+            //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
+            //也就是更新cardList的某一项
+            if(this.state.userInfo){//用户已登入
+                let token = localStorage.getItem("token")
+                //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
+                await cardCheckLikeAjax({cardId:item._id},token)
+                  .then(val => {
+                    item.likeChoose = val.data.data //更新item的是否点赞状态
+                  })
+                  .catch(err => {
+                    message.warn("获取点赞信息出现问题")
+                  })
+              }
+    
+            //获取card的点赞数量、评论数量、star数量
+            await getcardLikeCountAjax({cardId:item._id})
+            .then(val => {
+                item.likesCount = val.data.likesCount //更新点赞数量
+                item.commentsCount = val.data.commentsCount //更新评论数量
+                item.starsCount = val.data.starsCount //更新收藏数量
+            })
+            .catch(err => {
+              message.warning("卡片点赞数量获取出现问题请稍候再试")
+            })
+            this.setState({cardList,cardData:item})
     }
 
     //加载更多函数
@@ -338,6 +366,8 @@ class Main extends Component{
             })
     }
 
+
+
     //评论提交函数----------需要传递给cardDetail组件
     cardCommentSubmit = (content,cardId) => {
         let token = localStorage.getItem("token")
@@ -347,7 +377,8 @@ class Main extends Component{
                  // 再次获取评论列表
                     //在这里获取card的评论的用户信息并填塞进cardList
                     let cardList = JSON.parse(JSON.stringify(this.state.cardList))
-                    let cardData = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
+                    let cardData = JSON.parse(JSON.stringify(this.state.cardData))
+                    // let cardData = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
                     await getCardCommentsAjax({cardId:cardData._id})
                     .then(async val => {
                         let newComment = val.data.data.comments[val.data.data.comments.length-1]
@@ -359,7 +390,8 @@ class Main extends Component{
                                 message.warning("获取评论列表失败请重试!")
                             })
                         cardData.comments.push(newComment)
-                        let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
+                        let item = this.state.cardData
+                        // let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
                         //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
                         //也就是更新cardList的某一项
                         if(this.state.userInfo){//用户已登入
@@ -384,30 +416,128 @@ class Main extends Component{
                         .catch(err => {
                           message.warning("卡片点赞数量获取出现问题请稍候再试")
                         })
-                        this.setState({cardList})
-                                                // for(let i = 0;i < cardData.comments.length;i++){
-                        //     await getUserInfoByIdAjax( cardData.comments[i].userId)
-                        //     .then( val => {
-                        //         cardData.comments[i].userInfo = val.data.data
-                        //     })
-                        //     .catch(err => {
-                        //         message.warning("获取评论列表失败请重试!")
-                        //     })
-                        // }
-                        // console.log("cardList更新")
-                        // console.log(cardList)
-                        // this.setState({cardList})
+                        this.setState({cardList,cardData})
                     })
                     .catch(err => {
                         console.log(err)
                         message.warning("获取评论列表失败请重试!")
                     })
-                   
             })
             .catch(err => {
                 message.warning("评论失败，请稍候重试!")
             })
     }
+
+    //评论回复函数------需要传递给cardDetail组件
+    cardCommentReply = (cardId,content,toUserId) => {
+        let token = localStorage.getItem("token")
+        cardCommentReplyAjax({cardId,content,toUserId},token)
+            .then(async val => {
+                    // 再次获取评论列表
+                    //在这里获取card的评论的用户信息并填塞进cardList
+                    let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+                    let cardData = JSON.parse(JSON.stringify(this.state.cardData))
+                    // let cardData = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]//参数cardIndex1和cardIndex2用于标识目前操作的card的在二维数组cardList中的索引
+                    await getCardCommentsAjax({cardId:cardData._id})
+                    .then(async val => {
+                        let newComment = val.data.data.comments[val.data.data.comments.length-1]
+                        await getUserInfoByIdAjax(val.data.data.comments[val.data.data.comments.length-1].userId)
+                            .then(val => {
+                                newComment.userInfo = val.data.data
+                            })
+                            .catch(err => {
+                                message.warning("获取评论列表失败请重试!")
+                            })
+                        await getUserInfoByIdAjax(val.data.data.comments[val.data.data.comments.length-1].toUserId)
+                            .then(val => {
+                                newComment.toUserInfo = val.data.data
+                            })
+                            .catch(err => {
+                                message.warning("获取评论列表失败请重试!")
+                            })
+                        cardData.comments.push(newComment)
+                        let item = this.state.cardData
+                        // let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
+                        //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
+                        //也就是更新cardList的某一项
+                        if(this.state.userInfo){//用户已登入
+                            let token = localStorage.getItem("token")
+                            //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
+                            await cardCheckLikeAjax({cardId:item._id},token)
+                              .then(val => {
+                                item.likeChoose = val.data.data //更新item的是否点赞状态
+                              })
+                              .catch(err => {
+                                message.warn("获取点赞信息出现问题")
+                              })
+                          }
+                
+                        //获取card的点赞数量、评论数量、star数量
+                        await getcardLikeCountAjax({cardId:item._id})
+                        .then(val => {
+                            item.likesCount = val.data.likesCount //更新点赞数量
+                            item.commentsCount = val.data.commentsCount //更新评论数量
+                            item.starsCount = val.data.starsCount //更新收藏数量
+                        })
+                        .catch(err => {
+                          message.warning("卡片点赞数量获取出现问题请稍候再试")
+                        })
+                        this.setState({cardList,cardData})
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        message.warning("获取评论列表失败请重试!")
+                    })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    //评论点赞函数----------需要传递给cardDetail组件
+    cardCommentLike = (cardId,commentIndex) => {
+        let token = localStorage.getItem("token")
+        //准备数据：1.cardId卡片的id，2.被点赞评论的索引
+        cardCommentLikeAjax({cardId,commentIndex},token)
+            .then(val => {
+                message.success("点赞成功")
+                let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+                let cardData = JSON.parse(JSON.stringify(this.state.cardData))
+                cardData.comments[commentIndex].likes.push(this.state.userInfo.userId)
+                this.setState({cardList,cardData})
+            })
+            .catch(err => {
+                message.warning("点赞错误，稍后重试")
+                console.log(err)
+            })
+    }
+
+    //评论取消点赞函数------需要传递给cardDetail组件
+    cardCommentDisLike = (cardId,commentIndex) => {
+        let token = localStorage.getItem("token")
+        //准备数据：1.cardId卡片的id，2.被点赞评论的索引
+        cardCommentDelLikeAjax({cardId,commentIndex},token)
+            .then(val => {
+                // message.success("点赞成功")
+                let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+                let cardData = JSON.parse(JSON.stringify(this.state.cardData))
+                let itemIndex = cardData.comments[commentIndex].likes.indexOf(this.state.userInfo.userId)
+                cardData.comments[commentIndex].likes.splice(itemIndex,1)
+                this.setState({cardList,cardData})
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    //获取子组件userdetail方法
+    getUserdetailThis = (userdetailThis) => {
+        let childs = {
+            userdetail:userdetailThis
+        }
+        this.setState({childs})
+    }
+
 
     render() {
         return (
@@ -418,7 +548,9 @@ class Main extends Component{
                       <Userbox history={this.props.history} getUserInfoFromUserBox={this.getUserInfoFromUserBox}/>
                       <div className="recommend-box">
                         <p className="recommend-box-title">Classmate:</p>
-                        <RecommendCard />
+                        <RecommendCard 
+                            showModal2={this.showModal2}
+                        />
                       </div>
                     </div>
                   
@@ -454,7 +586,16 @@ class Main extends Component{
                                             {
                                                 item1.map((item2,index2) => {
                                                     return(
-                                                        <Card  getCardHeight={this.getCardHeight} userInfo={this.state.userInfo} key={item2._id} cardData={item2} index1={index1}index2={index2} showModal={this.showModal} showModal2={this.showModal2}/>
+                                                        <Card  
+                                                            getCardHeight={this.getCardHeight} 
+                                                            userInfo={this.state.userInfo} 
+                                                            key={item2._id} 
+                                                            cardData={item2} 
+                                                            index1={index1}
+                                                            index2={index2} 
+                                                            showModal={this.showModal}//用于打开动态详细
+                                                            showModal2={this.showModal2}//用于打开用户详细  
+                                                        />
                                                     )
                                                 })
                                             }
@@ -462,7 +603,6 @@ class Main extends Component{
                                     )
                                 })
                             }
-
                         {/* 加载更多的按钮 */}
                         <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
                         <DownCircleOutlined />加载更多
@@ -482,10 +622,20 @@ class Main extends Component{
                 </div>
 
                 {/* carddetail modal */}
-                <Modal wrapClassName="cardDetailModal" footer={null} closable={false} visible={this.state.modalVisible} onOk={this.handleOk} onCancel={this.handleCancel}>
+                <Modal zIndex={3000} wrapClassName="cardDetailModal" footer={null} closable={false} visible={this.state.modalVisible} onOk={this.handleOk} onCancel={this.handleCancel}>
                     {/* 卡片详细模块 */}
                     <div className="main-carddetail-box">
-                        <CardDetail   commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]}/>
+                        <CardDetail 
+                            showModal={this.showModal}//用于打开动态卡片详细 （在carddetail组件中专递给card组件）
+                            showModal2={this.showModal2}//用于打开用户详细 （在carddetail组件中专递给card组件）
+                            commentSubmit={this.cardCommentSubmit} 
+                            cardCommentLike={this.cardCommentLike}
+                            cardCommentDisLike={this.cardCommentDisLike}
+                            cardCommentReply={this.cardCommentReply}
+                            userInfo={this.state.userInfo} 
+                            cardData={this.state.cardData}
+                            // cardData={this.state.cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2]}
+                        />
                         {/* <CardDetail commentSubmit={this.cardCommentSubmit} userInfo={this.state.userInfo} cardData={this.state.cardData}/> */}
                     </div>
                 </Modal>
@@ -495,7 +645,12 @@ class Main extends Component{
                     {/* 用户详细模块 */}
                    <div className="userdetail-box">
                                 {/* <p className="userdetail-box-title">UserDetail:</p> */}
-                                <UserDetail/>
+                                <UserDetail
+                                    getUserdetailThis={this.getUserdetailThis}
+                                    showModal={this.showModal}//用于打开动态卡片详细 （在userdetail组件中专递给card组件）
+                                    showModal2={this.showModal2}//用于打开用户详细 （在userdetail组件中专递给card组件）
+                                    userInfo={this.state.objUserInfo} //来自card组件的数据
+                                />
                    </div>
                 </Modal>
             </div>

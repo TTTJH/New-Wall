@@ -38,6 +38,7 @@ card.post("/upload",async (ctx,next) => {
                 let card = new CardModel({
                     img:[imageName]
                 })
+                console.log(card)
                 await card.save()
                     .then(val => {
                         ctx.body = {code:200,data:val}
@@ -286,7 +287,7 @@ card.post("/comment",async(ctx,next) => {
   await CardModel.find({_id:cardId})
     .then(async doc => {
         let {comments} = doc[0]
-        comments.push({userId:userInfo.userId,content}) //向comments字段添加对象，对象内容为评论者ID和评论内容
+        comments.push({userId:userInfo.userId,content,likes:[]}) //向comments字段添加对象，对象内容为评论者ID和评论内容，点赞量
         await CardModel.updateOne({_id:cardId},{$set:{comments}})
                 .then(val => {
                     ctx.body = {code:200,msg:"评论成功"}
@@ -315,7 +316,104 @@ card.get("/getcomments",async (ctx,next) => {
         })
 })
 
+//卡片评论点赞路由
+card.post("/commentLike",async (ctx,next) => {
+  let {cardId,commentIndex} = ctx.request.body //获取参数
+  //token解析操作
+  let userInfo = tokenParse(ctx.request.headers.token)
 
+  //操作数据库
+  await CardModel.findOne({_id:cardId})
+    .then(async doc => {
+      let comments = JSON.parse(JSON.stringify(doc.comments)) //拿到comments数组
+      comments[commentIndex].likes.push(userInfo.userId)//添加用户id
+      await CardModel.updateOne({_id:cardId},{$set:{comments}})
+        .then(doc => {
+          ctx.body = {code:200,msg:"评论点赞成功"}
+        })
+        .catch(err => {
+          console.log(err)
+          ctx.body = {code:100,msg:"评论点赞失败"}
+        })
+    })
+    .catch(err => {
+      console.log(err)
+      ctx.body = {code:100,msg:"评论点赞失败"}
+    })
+})
+
+//卡片评论取消点赞路由
+card.post("/commentDelLike",async (ctx,next) => {
+  let {cardId,commentIndex} = ctx.request.body //获取参数
+  //token解析操作
+  let userInfo = tokenParse(ctx.request.headers.token)
+
+  //操作数据库
+  await CardModel.findOne({_id:cardId})
+    .then(async doc => {
+      let comments = JSON.parse(JSON.stringify(doc.comments)) //拿到comments数组
+      let itemIndex = comments[commentIndex].likes.indexOf(userInfo.userId) //得到目标索引
+      comments[commentIndex].likes.splice(itemIndex,1) //删除目标
+      await CardModel.updateOne({_id:cardId},{$set:{comments}})
+        .then(doc => {
+          ctx.body = {code:200,msg:"取消评论点赞成功"}
+        })
+        .catch(err => {
+          console.log(err)
+          ctx.body = {code:100,msg:"取消评论点赞失败"}
+        })
+    })
+    .catch(err => {
+      console.log(err)
+      ctx.body = {code:100,msg:"取消评论点赞失败"}
+    })
+})
+
+//卡片评论回复接口
+card.post("/commentReply",async (ctx,next) => {
+  let {cardId,toUserId,content} = ctx.request.body
+  //token解析操作
+  let userInfo = tokenParse(ctx.request.headers.token)
+
+  //操作数据库
+  await CardModel.findOne({_id:cardId})
+    .then(async doc => {
+      let comments = JSON.parse(JSON.stringify(doc.comments))
+      comments.push({
+        userId:userInfo.userId,
+        toUserId,
+        content,
+        likes:[]
+      })
+      console.log(comments)
+      await CardModel.updateOne({_id:cardId},{$set:{comments}})
+        .then(doc => {
+          console.log(doc)
+          ctx.body = {code:100,msg:"回复成功"}
+        })
+        .catch(err => {
+          console.log(err)
+          ctx.body = {code:100,msg:"回复评论错误"}
+        })
+    })
+    .catch(err => {
+      console.log(err)
+      ctx.body = {code:100,msg:"回复评论错误"}
+    })
+})
+
+//获取某用户发布过的所有卡片接口
+card.get("/usercardlist",async (ctx,next) => {
+    let {userId} = ctx.request.query
+    console.log(userId)
+    await CardModel.find({userId}).sort({_id:-1})
+      .then(doc => {
+        ctx.body = {code:200,data:doc}
+      })
+      .catch(err => {
+        ctx.body = {code:100,msg:"获取用户发布卡片错误"}
+      })
+})
 
 //-----------子路由导出----------------------
 module.exports = card
