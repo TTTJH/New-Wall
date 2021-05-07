@@ -38,7 +38,7 @@ card.post("/upload",async (ctx,next) => {
                 let card = new CardModel({
                     img:[imageName]
                 })
-                console.log(card)
+                // console.log(card)
                 await card.save()
                     .then(val => {
                         ctx.body = {code:200,data:val}
@@ -63,12 +63,12 @@ card.post("/upload",async (ctx,next) => {
                                             })
                                 })
                                 .catch(err => {
-                                    console.log(err)
+                                    // console.log(err)
                                     ctx.body = {code:102,msg:"图片提交失败，请重试"}
                                 })
                     })
                     .catch((err) => {
-                        console.log(err)
+                        // console.log(err)
                         ctx.body = {code:102,msg:"图片提交失败，请重试"}
                     })
             }
@@ -109,7 +109,7 @@ card.post("/delupload",async (ctx,next) => {
                 })
         })
         .catch(err => {
-            console.log(err)
+            // console.log(err)
             ctx.body = {code:100,msg:"删除有误"}
         })
 })
@@ -206,12 +206,12 @@ card.post("/like",async(ctx,next) => {
                   ctx.body = {code:200,data:"点赞成功！"}
                 })
                 .catch(err => {
-                  console.log(err)
+                  // console.log(err)
                   ctx.body = {code:100,msg:"点赞模块出现问题请稍候再试"}
                 })
         })
         .catch(err => {
-          console.log(err)
+          // console.log(err)
           ctx.body = {code:100,msg:"点赞模块出现问题请稍候再试"}
         })
 
@@ -232,12 +232,12 @@ card.post("/dellike",async(ctx,next) => {
             ctx.body = {code:200,data:"取消点赞成功！"}
           })
           .catch(err => {
-            console.log(err)
+            // console.log(err)
             ctx.body = {code:100,msg:"取消点赞模块出现问题请稍候再试"}
           })
   })
   .catch(err => {
-    console.log(err)
+    // console.log(err)
     ctx.body = {code:100,msg:"取消点赞模块出现问题请稍候再试"}
   })
 })
@@ -259,7 +259,7 @@ card.post("/checklike",async(ctx,next) => {
       }
     })
     .catch(err => {
-      console.log(err)
+      // console.log(err)
       ctx.body = {code:100,msg:"卡片数据获取出现问题请稍候再试"}
     })
 })
@@ -311,7 +311,7 @@ card.get("/getcomments",async (ctx,next) => {
             ctx.body = {code:200,data:{comments}}
         })
         .catch(err => {
-            console.log(err)
+            // console.log(err)
             ctx.body = {code:100,msg:"获取评论失败"}
         })
 })
@@ -332,12 +332,12 @@ card.post("/commentLike",async (ctx,next) => {
           ctx.body = {code:200,msg:"评论点赞成功"}
         })
         .catch(err => {
-          console.log(err)
+          // console.log(err)
           ctx.body = {code:100,msg:"评论点赞失败"}
         })
     })
     .catch(err => {
-      console.log(err)
+      // console.log(err)
       ctx.body = {code:100,msg:"评论点赞失败"}
     })
 })
@@ -359,12 +359,12 @@ card.post("/commentDelLike",async (ctx,next) => {
           ctx.body = {code:200,msg:"取消评论点赞成功"}
         })
         .catch(err => {
-          console.log(err)
+          // console.log(err)
           ctx.body = {code:100,msg:"取消评论点赞失败"}
         })
     })
     .catch(err => {
-      console.log(err)
+      // console.log(err)
       ctx.body = {code:100,msg:"取消评论点赞失败"}
     })
 })
@@ -385,19 +385,19 @@ card.post("/commentReply",async (ctx,next) => {
         content,
         likes:[]
       })
-      console.log(comments)
+      // console.log(comments)
       await CardModel.updateOne({_id:cardId},{$set:{comments}})
         .then(doc => {
-          console.log(doc)
+          // console.log(doc)
           ctx.body = {code:100,msg:"回复成功"}
         })
         .catch(err => {
-          console.log(err)
+          // console.log(err)
           ctx.body = {code:100,msg:"回复评论错误"}
         })
     })
     .catch(err => {
-      console.log(err)
+      // console.log(err)
       ctx.body = {code:100,msg:"回复评论错误"}
     })
 })
@@ -405,7 +405,7 @@ card.post("/commentReply",async (ctx,next) => {
 //获取某用户发布过的所有卡片接口
 card.get("/usercardlist",async (ctx,next) => {
     let {userId} = ctx.request.query
-    console.log(userId)
+    // console.log(userId)
     await CardModel.find({userId}).sort({_id:-1})
       .then(doc => {
         ctx.body = {code:200,data:doc}

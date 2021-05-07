@@ -42,6 +42,11 @@
     margin: 40px 0;
 }
 
+.main-chatroom-box{
+    padding: 0 40px;
+    margin: 40px 0;
+}
+
 .recommend-box-title{
     font-size: 18px;
     font-weight: bold;

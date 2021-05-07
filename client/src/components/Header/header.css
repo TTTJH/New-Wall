@@ -44,3 +44,52 @@
     font-weight: bold;
     color: #69606b;
 }
+
+.notice-icon{
+    font-size: 16px;
+}
+
+.notice-icon-rotate{
+    animation-name: notice;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+@keyframes notice{
+    0%{
+        transform: rotate(10deg);
+    }
+    50%{
+        transform: rotate(-10deg);
+    }
+    100%{
+        transform: rotate(10deg);
+    }
+}
+
+
+/* 重写antd */
+.header-popover  .ant-popover-content  .ant-popover-arrow{
+    /* border-top-color: unset !important;
+    border-bottom-color: unset !important;
+    border-left-color: unset !important;
+    border-right-color: unset !important; */
+    /* border-color: #fddb3a !important; */
+}
+.header-popover p{
+    margin: 0;
+    color: #69606b;
+}
+.header-popover .ant-popover-content .ant-popover-inner{
+    text-align: center;
+    border-radius: 5px;
+    /* background-color: #fddb3a; */
+    cursor: pointer;
+    padding: 0;
+}
+.header-popover .ant-popover-inner .ant-popover-inner-content {
+    padding: 1px 8px;
+    padding-bottom: 0px;
+    border-radius: 5px;
+    /* background-color: #fddb3a; */
+    cursor: pointer;
+}

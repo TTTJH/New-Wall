@@ -24,13 +24,33 @@ const CardSchema = new Schema({
     comments:Array,//评论列表
     stars:Array,//收藏列表
 })
+
+const AnalysisSchema = new Schema({
+    os:String, //用户设备
+})
+
+const MessageSchema = new Schema({
+  usersId:Array,//对话双方的id组合[fromUserId+toUserId,toUserId+fromUserId]
+  msgList:Array,//聊天内容数组，结构：[{fromUserId,toUserId,content,date},{fromUserId,toUserId,content,date}]
+})
+
+const NoticeSchema = new Schema({
+  userId:String,//该document的所属用户的userId
+  noticeList:Array,//通知数组，结构:[{type,read,info,}]
+})
 //---------------结束定义Schema------------------------
 
 //---------------开始定义Module------------------------
 const UserModel = new mongoose.model("user",UserSchema)
 const CardModel = new mongoose.model("card",CardSchema)
+const AnalysisModel = new mongoose.model("analysis",AnalysisSchema)
+const MessageModel = new mongoose.model("message",MessageSchema)
+const NoticeModel = new mongoose.model("notice",NoticeSchema)
 //---------------结束定义Module------------------------
 
 //---------------导出Model----------------------------
 exports.UserModel = UserModel
 exports.CardModel = CardModel
+exports.AnalysisModel = AnalysisModel
+exports.MessageModel = MessageModel
+exports.NoticeModel = NoticeModel

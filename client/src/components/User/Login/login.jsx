@@ -22,6 +22,9 @@ class Login extends Component{
         wrapperCol: { offset: 8, span: 16 },
     };
     onFinish = values => {
+
+        // this.props.location.func()//执行来自main--->userbox--->login的socket初始化函数
+
         loginAjax(values)
             .then((val) => {
                 if(val.data.code == 200){

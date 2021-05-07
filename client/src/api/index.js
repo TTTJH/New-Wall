@@ -1,6 +1,6 @@
 import ajax from './ajax'
 
-const baseUrl = "http://localhost:3030"
+const baseUrl = "http://localhost:3000"
 const loginRoute = baseUrl+"/user/login"
 const registerRoute = baseUrl+"/user/register"
 const usernameCheckRoute = baseUrl+"/user/username_check"
@@ -23,6 +23,9 @@ const cardCommentLikeRouter = baseUrl + "/card/commentLike"
 const cardCommentDelLikeRouter = baseUrl + "/card/commentDelLike"
 const cardCommentReplyRouter = baseUrl + "/card/commentReply"
 const cardUserCardList = baseUrl + "/card/usercardlist"
+const analysisDeviceRouter = baseUrl + "/analysis/device"
+const messageSubmitRouter = baseUrl + "/message/submit"
+const getMessageListRouter = baseUrl + "/message/msglist"
 
 //登入路由
 export const loginAjax = (data) => {
@@ -132,5 +135,25 @@ export const cardCommentReplyAjax = (data,token) => {
 //根据用户ID获取其发布过的卡片
 export const getUserCardListAjax = (data) => {
     return ajax(cardUserCardList,"GET",data)
+}
+
+//提交用户设备路由
+export const postAnalysisDevice = (data) => {
+    return ajax(analysisDeviceRouter,"POST",data)
+}
+
+//用户私聊消息提交
+export const messageSubmitAjax = (data) => {
+    return ajax(messageSubmitRouter,"POST",data)
+}
+
+//获取用户私聊消息
+export const getMsgListAjax = (data) => {
+    return ajax(getMessageListRouter,"GET",data)
+}
+
+//test 
+export const test = () => {
+    return ajax("/test","GET")
 }
 

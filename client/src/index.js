@@ -4,7 +4,6 @@ import {HashRouter as Router, Route, Link } from 'react-router-dom'
 import {Button} from 'antd'
 
 //组件
-import Header from './components/Header/header'
 import Sidemenu from './components/Sidemenu/sidemenu'
 import Main from './components/Main/main'
 import Login from './components/User/Login/login'
@@ -16,7 +15,7 @@ ReactDOM.render(
   // <React.StrictMode>
   <div className="container">
       <Router  className="Index">
-          <Header/>
+          {/* <Header/> */}
           {/* <Sidemenu/> */}
           <Route path="/" exact component={Main} />
           <Route path="/login" component={Login} />

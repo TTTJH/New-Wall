@@ -18,11 +18,14 @@
     "js-cookie": "^2.2.1",
     "multer": "^1.4.2",
     "react": "^16.14.0",
+    "react-amap": "^1.2.8",
     "react-dom": "^16.14.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1"
   },
   "scripts": {
     "start": "craco start",
@@ -44,5 +47,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy":"http://localhost:3030"
 }

@@ -4,6 +4,8 @@ import {
     Button,
     Modal,
 } from 'antd'
+import {Map,Marker,} from 'react-amap'
+import { io } from "socket.io-client"
 import {
     DownCircleOutlined,
     } from '@ant-design/icons';
@@ -13,6 +15,9 @@ import RecommendCard from '../Recommendcard/recommendcard'
 import Textarea from '../Textarea/textarea'
 import UserDetail from '../User/UserDetail/userdetail'
 import CardDetail from '../Carddetail/carddetail'
+import Chatroom from '../Chatroom/chatroom'
+import Header from '../Header/header'
+
 import {
     getCardListAjax,
     getUserInfoByIdAjax,
@@ -23,6 +28,8 @@ import {
     cardCommentLikeAjax,
     cardCommentDelLikeAjax,
     cardCommentReplyAjax,
+    postAnalysisDevice,
+    test,
 } from '../../api/index'
 
 import "./main.css"
@@ -45,11 +52,18 @@ class Main extends Component{
      cardData:{},//传递给cardDetail组件的数据
      objUserInfo:{},//传递给userDetail组件的数据
      childs:{},
+     msgList:[],//消息列表，结构[{userInfo,content},{userInfo,content}] 传递给chatroom组件
+     socket:{},//初始化后的socket对象，需要传递给chatroom组件
+     onlineList:[],//当前在线用户的userInfo，需要传递给userdetail组件
+     privateMsgList:[],//私人聊天列表，需要传递给userdetail组件
     }
     componentDidMount(){
+
         //首次调用getCardListAjax
         getCardListAjax(1)
             .then(val => {
+                
+
                 this.setState({cardList:[val.data.data]},() => {
                     let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card img`)
                     //注意的一个问题就是在card内的图片尚未加载完毕的时候，
@@ -145,11 +159,81 @@ class Main extends Component{
             .catch(err => {
                 message.error("获取卡片列表失败请重试")
             })
+
+        //这里需要采集用户信息传递给后端
+        console.log(navigator)
+        let os = ""
+        if(navigator.userAgent.includes("Windows NT")){
+            os = "windows"
+        }else if(navigator.userAgent.includes("Android")){
+            os = "android"
+        }else if(navigator.userAgent.includes("iPhone")){
+            os = "iphone"
+        }else if(navigator.userAgent.includes("iPad")){
+            os = "ipad"
+        }else if(navigator.userAgent.includes("Mac")){
+            os = "mac"
+        }else if(navigator.userAgent.includes("Linux")){
+            os = "linux"
+        }
+        
+        //触发存储device的ajax
+        postAnalysisDevice({os})
+            .then(val => {
+                console.log(val)
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
+    // amapEvents = {
+    //     created: (mapInstance) => {
+    //       console.log('高德地图 Map 实例创建成功；如果你要亲自对实例进行操作，可以从这里开始。比如：');
+    //     //   let citysearch = new window.AMap.CitySearch()
+    //     let mapObj = new window.AMap.Map('iCenter');
+    //     mapObj.plugin('AMap.Geolocation', () => {
+    //         let geolocation = new window.AMap.Geolocation({
+    //             enableHighAccuracy: true,//是否使用高精度定位，默认:true
+    //             timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+    //             maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+    //             convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+    //             showButton: true,        //显示定位按钮，默认：true
+    //             buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+    //             buttonOffset: new window.AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+    //             showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+    //             showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+    //             panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+    //             zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+    //         });
+    //         mapObj.addControl(geolocation);
+    //         geolocation.getCurrentPosition();
+    //         window.AMap.event.addListener(geolocation, 'complete', this.onComplete);//返回定位信息
+    //         window.AMap.event.addListener(geolocation, 'error', this.onError);      //返回定位出错信息
+    //     });
+    //     }
+    //   };
+    onComplete = (data) => {
+        console.log(data)
+    }
+    onError = (err) => {
+        console.log(err)
+    }
+    markerEvents = {
+        created: (markerInstance) => {
+          console.log('高德地图 Marker 实例创建成功；如果你要亲自对实例进行操作，可以从这里开始。比如：');
+          console.log(markerInstance);
+        }
+      }
+      
+    markerPosition = { longitude: 120, latitude: 30 };
     //通过userbox组件调用该函数传递userbox组件获得的userinfo
     getUserInfoFromUserBox = (userInfo) => {
         this.setState({userInfo})//userInfo用于传递给card组件，card组件通过userid来判断是否点赞过
+        //在此处调用socketinit初始化函数，应为此刻用户已经登入,userInfo不存在时表面用户进行了用户退出
+        if(userInfo){
+            this.socketInit()
+        }
     }
 
     getCardHeight = (index,height) => {
@@ -202,7 +286,9 @@ class Main extends Component{
     //carddetail model使用函数
     handleCancel = async () => {
         this.updateCardItemStatus()
+        if(this.state.childs.userdetail){
         this.state.childs.userdetail.cardlistMode()//调用userdetail子组件的函数更新其历史卡片cardlist
+        }
         this.setState({modalVisible:false,})//更新抹布状态和cardList
     };
 
@@ -538,14 +624,120 @@ class Main extends Component{
         this.setState({childs})
     }
 
+    //登入检查函数
+    loginCheck = () => {
+        console.log(Object.keys(this.state.userInfo).length)
+        console.log(this.state)
+        console.log(this.state.userInfo)
+        if(!Object.keys(this.state.userInfo).length){
+            return false
+        }
+        return true
+    }
+
+    //更新私人聊天列表数据函数，需要传递给userdetail组件
+    updatePrivateMsgList = (privateMsgList) => {
+        this.setState({privateMsgList})
+    }
+
+    //获取children函数
+    onRef = (ref) => {
+        this.children = ref
+    } 
+
+    //socket断开函数，需要传递给userbox组件，当用户退出时调用
+    socketDisconnected = () => {
+        //更新onlineList
+
+        this.state.socket.disconnect()//断开socket
+
+    }
+
+    //socketIO初始化函数
+    //由main组件---->userBox组件--->login组件和register组件
+    socketInit = () => {
+        //如果登入了才连接websocket
+        let socket =  io("http://localhost:3030",{
+            query:{userInfo:JSON.stringify(this.state.userInfo)}//将userInfo传递过去
+        })
+        this.setState({socket},() => {
+            // 监听与服务端的连接
+            this.state.socket.on('connect', () => {
+                console.log('连接成功'); 
+            });
+
+            //接收当前在线用户
+            this.state.socket.on("users",(users) => {
+                //获取新用户信息，更新onlineList
+                // console.log("获取了当前在线用户")
+                // console.log(users)
+                this.setState({onlineList:users})
+            })
+
+            //接收新用户上线提醒
+            this.state.socket.on("user connected",(user) => {
+                //获取新用户信息，更新onlineList
+                let onlineList = JSON.parse(JSON.stringify(this.state.onlineList))
+                let flag = false
+                //重复的话取后者
+                onlineList.map((item,index) => {
+                    if(item.userInfo.nickname == user.userInfo.nickname){
+                        flag = true
+                        item = user
+                    }
+                })
+                //不同则push
+                if(!flag) onlineList.push(user)
+                
+                this.setState({onlineList})
+            })
+
+            //接受来自客户端的消息
+            this.state.socket.on("message",(data) => {
+                let msgList = JSON.parse(JSON.stringify(this.state.msgList))
+                msgList.push(data)
+                this.setState({msgList})//更新msgList
+            })
+
+            //接收私人消息
+            this.state.socket.on("privateMsg",({content,from,fromUserInfo,toUserInfo}) => {
+                let privateMsgList = JSON.parse(JSON.stringify(this.state.privateMsgList))
+                privateMsgList.push({content,from,fromUserInfo,toUserInfo})
+                this.setState({privateMsgList})
+                //这里应该触发消息通知
+                let data = {
+                    type:"message",
+                    info:"一封新消息",
+                    read:false,
+                }
+                //触发header子组件更新其noticeList函数
+                this.children.updateNoticeList(data)
+            })
+
+        })
+    }
 
     render() {
         return (
             <div className="main clearfix">
+                <Header
+                    onRef={this.onRef}
+                />
+                {/* <div id="iCenter" style={{width:"500px",height:"500px"}}>
+                <Map amapkey="59e84b3980cb9f86930d92eb90d9e204" events={this.amapEvents}>
+                    <Marker position={this.markerPosition} events={this.markerEvents} />
+                </Map>
+                </div> */}
+
                 <div className="main-container">
 
                     <div className="main-left-box">
-                      <Userbox history={this.props.history} getUserInfoFromUserBox={this.getUserInfoFromUserBox}/>
+                      <Userbox 
+                        socketDisconnected={this.socketDisconnected}//用于断开socket连接
+                        history={this.props.history}
+                        getUserInfoFromUserBox={this.getUserInfoFromUserBox}
+                        socketInit={this.socketInit}
+                        />
                       <div className="recommend-box">
                         <p className="recommend-box-title">Classmate:</p>
                         <RecommendCard 
@@ -560,12 +752,20 @@ class Main extends Component{
                    <p className="main-card-box-textarea-title">Textarea:</p>
                         <Textarea
                             mainGetCard={this.mainGetCard}
+                            loginCheck={this.loginCheck}//登入检查函数
                         />
                    </div>
 
-
-
-                    
+                    <div className="main-chatroom-box">
+                        <p className="main-card-box-textarea-title">Chatroom:</p>
+                        <Chatroom
+                            socket={this.state.socket}//初始化后的socket对象
+                            msgList={this.state.msgList}//消息列表
+                            loginCheck={this.loginCheck}//登入检查函数
+                            userInfo={this.state.userInfo}//传递当前已经登入的用户info
+                            showModal2={this.showModal2}//用于打开用户详细  
+                        />
+                    </div>
 
                     <div className="main-card-box">
                             
@@ -626,6 +826,7 @@ class Main extends Component{
                     {/* 卡片详细模块 */}
                     <div className="main-carddetail-box">
                         <CardDetail 
+                            loginCheck={this.loginCheck}//登入检查函数
                             showModal={this.showModal}//用于打开动态卡片详细 （在carddetail组件中专递给card组件）
                             showModal2={this.showModal2}//用于打开用户详细 （在carddetail组件中专递给card组件）
                             commentSubmit={this.cardCommentSubmit} 
@@ -646,10 +847,16 @@ class Main extends Component{
                    <div className="userdetail-box">
                                 {/* <p className="userdetail-box-title">UserDetail:</p> */}
                                 <UserDetail
+                                    updatePrivateMsgList={this.updatePrivateMsgList}//更新私聊列表函数
+                                    privateMsgList={this.state.privateMsgList}//私聊列表
+                                    onlineList={this.state.onlineList}//当前在线用户列表
+                                    socket={this.state.socket}//初始化的socket对象
+                                    loginCheck={this.loginCheck}//登入检查函数
                                     getUserdetailThis={this.getUserdetailThis}
                                     showModal={this.showModal}//用于打开动态卡片详细 （在userdetail组件中专递给card组件）
                                     showModal2={this.showModal2}//用于打开用户详细 （在userdetail组件中专递给card组件）
                                     userInfo={this.state.objUserInfo} //来自card组件的数据
+                                    myUserInfo={this.state.userInfo}//当前用户个人信息
                                 />
                    </div>
                 </Modal>

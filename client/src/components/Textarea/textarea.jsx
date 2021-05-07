@@ -81,6 +81,13 @@ class Textarea extends Component{
         })
     }
     submit = () => {
+      //登入检查
+      if(!this.props.loginCheck()){
+        message.warning("同学，尚未登入哦！")
+        return false
+      }
+
+      console.log(this.props.loginCheck())
       let token = localStorage.getItem("token")
       //提交card的contnet
       cardSubmiAjax({
@@ -116,6 +123,17 @@ class Textarea extends Component{
         previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
       });
     };
+    myBeforeUpload = () => {
+      //直接return false无效
+      return new Promise((resolve,reject) => {
+         //登入检查
+        if(!this.props.loginCheck()){
+          message.warning("同学，尚未登入哦！")
+          reject(false)
+        }
+        resolve(true)
+      })
+    }
     handleChange = ({ fileList }) => {
       let delImgName = ""
       if(fileList.length){//fileList有长度
@@ -212,6 +230,7 @@ class Textarea extends Component{
           onPreview={this.handlePreview}
           onChange={this.handleChange}
           onRemove={this.handleRemove}
+          beforeUpload={this.myBeforeUpload}
         >
           {fileList.length >= 6 ? null : uploadButton}
         </Upload>

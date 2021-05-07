@@ -23,7 +23,7 @@ class Jwt {
                 //error有值有两种情况，
                     //exp过期时间已经小于当前时间。
                     //token传递有误。
-                console.log(error)
+                // console.log(error)
                 return {code:100,msg:"token已过期"}
             }
                 return {code:200,...decoded}

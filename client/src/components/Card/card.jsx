@@ -79,7 +79,7 @@ class Mycard extends Component{
           cardCheckLikeAjax({cardId:this.props.cardData._id},token)
             .then(val => {
               this.setState({likeChoose:val.data.data},() => {
-                console.log(this.state)
+                // console.log(this.state)
               })
             })
             .catch(err => {
@@ -115,7 +115,7 @@ class Mycard extends Component{
         //获取card的点赞数量、评论数量、star数量
         getcardLikeCountAjax({cardId:this.props.cardData._id})
           .then(val => {
-            console.log(val)
+            // console.log(val)
             this.setState({likesCount:val.data.likesCount,commentsCount:val.data.commentsCount,starsCount:val.data.starsCount})
           })
           .catch(err => {

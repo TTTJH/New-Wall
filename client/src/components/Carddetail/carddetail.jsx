@@ -53,12 +53,22 @@ class CardDetail extends Component{
     
     //评论提交函数-----来自main组件
     commentSubmit = () => {
+        //登入检查
+        if(!this.props.loginCheck()){
+            message.warning("同学，尚未登入哦！")
+            return false
+        }
         this.props.commentSubmit(this.state.content,this.props.cardData._id)
         this.setState({content:""})//清空content
     }
 
     //评论点赞函数------来自main组件
     commentLike = (commentIndex) => {
+        //登入检查
+        if(!this.props.loginCheck()){
+            message.warning("同学，尚未登入哦！")
+            return false
+        }
         this.props.cardCommentLike(this.props.cardData._id,commentIndex)
     }
 
@@ -69,12 +79,23 @@ class CardDetail extends Component{
 
     //评论回复函数------来自main组件
     commentReply = () => {
+        //登入检查
+      if(!this.props.loginCheck()){
+        message.warning("同学，尚未登入哦！")
+        return false
+      }
         this.props.cardCommentReply(this.props.cardData._id,this.state.content,this.state.toUserId)
         this.setState({content:"",commentStatus:true})//清空content
     }
 
     //回复对象选择函数
     toUserIdChange = (index) => {
+        //登入检查
+      if(!this.props.loginCheck()){
+        message.warning("同学，尚未登入哦！")
+        return false
+      }
+      
         let toUserId = this.props.cardData.comments[index].userId
         let toUserNickname = this.props.cardData.comments[index].userInfo.nickname
         this.setState({toUserId,toUserNickname,commentStatus:false})

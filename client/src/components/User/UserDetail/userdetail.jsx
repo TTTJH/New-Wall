@@ -17,6 +17,9 @@ import {
 
 import {
     getUserCardListAjax,
+    messageSubmitAjax,//私聊消息提交ajax
+    getMsgListAjax,//获取用户间的私聊消息
+    getUserInfoByIdAjax,//通过id获取userInfo
 } from '../../../api/index'
 
 import Card from '../../Card/card'
@@ -26,6 +29,7 @@ import './userdetail.css'
 class UserDetail extends Component{
 
     state = {
+        content:"",//textarea文本域内容
         userInfo:{},
         mode:"standard",//standard:标准模式，展示功能模块；chatroom:聊天模式，展示聊天框，cardlist:卡片模式，展示历史卡片
         userCardlist:[],//存放用户历史卡片
@@ -46,7 +50,43 @@ class UserDetail extends Component{
 
     //修改UI界面至chatroom模式
     chatroomMode = () => {
+        this.props.updatePrivateMsgList([])//清除以下main组件的privateMsgList
         this.setState({mode:"chatroom"})
+        //每次打开这个模式的时候是需要去数据库获取两人之间的对话
+        let messageId = this.props.myUserInfo.userId+this.props.userInfo._id //messageId由fromUserID和toUserId组成，顺序随意，后台模糊判断
+        getMsgListAjax({messageId})
+            .then(async val => {
+                if(val){
+                    //两人有历史聊天记录
+                    let {msgList} = val.data.data
+                    let fromUserInfo = ""
+                    let toUserInfo = ""
+                    //分别获取fromUserInfo和toUserInfo
+                    await getUserInfoByIdAjax(this.props.myUserInfo.userId)
+                        .then(val => {
+                            fromUserInfo = val.data.data
+                        })
+                        .catch(err => {
+                            message.warning("获取用户信息错误")
+                        })
+
+                    await getUserInfoByIdAjax(this.props.userInfo._id)
+                        .then(val => {
+                            toUserInfo = val.data.data
+                        })
+                        .catch(err => {
+                            message.warning("获取用户信息错误")
+                        })
+                    msgList.map((item,index) => {
+                        item.fromUserInfo = fromUserInfo
+                        item.toUserInfo = toUserInfo
+                    })
+                    this.props.updatePrivateMsgList(msgList)//此处发送方需要物理添加一下main组件中的privateMsgList
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     //修改UI界面至standard模式
@@ -69,7 +109,87 @@ class UserDetail extends Component{
         this.setState({mode:"cardlist"})
     }
 
+    //消息发送
+    submit = async () => {
+        let toUserId = this.props.userInfo._id //目标id
+        let socketId = ""
+        let fromUserInfo = ""
+        let toUserInfo = ""
+        this.props.onlineList.map((item,index) => {
+            if(item.userInfo.userId == toUserId) socketId = item.id
+        })
+        //分别获取fromUserInfo和toUserInfo
+        await getUserInfoByIdAjax(this.props.myUserInfo.userId)
+            .then(val => {
+                fromUserInfo = val.data.data
+            })
+            .catch(err => {
+                message.warning("获取用户信息错误")
+            })
 
+        await getUserInfoByIdAjax(this.props.userInfo._id)
+            .then(val => {
+                toUserInfo = val.data.data
+            })
+            .catch(err => {
+                message.warning("获取用户信息错误")
+            })
+
+        if(socketId){//当该用户在线时发送websocket事件
+            let data = {
+                content:this.state.content,
+                to:socketId,
+                userInfo:this.props.userInfo,
+                fromUserInfo,
+                toUserInfo,
+            }
+            this.props.socket.emit("privateMsg",data)
+
+            let privateMsgList = JSON.parse(JSON.stringify(this.props.privateMsgList))
+            privateMsgList.push(data)
+            
+            this.props.updatePrivateMsgList(privateMsgList)//此处发送方需要物理添加一下main组件中的privateMsgList
+        }else{
+            //当该用户不在线时
+            // alert("!")
+            let data = {
+                content:this.state.content,
+                to:socketId,
+                userInfo:this.props.userInfo,
+                fromUserInfo,
+                toUserInfo,
+            }
+            let privateMsgList = JSON.parse(JSON.stringify(this.props.privateMsgList))
+            privateMsgList.push(data)
+            
+            this.props.updatePrivateMsgList(privateMsgList)//此处发送方需要物理添加一下main组件中的privateMsgList
+        }
+
+        //不管在不在线消息保存至数据库
+        let data = {
+            fromUserId:this.props.myUserInfo.userId,
+            toUserId:this.props.userInfo._id,
+            content:this.state.content,
+        }
+        //私聊消息提交ajax
+        messageSubmitAjax(data)
+            .then(val => {
+                // console.log(val)
+            })
+            .catch(err => {
+                message.warning("发送错误")
+                console.log(err)
+            })
+
+        //清空content
+        this.setState({content:""})
+
+    }
+
+    //文本域change函数
+    textareaChange = (e) => {
+        this.setState({content:e.target.value})
+    }
 
     render(){
         const { TextArea } = Input;
@@ -130,69 +250,42 @@ class UserDetail extends Component{
                     <div className="userdetail-chat-box-box1">
                         与 tutu 的聊天
                     </div>
-                        <div className="userdetail-chat-box-from">
-                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
-                            <p>Hello World</p> 
-                            <div>
-                            <span>10:48AM</span>
-                            </div>
-                        </div>
+                        
 
-                        <div className="userdetail-chat-box-to">
-                        <div>
-                            <span>10:48AM</span>
-                            </div>
-                            <p>Hello World !</p>
-                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
-                        </div>
-                        <div className="userdetail-chat-box-from">
-                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
-                            <p>Hello World</p> 
-                            <div>
-                            <span>10:48AM</span>
-                            </div>
-                        </div>
-                        <div className="userdetail-chat-box-to">
-                        <div>
-                            <span>10:48AM</span>
-                            </div>
-                            <p>Hello World !</p>
-                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
-                        </div>
-                        <div className="userdetail-chat-box-from">
-                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
-                            <p>Hello World</p> 
-                            <div>
-                            <span>10:48AM</span>
-                            </div>
-                        </div>
-                        <div className="userdetail-chat-box-to">
-                        <div>
-                            <span>10:48AM</span>
-                            </div>
-                            <p>Hello World !</p>
-                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
-                        </div>
-                        <div className="userdetail-chat-box-from">
-                            <img src="http://www.tttjh.com.cn/imgs/avatar.jpg" alt=""/>
-                            <p>Hello World</p> 
-                            <div>
-                            <span>10:48AM</span>
-                            </div>
-                        </div>
-
-                        <div className="userdetail-chat-box-to">
-                        <div>
-                            <span>10:48AM</span>
-                            </div>
-                            <p>Hello World !</p>
-                            <img src="http://www.tttjh.com.cn/imgs/girl.gif" alt=""/>
-                        </div>
-                        </div>
+                       {
+                           //列表渲染privateMsgList
+                           this.props.privateMsgList.map((item,index) => {
+                               console.log(item)
+                               if(item.fromUserId == this.state.userInfo._id){
+                                   //他人的消息
+                                   return(
+                                        <div key={index} className="userdetail-chat-box-from">
+                                            <img src={`http://localhost:3030/${item.fromUserInfo.avatar}`} alt=""/>
+                                            <p>{item.content}</p> 
+                                            <div>
+                                            {/* <span>10:48AM</span> */}
+                                            </div>
+                                        </div>
+                                   )
+                               }else{
+                                   //自己的消息
+                                   return(
+                                    <div key={index} className="userdetail-chat-box-to">
+                                    <div>
+                                        {/* <span>10:48AM</span> */}
+                                        </div>
+                                        <p>{item.content}</p> 
+                                        <img src={`http://localhost:3030/${item.toUserInfo.avatar}`} alt=""/>
+                                    </div>
+                                   )
+                               }
+                           })
+                       }
+                       </div>
 
                     <div className="userdetail-chat-box-handle">
-                        <TextArea placeholder="请输入内容" className="userdetail-chat-box-textarea" rows={2} />
-                        <Button className="userdetail-chat-box-submit" type="primary" shape="round">
+                        <TextArea onChange={this.textareaChange} value={this.state.content} placeholder="请输入内容" className="userdetail-chat-box-textarea" rows={2} />
+                        <Button onClick={this.submit} className="userdetail-chat-box-submit" type="primary" shape="round">
                             发送        
                         </Button>
                     </div>
@@ -220,11 +313,11 @@ class UserDetail extends Component{
                         }
                         </div>
 
-                        <div className="userdetail-card-load-more">
+                        {/* <div className="userdetail-card-load-more">
                             <Button size="small" shape="round" type="primary" icon={<CaretDownOutlined />}>
                             加载更多
                             </Button>
-                        </div>
+                        </div> */}
 
                         <Button onClick={this.standardMode} size="small" className="userdetail-chat-box-back2" shape="round" type="primary" icon={<CaretLeftOutlined />}>
                             返回

@@ -61,13 +61,18 @@ class Userbox extends Component{
             })
     }
     gotoLogin = () => {
-        this.props.history.push("/login")
+        //这里在跳转至login的时候携带来自main组件的socketInit初始化函数
+        this.props.history.push({pathname:"/login",func:this.props.socketInit})
     }
     logoutConfirm = () => {
         //删除localStorage中存储的token
         localStorage.removeItem("token")
         //更新state中userInfo的状态
         this.setState({userInfo:{}})//清除userInfo
+        //调用main组件传递的函数，将userInfo传递给main组件,清除main组件中的userInfo
+        this.props.getUserInfoFromUserBox({})
+        //调用main组件传递的函数，将socket断开
+        this.props.socketDisconnected()
         message.success("退出成功")
     }
     uploadChange = (obj) => {
