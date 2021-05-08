@@ -63,7 +63,7 @@ io.on('connection', socket => {
               id
             });
           }
-          io.emit("users", users);//向全体成员发送最新的users列表
+          io.emit("user disconnect", users);//向全体成员发送最新的users列表
         })
 })
 

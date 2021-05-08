@@ -36,7 +36,8 @@ const MessageSchema = new Schema({
 
 const NoticeSchema = new Schema({
   userId:String,//该document的所属用户的userId
-  noticeList:Array,//通知数组，结构:[{type,read,info,}]
+  noticeList:Array,//通知数组，结构:[{type,read,info,fromUserId}]
+  // fromUserId:String,//操作用户的userId
 })
 //---------------结束定义Schema------------------------
 

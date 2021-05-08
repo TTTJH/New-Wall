@@ -36,6 +36,7 @@ class UserDetail extends Component{
     }
 
     componentDidMount(){
+        this.props.onRef(this)//将自己整个this交给main组件
         this.props.getUserdetailThis(this)
         this.setState({userInfo:this.props.userInfo})//将main组件传递过来的数据转换为自身的state
     }
@@ -149,6 +150,7 @@ class UserDetail extends Component{
             privateMsgList.push(data)
             
             this.props.updatePrivateMsgList(privateMsgList)//此处发送方需要物理添加一下main组件中的privateMsgList
+            
         }else{
             //当该用户不在线时
             // alert("!")
@@ -162,6 +164,22 @@ class UserDetail extends Component{
             let privateMsgList = JSON.parse(JSON.stringify(this.props.privateMsgList))
             privateMsgList.push(data)
             
+                    
+            // 这里应该触发消息通知
+            let data2 = {
+                type:"message",
+                info:"一封新消息",
+                read:false,
+                fromUserInfo,
+                toUserInfo
+            }
+            let obj = {
+                data:data2,
+                userId:this.props.userInfo._id
+            }
+            //触发header组件更新其noticeList函数(该函数来源过程 header --> main --> userdetial)
+            this.props.updateNoticeList(obj)
+
             this.props.updatePrivateMsgList(privateMsgList)//此处发送方需要物理添加一下main组件中的privateMsgList
         }
 
@@ -180,6 +198,7 @@ class UserDetail extends Component{
                 message.warning("发送错误")
                 console.log(err)
             })
+
 
         //清空content
         this.setState({content:""})
@@ -255,7 +274,6 @@ class UserDetail extends Component{
                        {
                            //列表渲染privateMsgList
                            this.props.privateMsgList.map((item,index) => {
-                               console.log(item)
                                if(item.fromUserId == this.state.userInfo._id){
                                    //他人的消息
                                    return(

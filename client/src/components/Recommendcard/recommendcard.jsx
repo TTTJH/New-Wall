@@ -19,7 +19,7 @@ class Recommendcard extends Component{
                 this.setState({
                     classmateList:val.data.data
                 })
-                console.log(val)
+                // console.log(val)
             })
             .catch(err => {
                 message.error("获取同学推荐列表失败请重试")

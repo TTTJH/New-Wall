@@ -180,10 +180,10 @@ class Main extends Component{
         //触发存储device的ajax
         postAnalysisDevice({os})
             .then(val => {
-                console.log(val)
+                // console.log(val)
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
             })
     }
 
@@ -231,7 +231,7 @@ class Main extends Component{
     getUserInfoFromUserBox = (userInfo) => {
         this.setState({userInfo})//userInfo用于传递给card组件，card组件通过userid来判断是否点赞过
         //在此处调用socketinit初始化函数，应为此刻用户已经登入,userInfo不存在时表面用户进行了用户退出
-        if(userInfo){
+        if(Object.keys(userInfo).length){
             this.socketInit()
         }
     }
@@ -293,12 +293,20 @@ class Main extends Component{
     };
 
     //useretail model使用函数
-    showModal2 = (objUserInfo,e) => {
-        console.log(objUserInfo)
+    showModal2 = (objUserInfo,e,tag) => {
+        console.log(tag)
         //阻止事件冒泡
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
-        this.setState({modalVisible2:true,objUserInfo})
+        this.setState({modalVisible2:true,objUserInfo},() => {
+            if(tag){
+                //如果特殊标识存在，证明需要userdetial组件默认开启chatroom模式
+                //调用userdetial组件中的方法
+                this.userdetail.chatroomMode()
+                // this.state.childs.userdetail.chatroomMode()
+            }
+        })
+        
       };
     
     //userdetail model使用函数
@@ -616,13 +624,7 @@ class Main extends Component{
             })
     }
 
-    //获取子组件userdetail方法
-    getUserdetailThis = (userdetailThis) => {
-        let childs = {
-            userdetail:userdetailThis
-        }
-        this.setState({childs})
-    }
+   
 
     //登入检查函数
     loginCheck = () => {
@@ -640,17 +642,28 @@ class Main extends Component{
         this.setState({privateMsgList})
     }
 
-    //获取children函数
-    onRef = (ref) => {
-        this.children = ref
+    //获取header组件this函数
+    onHeader = (ref) => {
+        this.header = ref
     } 
+
+    //获取userdetial组件this函数
+    onUserdetail = (ref) => {
+        this.userdetail = ref
+    }
+
+     //获取子组件userdetail方法
+     getUserdetailThis = (userdetailThis) => {
+        let childs = {
+            userdetail:userdetailThis
+        }
+        this.setState({childs})
+    }
 
     //socket断开函数，需要传递给userbox组件，当用户退出时调用
     socketDisconnected = () => {
         //更新onlineList
-
         this.state.socket.disconnect()//断开socket
-
     }
 
     //socketIO初始化函数
@@ -692,6 +705,16 @@ class Main extends Component{
                 this.setState({onlineList})
             })
 
+            //接受用户下线提醒
+            this.state.socket.on("user disconnect",(users) => {
+                alert("disconnect执行")
+                console.log(users)
+                //获取新用户信息，更新onlineList
+                // console.log("获取了当前在线用户")
+                // console.log(users)
+                this.setState({onlineList:users})
+            })
+
             //接受来自客户端的消息
             this.state.socket.on("message",(data) => {
                 let msgList = JSON.parse(JSON.stringify(this.state.msgList))
@@ -704,24 +727,42 @@ class Main extends Component{
                 let privateMsgList = JSON.parse(JSON.stringify(this.state.privateMsgList))
                 privateMsgList.push({content,from,fromUserInfo,toUserInfo})
                 this.setState({privateMsgList})
+                
+                //在线的情况在这里触发，不在线的情况在userdetial
                 //这里应该触发消息通知
                 let data = {
                     type:"message",
                     info:"一封新消息",
                     read:false,
+                    fromUserInfo,
+                    toUserInfo
                 }
+                let obj = {
+                    data,
+                    userId:this.state.userInfo.userId
+                }
+                alert("执行了socket.on")
                 //触发header子组件更新其noticeList函数
-                this.children.updateNoticeList(data)
+                this.header.updateNoticeList(obj)
             })
+
+            //
 
         })
     }
+    mainUpdateNoticeList = (data) => {
+           // //触发header子组件更新其noticeList函数
+            this.header.updateNoticeList(data)
+    }
+
 
     render() {
         return (
             <div className="main clearfix">
                 <Header
-                    onRef={this.onRef}
+                    showModal2={this.showModal2}//用于打开userdetial组件
+                    userInfo = {this.state.userInfo}//当前用户userInfo
+                    onRef={this.onHeader}//用于main父组件调用header子组件
                 />
                 {/* <div id="iCenter" style={{width:"500px",height:"500px"}}>
                 <Map amapkey="59e84b3980cb9f86930d92eb90d9e204" events={this.amapEvents}>
@@ -847,6 +888,8 @@ class Main extends Component{
                    <div className="userdetail-box">
                                 {/* <p className="userdetail-box-title">UserDetail:</p> */}
                                 <UserDetail
+                                    updateNoticeList={this.mainUpdateNoticeList}
+                                    onRef={this.onUserdetail}//用于将自己整个组件this交给main组件
                                     updatePrivateMsgList={this.updatePrivateMsgList}//更新私聊列表函数
                                     privateMsgList={this.state.privateMsgList}//私聊列表
                                     onlineList={this.state.onlineList}//当前在线用户列表

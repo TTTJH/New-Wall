@@ -26,6 +26,9 @@ const cardUserCardList = baseUrl + "/card/usercardlist"
 const analysisDeviceRouter = baseUrl + "/analysis/device"
 const messageSubmitRouter = baseUrl + "/message/submit"
 const getMessageListRouter = baseUrl + "/message/msglist"
+const noticeSubmitRouter = baseUrl + "/notice/submit"
+const getNoticeListRouter = baseUrl + "/notice/noticelist"
+const updateNoticeListReadRouter = baseUrl + "/notice/updateRead"
 
 //登入路由
 export const loginAjax = (data) => {
@@ -150,6 +153,21 @@ export const messageSubmitAjax = (data) => {
 //获取用户私聊消息
 export const getMsgListAjax = (data) => {
     return ajax(getMessageListRouter,"GET",data)
+}
+
+//消息通知提交
+export const noticeSubmitAjax = (data) => {
+    return ajax(noticeSubmitRouter,"POST",data)
+}
+
+//获取用户所属的noticeList
+export const getNoticeListAjax = (data) =>{
+    return ajax(getNoticeListRouter,"GET",data)
+}
+
+//更新数据库某条notice的noticeList的read标志位
+export const updateNoticeListReadAjax = (data) => {
+    return ajax(updateNoticeListReadRouter,"POST",data)
 }
 
 //test 

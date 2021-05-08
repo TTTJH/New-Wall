@@ -78,18 +78,32 @@
 .header-popover p{
     margin: 0;
     color: #69606b;
+    margin: 5px 0;
 }
 .header-popover .ant-popover-content .ant-popover-inner{
     text-align: center;
-    border-radius: 5px;
+    border-radius: 10px;
     /* background-color: #fddb3a; */
     cursor: pointer;
     padding: 0;
 }
 .header-popover .ant-popover-inner .ant-popover-inner-content {
-    padding: 1px 8px;
-    padding-bottom: 0px;
+    padding: 5px 8px;
     border-radius: 5px;
     /* background-color: #fddb3a; */
     cursor: pointer;
+}
+
+.notice-list{
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 0 30px #f0f0f0;
+    border: 1px solid #f0f0f0;
+}
+
+.notice-list img{
+    width: 40px;
+    height: 40px;
+    margin: 0 3px;
+    border-radius: 50%;
 }
