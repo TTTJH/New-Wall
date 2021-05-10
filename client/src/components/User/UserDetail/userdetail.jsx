@@ -20,6 +20,7 @@ import {
     messageSubmitAjax,//私聊消息提交ajax
     getMsgListAjax,//获取用户间的私聊消息
     getUserInfoByIdAjax,//通过id获取userInfo
+    noticeSubmitAjax,//notice提交ajax
 } from '../../../api/index'
 
 import Card from '../../Card/card'
@@ -178,7 +179,17 @@ class UserDetail extends Component{
                 userId:this.props.userInfo._id
             }
             //触发header组件更新其noticeList函数(该函数来源过程 header --> main --> userdetial)
-            this.props.updateNoticeList(obj)
+            // this.props.updateNoticeList(obj)
+
+            // 这里应该去将obj存入noticeModel
+            noticeSubmitAjax(obj)
+            .then(val => {
+                console.log(val)
+            })
+            .catch(err => {
+                console.log(err)
+                message.warning("保存错误")
+            })
 
             this.props.updatePrivateMsgList(privateMsgList)//此处发送方需要物理添加一下main组件中的privateMsgList
         }
@@ -198,7 +209,6 @@ class UserDetail extends Component{
                 message.warning("发送错误")
                 console.log(err)
             })
-
 
         //清空content
         this.setState({content:""})

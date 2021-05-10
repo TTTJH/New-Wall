@@ -16,6 +16,7 @@ import {
     getCardCommentsAjax,//获取卡片评论ajax
     getUserInfoByIdAjax,//获取用户信息ajax
     cardCommentLikeAjax,//卡片评论点赞ajax
+    noticeSubmitAjax,//notice提交ajax
 } from '../../api/index'
 
 import './carddetail.css'
@@ -35,6 +36,8 @@ class CardDetail extends Component{
     componentDidMount(){
         this.setState({cardData:this.props.cardData})
     }
+
+    
 
     //文本域的onChange函数
     textareaChange =  (e) => {
@@ -58,6 +61,10 @@ class CardDetail extends Component{
             message.warning("同学，尚未登入哦！")
             return false
         }
+
+        //socketEvent事件函数
+        this.socketEventCarddetail()
+
         this.props.commentSubmit(this.state.content,this.props.cardData._id)
         this.setState({content:""})//清空content
     }
@@ -78,14 +85,94 @@ class CardDetail extends Component{
     }
 
     //评论回复函数------来自main组件
-    commentReply = () => {
+    commentReply = async () => {
         //登入检查
       if(!this.props.loginCheck()){
         message.warning("同学，尚未登入哦！")
         return false
       }
+
+        //socketEvent事件函数
+        this.socketEventCarddetail()
+
         this.props.cardCommentReply(this.props.cardData._id,this.state.content,this.state.toUserId)
         this.setState({content:"",commentStatus:true})//清空content
+    }
+
+    //carddetial组建的socket事件函数
+    socketEventCarddetail = async  () => {
+        let toUserId = this.props.cardData.userId
+        let fromUserInfo = this.props.userInfo
+        let cardId = this.props.cardData._id
+        let toUserInfo = ""
+        let socketId = ""
+        //调用ajax获取toUserInfo
+        await getUserInfoByIdAjax(toUserId)
+          .then(val => {
+              toUserInfo = val.data.data
+          })
+          .catch(err => {
+              message.warning("获取用户信息错误")
+          })
+      
+          //判断目标用户是否在线
+          this.props.onlineList.map((item,index) => {
+              //如果onlineList中存在着目标用户的userId,证明目标用户目前在线
+              if(item.userInfo.userId == toUserId){
+                socketId = item.id
+              }
+          })
+  
+          if(socketId){
+            //   alert("在线")
+              //目标用户在线
+              //这里应该触发socket的评论事件
+              let data = {
+                  to:socketId,
+                  fromUserInfo,
+                  toUserInfo,
+                  cardId,
+              }
+              this.props.socket.emit("comment",data)
+          }else{
+            //   alert("offline")
+              //不在线的情况
+          }
+  
+          //在不在线都应该将该noticeItem存储进数据库
+          //obj的结构如下： 
+              // let obj = {
+              //   data:{
+              //     type,
+              //     info,
+              //     read,
+              //     fromUserInfo,
+              //     toUserInfo
+              //   },
+              //   userId
+              // }
+          let data = {
+              type:"comment",
+              info:"有人评论你啦!",
+              read:false,
+              fromUserInfo,
+              toUserInfo,
+              cardId
+              }
+  
+              let obj = { 
+              data,
+              userId:toUserId
+              }
+  
+              noticeSubmitAjax(obj)
+              .then(val => {
+                  console.log(val)
+              })
+              .catch(err => {
+                  console.log(err)
+                  message.warning("保存错误")
+              })
     }
 
     //回复对象选择函数

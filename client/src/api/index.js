@@ -23,6 +23,7 @@ const cardCommentLikeRouter = baseUrl + "/card/commentLike"
 const cardCommentDelLikeRouter = baseUrl + "/card/commentDelLike"
 const cardCommentReplyRouter = baseUrl + "/card/commentReply"
 const cardUserCardList = baseUrl + "/card/usercardlist"
+const getCardDataByIdRoute = baseUrl + "/card/cardData"
 const analysisDeviceRouter = baseUrl + "/analysis/device"
 const messageSubmitRouter = baseUrl + "/message/submit"
 const getMessageListRouter = baseUrl + "/message/msglist"
@@ -113,6 +114,11 @@ export const cardDelLikeAjax = (data,token) => {
 //卡片评论路由
 export const cardCommentAjax = (data,token) => {
     return ajax(cardCommentRouter,"POST",data,token)
+}
+
+//通过cardId获取cardData
+export const getCardDataById = (data) => {
+    return ajax(getCardDataByIdRoute,"GET",data)
 }
 
 //获取卡片评论路由

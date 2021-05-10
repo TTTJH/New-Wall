@@ -30,6 +30,7 @@ import {
   cardCheckLikeAjax,
   cardDelLikeAjax,
   getcardLikeCountAjax,
+  noticeSubmitAjax,//notice提交ajax
 } from '../../api'
 import "./card.css"
 
@@ -65,6 +66,8 @@ class Mycard extends Component{
     }
 
     componentDidMount(){
+      //将自身this传递给main组件
+      // this.props.onCard(this)
       //根据props的userData获取userinfo放在render()渲染函数内部完成
       getUserInfoByIdAjax(this.props.cardData.userId)
           .then(val => {
@@ -165,14 +168,29 @@ class Mycard extends Component{
         e.nativeEvent.stopImmediatePropagation();
     }
 
+    //点赞数量更新函数,需要在main函数中调用
+    // likesCountUpdate = () => {
+    //   //执行一下该ajax更新likecount
+    //   getcardLikeCountAjax({cardId:this.props.cardData._id})
+    //   .then(val => {
+    //     console.log(val)
+    //     this.setState({likesCount:val.data.likesCount})
+    //   })
+    //   .catch(err => {
+    //     message.warning("卡片点赞数量获取出现问题请稍候再试")
+    //   })
+    // }
+
     //点赞函数
-    like = (e) => {
+    like = async (e) => {
         //阻止事件冒泡
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
 
+
+
         //点赞反转
-        this.setState({likeChoose:!this.state.likeChoose},() => {
+        this.setState({likeChoose:!this.state.likeChoose},async () => {
           let cardId = this.props.cardData._id //准备传递数据
           let token = localStorage.getItem("token") //获取token
           if(this.state.likeChoose){//进行了点赞
@@ -223,6 +241,98 @@ class Mycard extends Component{
             .catch(err => {
               console.log(err)
             }) 
+          }
+
+
+          //以下是socket的like事件
+          if(this.state.likeChoose){
+                //进行了点赞
+                //准备emit一个点赞事件
+            let toUserId = this.props.cardData.userId
+            let fromUserId = this.props.userInfo.userId
+            let cardId = this.props.cardData._id
+            let socketId = ""
+            let toUserInfo = ""
+            let fromUserInfo = ""
+
+            //分别获取toUserInfo和fromUserInfo
+            await getUserInfoByIdAjax(toUserId)
+              .then(val => {
+                toUserInfo = val.data.data
+              })
+              .catch(err => {
+                message.warning("获取用户信息错误")
+              })
+
+            await getUserInfoByIdAjax(fromUserId)
+            .then(val => {
+              fromUserInfo = val.data.data
+            })
+            .catch(err => {
+              message.warning("获取用户信息错误")
+            })
+            //判断是否在线
+            this.props.onlineList.map((item,index) => {
+              //如果onlineList中存在着目标用户的userId,证明目标用户目前在线
+              if(item.userInfo.userId == toUserId){
+                socketId = item.id
+              }
+            })
+
+            if(socketId){
+              //目标用户在线的情况
+              //发送一个socket 的 like事件通知
+              let data = {
+                to:socketId,
+                fromUserInfo,
+                toUserInfo,
+                cardId,
+              }
+
+              this.props.socket.emit("like",data)
+            }else{
+              //目标用户不在线的情况
+              //目前无操作
+            }
+
+            //不管在不在线都需要将该条notice存储到数据库
+            //obj的结构如下： 
+            // let obj = {
+            //   data:{
+            //     type,
+            //     info,
+            //     read,
+            //     fromUserInfo,
+            //     toUserInfo
+            //   },
+            //   userId
+            // }
+
+            let data = {
+              type:"like",
+              info:"你收到了一个赞",
+              read:false,
+              fromUserInfo,
+              toUserInfo,
+              cardId
+            }
+
+            let obj = { 
+              data,
+              userId:toUserId
+            }
+
+            noticeSubmitAjax(obj)
+            .then(val => {
+                console.log(val)
+            })
+            .catch(err => {
+                console.log(err)
+                message.warning("保存错误")
+            })
+
+            //触发header组件更新其noticeList函数(该函数来源过程 header --> main --> userdetial)
+            // this.props.updateNoticeList(obj)            
           }
         })
     }

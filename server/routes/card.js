@@ -191,6 +191,20 @@ card.get("/list",async (ctx,next) => {
     }
 })
 
+//根据cardId获取cardData
+card.get("/cardData",async (ctx,next) => {
+  let {cardId} = ctx.request.query //获取get数据
+  console.log(cardId)
+  //操作数据库
+  await CardModel.findOne({_id:cardId})
+    .then(doc => {
+      ctx.body = {code:200,data:doc}
+    })
+    .catch(err => {
+      ctx.body = {code:100,msg:"err"}
+    })
+})
+
 //卡片点赞接口
 card.post("/like",async(ctx,next) => {
   //token解析操作

@@ -90,33 +90,59 @@ notice.get("/noticelist",async (ctx,next) => {
 
 //更新noticeList中的read标识位路由
 notice.post("/updateRead",async (ctx,next) => {
-  let {index,userId,fromUserId} = ctx.request.body //解析post数据
-  //操作数据库
-  await NoticeModel.findOne({userId})
-    .then(async doc => {
-      let {noticeList} = doc
-
-      noticeList.map((item,index) => {
-        if(fromUserId == item.fromUserInfo._id){
-          //将同一个发送者发送的多条消息read标志位更新为true
-          item.read = true
-        }
+  let {index,userId,fromUserId,isLike} = ctx.request.body //解析post数据
+  //区分情况，是私聊还是点赞
+  if(isLike){
+    //点赞的情况
+    await NoticeModel.findOne({userId})
+      .then(async doc => {
+        let noticeList = JSON.parse(JSON.stringify(doc.noticeList))
+        noticeList.splice(index,1)
+        //更新noticeList
+        await NoticeModel.updateOne({userId},{$set:{noticeList}})
+          .then(doc => {
+            console.log(doc)
+            ctx.body = {code:200,data:"success"}
+          })
+          .catch(err => {
+            console.log(err)
+            ctx.body = {code:100,msg:"err"}
+          })
       })
+      .catch(err => {
+        console.log(err)
+        ctx.body = {code:100,msg:"err"}
+      })
+  }else{
+    //私聊的情况
+    //操作数据库
+    await NoticeModel.findOne({userId})
+      .then(async doc => {
+        let {noticeList} = doc
 
-      //更新noticeList
-      await NoticeModel.updateOne({userId},{$set:{noticeList}})
-        .then(doc => {
-          ctx.body = {code:200,data:"success"}
+        noticeList.map((item,index) => {
+          if(fromUserId == item.fromUserInfo._id){
+            //将同一个发送者发送的多条消息read标志位更新为true
+            item.read = true
+          }
         })
-        .catch(err => {
-          console.log(err)
-          ctx.body = {code:100,msg:"err"}
-        })
-    })
-    .catch(err => {
-      console.log(err)
-      ctx.body = {code:100,msg:"err"}
-    })
+
+        //更新noticeList
+        await NoticeModel.updateOne({userId},{$set:{noticeList}})
+          .then(doc => {
+            ctx.body = {code:200,data:"success"}
+          })
+          .catch(err => {
+            console.log(err)
+            ctx.body = {code:100,msg:"err"}
+          })
+      })
+      .catch(err => {
+        console.log(err)
+        ctx.body = {code:100,msg:"err"}
+      })
+  }
+
 })
 
 

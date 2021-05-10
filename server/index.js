@@ -44,6 +44,14 @@ io.on('connection', socket => {
             io.emit("message",data)
         })
 
+        //后端接收like事件
+        socket.on("like",(data) => {
+          console.log("后端like事件被触发")
+          let {to} = data
+          console.log(data)
+          socket.to(to).emit("like",data)
+        })
+
         //私人消息
         socket.on("privateMsg",({content,to,fromUserInfo,toUserInfo}) => {
           socket.to(to).emit("privateMsg",{
@@ -52,6 +60,12 @@ io.on('connection', socket => {
             fromUserInfo,
             toUserInfo
           })
+        })
+
+        //comment事件
+        socket.on("comment",(data) => {
+            console.log("后台comment事件被触发")
+            socket.to(data.to).emit("comment",data)
         })
         socket.on("disconnect", () => {
           console.log("user disconnect!")

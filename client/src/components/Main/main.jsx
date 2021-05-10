@@ -484,16 +484,16 @@ class Main extends Component{
                                 message.warning("获取评论列表失败请重试!")
                             })
                         cardData.comments.push(newComment)
-                        let item = this.state.cardData
+                        // let item = JSON.parse(JSON.stringify(this.state.cardData))
                         // let item = cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] //刚刚被选中的卡片
                         //每当关闭了carddetail之后，要再次触发一次点赞检查函数和操作数量获取函数，更新该卡片的互动状态
                         //也就是更新cardList的某一项
                         if(this.state.userInfo){//用户已登入
                             let token = localStorage.getItem("token")
                             //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行初始化
-                            await cardCheckLikeAjax({cardId:item._id},token)
+                            await cardCheckLikeAjax({cardId:cardData._id},token)
                               .then(val => {
-                                item.likeChoose = val.data.data //更新item的是否点赞状态
+                                cardData.likeChoose = val.data.data //更新item的是否点赞状态
                               })
                               .catch(err => {
                                 message.warn("获取点赞信息出现问题")
@@ -501,15 +501,16 @@ class Main extends Component{
                           }
                 
                         //获取card的点赞数量、评论数量、star数量
-                        await getcardLikeCountAjax({cardId:item._id})
+                        await getcardLikeCountAjax({cardId:cardData._id})
                         .then(val => {
-                            item.likesCount = val.data.likesCount //更新点赞数量
-                            item.commentsCount = val.data.commentsCount //更新评论数量
-                            item.starsCount = val.data.starsCount //更新收藏数量
+                            cardData.likesCount = val.data.likesCount //更新点赞数量
+                            cardData.commentsCount = val.data.commentsCount //更新评论数量
+                            cardData.starsCount = val.data.starsCount //更新收藏数量
                         })
                         .catch(err => {
                           message.warning("卡片点赞数量获取出现问题请稍候再试")
                         })
+                        cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] = cardData
                         this.setState({cardList,cardData})
                     })
                     .catch(err => {
@@ -576,6 +577,9 @@ class Main extends Component{
                         .catch(err => {
                           message.warning("卡片点赞数量获取出现问题请稍候再试")
                         })
+                        console.log(item)
+                        cardList[this.state.chooseCardIndex1][this.state.chooseCardIndex2] = item
+                        console.log(cardList)
                         this.setState({cardList,cardData})
                     })
                     .catch(err => {
@@ -628,9 +632,7 @@ class Main extends Component{
 
     //登入检查函数
     loginCheck = () => {
-        console.log(Object.keys(this.state.userInfo).length)
-        console.log(this.state)
-        console.log(this.state.userInfo)
+
         if(!Object.keys(this.state.userInfo).length){
             return false
         }
@@ -650,6 +652,11 @@ class Main extends Component{
     //获取userdetial组件this函数
     onUserdetail = (ref) => {
         this.userdetail = ref
+    }
+
+    //获取Card组件的this函数
+    onCard = (ref) => {
+        this.card = ref
     }
 
      //获取子组件userdetail方法
@@ -707,7 +714,7 @@ class Main extends Component{
 
             //接受用户下线提醒
             this.state.socket.on("user disconnect",(users) => {
-                alert("disconnect执行")
+                // alert("disconnect执行")
                 console.log(users)
                 //获取新用户信息，更新onlineList
                 // console.log("获取了当前在线用户")
@@ -741,12 +748,75 @@ class Main extends Component{
                     data,
                     userId:this.state.userInfo.userId
                 }
-                alert("执行了socket.on")
+                // alert("执行了socket.on")
                 //触发header子组件更新其noticeList函数
                 this.header.updateNoticeList(obj)
             })
 
-            //
+            //接收点赞消息
+            this.state.socket.on("like",(data) => {
+                let {
+                    fromUserInfo,
+                    toUserInfo,
+                    cardId,
+                } = data
+                //这里需要更新一下cardList中对应那张卡片的like长度
+                //根据data中传递的cardId选中需要改变like数量的cardItem
+                // let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+                // cardList.map((item,index) => {
+                //     //注意cardList是个双重数组
+                //     item.map((item2,index2) => {
+                //         if(item2._id == data.cardId){
+                //             item2.likes.push(data.fromUserInfo._id)
+                //         }
+                //     })
+                // })
+                // this.setState({cardList})
+                //调用一下card组件的likesCountUpdate函数
+                // console.log(this.onCard)
+                // this.card.likesCountUpdate()
+
+                //添加消息通知
+                let innerObj = {
+                    type:"like",
+                    info:"收到了一个赞",
+                    read:false,
+                    fromUserInfo,
+                    toUserInfo,
+                    cardId
+                }
+                let outerObj = {
+                    data:innerObj,
+                    userId:this.state.userInfo.userId
+                }
+                //触发header子组件更新其noticeList函数
+                this.header.updateNoticeList(outerObj)
+            })
+
+            //接收评论
+            this.state.socket.on("comment",(data) => {
+                let {
+                    fromUserInfo,
+                    toUserInfo,
+                    cardId,
+                } = data
+
+                //添加消息通知
+                let innerObj = {
+                    type:"comment",
+                    info:"有人给你评论!",
+                    read:false,
+                    fromUserInfo,
+                    toUserInfo,
+                    cardId
+                }
+                let outerObj = {
+                    data:innerObj,
+                    userId:this.state.userInfo.userId
+                }
+                //触发header子组件更新其noticeList函数
+                this.header.updateNoticeList(outerObj)
+            })
 
         })
     }
@@ -760,6 +830,7 @@ class Main extends Component{
         return (
             <div className="main clearfix">
                 <Header
+                    showModal={this.showModal}//用于打开carddetial组件
                     showModal2={this.showModal2}//用于打开userdetial组件
                     userInfo = {this.state.userInfo}//当前用户userInfo
                     onRef={this.onHeader}//用于main父组件调用header子组件
@@ -771,7 +842,6 @@ class Main extends Component{
                 </div> */}
 
                 <div className="main-container">
-
                     <div className="main-left-box">
                       <Userbox 
                         socketDisconnected={this.socketDisconnected}//用于断开socket连接
@@ -828,6 +898,9 @@ class Main extends Component{
                                                 item1.map((item2,index2) => {
                                                     return(
                                                         <Card  
+                                                            onCard = {this.onCard} //用于main组件得到card组件的this
+                                                            onlineList={this.state.onlineList}//当前在线用户列表
+                                                            socket = {this.state.socket}//用于emit一个点赞事件
                                                             getCardHeight={this.getCardHeight} 
                                                             userInfo={this.state.userInfo} 
                                                             key={item2._id} 
@@ -867,6 +940,8 @@ class Main extends Component{
                     {/* 卡片详细模块 */}
                     <div className="main-carddetail-box">
                         <CardDetail 
+                            onlineList={this.state.onlineList}//当前在线用户列表
+                            socket={this.state.socket}//初始化的socket对象
                             loginCheck={this.loginCheck}//登入检查函数
                             showModal={this.showModal}//用于打开动态卡片详细 （在carddetail组件中专递给card组件）
                             showModal2={this.showModal2}//用于打开用户详细 （在carddetail组件中专递给card组件）
