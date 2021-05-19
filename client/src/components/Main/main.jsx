@@ -3,10 +3,12 @@ import {
     message,
     Button,
     Modal,
+    Skeleton,
 } from 'antd'
 import {Map,Marker,} from 'react-amap'
 import { io } from "socket.io-client"
 import {
+    AlertTwoTone,
     DownCircleOutlined,
     } from '@ant-design/icons';
 import Userbox from '../Userbox/userbox'
@@ -56,109 +58,14 @@ class Main extends Component{
      socket:{},//初始化后的socket对象，需要传递给chatroom组件
      onlineList:[],//当前在线用户的userInfo，需要传递给userdetail组件
      privateMsgList:[],//私人聊天列表，需要传递给userdetail组件
+     cardListLoading:true,//卡片列表加载中标识
+     allImgLoadDone:false,//cardList中所有卡片是否加载完毕标识
+     preItemHeightSum:0,//最高值总和
     }
     componentDidMount(){
 
-        //首次调用getCardListAjax
-        getCardListAjax(1)
-            .then(val => {
-                
-
-                this.setState({cardList:[val.data.data]},() => {
-                    let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card img`)
-                    //注意的一个问题就是在card内的图片尚未加载完毕的时候，
-                    //card的clientHeight是不包括img的高度的，
-                    //所以我在一批card的img加载完毕后再获取其高度，累加计算目前的top值。
-                    let promiseArr = []
-                    // 这里将每张图片加载完毕生成Promise对象，最后使用Promise.all方法统一进行结果代码执行。
-                    Array.from(imgs).map((item,index) => {
-                        let promise = new Promise((resolve,reject) => {
-                            item.addEventListener("load",() => {
-                                resolve("done")
-                            })
-                            item.addEventListener("error",() => {
-                                reject("error")
-                            })
-                        })
-                        promiseArr.push(promise)
-                    })
-
-                    Promise.all(promiseArr)
-                        .then(() => {
-                            let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
-                            let btns = document.querySelectorAll(".more-card-btn")
-                            let {cardList} = this.state
-                            let {topNum1,topNum2,topNum3} = this.state
-                            Array.from(cards).map((item,index) => {
-                                    let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-                                    cardListItem[index].left = (index%3)*320 
-                                    switch(index%3){
-                                        case 0:{
-                                            cardListItem[index].top = topNum1 + 20
-                                            topNum1 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 1:{
-                                            cardListItem[index].top = topNum2 + 20
-                                            topNum2 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 2:{
-                                            cardListItem[index].top = topNum3 + 20
-                                            topNum3 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                    }
-                            })
-                                btns[0].style.top = topNum1 + 20 + "px"
-                                btns[1].style.top = topNum2 + 20 + "px"
-                                btns[2].style.top = topNum3 + 20 + "px"
-                               Array.from(btns).map((item,index) => {
-                                   item.style.left = (index%3)*321 + "px"
-                               })
-                            this.setState({cardList,topNum1,topNum2,topNum3})
-                        })
-                        .catch((err) => {
-                            // console.log(err)
-                            // message.warning("某图片加载失败，将影响瀑布流布局")
-                            let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
-                            let btns = document.querySelectorAll(".more-card-btn")
-                            let {cardList} = this.state
-                            let {topNum1,topNum2,topNum3} = this.state
-                            Array.from(cards).map((item,index) => {
-                                    let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-                                    cardListItem[index].left = (index%3)*320 
-                                    switch(index%3){
-                                        case 0:{
-                                            cardListItem[index].top = topNum1 + 20
-                                            topNum1 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 1:{
-                                            cardListItem[index].top = topNum2 + 20
-                                            topNum2 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 2:{
-                                            cardListItem[index].top = topNum3 + 20
-                                            topNum3 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                    }
-                            })
-                                btns[0].style.top = topNum1 + 20 + "px"
-                                btns[1].style.top = topNum2 + 20 + "px"
-                                btns[2].style.top = topNum3 + 20 + "px"
-                               Array.from(btns).map((item,index) => {
-                                   item.style.left = (index%3)*321 + "px"
-                               })
-                            this.setState({cardList,topNum1,topNum2,topNum3})
-                        })
-                })
-            })
-            .catch(err => {
-                message.error("获取卡片列表失败请重试")
-            })
+        //初次获取cardList
+        this.getcardList(1)
 
         //这里需要采集用户信息传递给后端
         console.log(navigator)
@@ -185,6 +92,155 @@ class Main extends Component{
             .catch(err => {
                 // console.log(err)
             })
+    }
+
+    //获取cartList函数
+    //在componentDidMount中调用
+    //在用户发布了card后调用,所以要传递给textarea组件
+    getcardList = (page) => {
+        //获取cardList之前将标识置为false
+        this.setState({allImgLoadDone:false})
+
+        //首次调用getCardListAjax
+        getCardListAjax(page)
+            .then(val => {
+                console.log(page)
+                if(page != 1){
+                    //不是第一页的情况
+                    //需要先更新一下state中的List
+                    let cardListItem = val.data.data
+                    let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+                    cardList.push(cardListItem) //给cardList添加一个数组项，也就是新的一页的数据
+                    this.setState({cardList,cardListIndex:page,cardListLoading:false},callback)
+                }else{
+                    // 第一页
+                    this.setState({cardList:[val.data.data],cardListLoading:false},callback)
+                }
+            })
+            .catch(err => {
+                message.error("获取卡片列表失败请重试")
+            })
+        let callback = () => {
+            let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card-loading img`)
+            //注意的一个问题就是在card内的图片尚未加载完毕的时候，
+            //card的clientHeight是不包括img的高度的，
+            //所以我在一批card的img加载完毕后再获取其高度，累加计算目前的top值。
+            let promiseArr = []
+            console.log(imgs)
+            // 这里将每张图片加载完毕生成Promise对象，最后使用Promise.all方法统一进行结果代码执行。
+            Array.from(imgs).map((item,index) => {
+                let promise = new Promise((resolve,reject) => {
+                    item.addEventListener("load",() => {
+                        resolve("done")
+                    })
+                    item.addEventListener("error",() => {
+                        // reject("error")
+                        resolve("done")
+                    })
+                })
+                promiseArr.push(promise)
+            })
+
+            Promise.all(promiseArr)
+                .then(() => {
+                    // alert("done!")
+                    this.setState({allImgLoadDone:true},() => {
+                    })//设置标识
+                    setHeight()
+                })
+                // .catch((err) => {
+                //     alert("err")
+                //     this.setState({allImgLoadDone:true})//设置标识
+                //     console.log(err)
+                //     setHeight()
+                // })
+
+            let setHeight = () => {
+                let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card-loading`)
+                    let btns = document.querySelectorAll(".more-card-btn")
+                    let {cardList} = this.state
+                    let {topNum1,topNum2,topNum3,preItemHeightSum} = this.state
+                    Array.from(cards).map((item,index) => {
+                            let preItemHeightArr = []
+                            let preHeightestHeight = 0
+                            let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
+                            cardListItem[index].left = (index%3)*320 
+                            if(index > 2){ //排除前三个
+                                
+                                cardListItem[index].preItemHeight = cards[index-3].clientHeight+40 //获取cardItem正上方元素的高
+                            }
+                            switch(index%3){
+                                case 0:{
+                                    if(index > 2){
+                                        //需要找到他上一排最高的item的值
+                                    preItemHeightArr = [cards[index-3].clientHeight,cards[index-2].clientHeight,cards[index-1].clientHeight]
+                                    preItemHeightArr.map((item) => {
+                                        if(item > preHeightestHeight){
+                                            preHeightestHeight=item 
+                                        }
+                                    })
+                                    cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
+                                    console.log(preItemHeightSum)
+                                    }
+
+                                    cardListItem[index].top = topNum1 //设置cardItem的top
+                                    topNum1 +=  cards[index].clientHeight 
+                                    break
+                                }
+                                case 1:{
+                                    if(index > 2){
+                                    //需要找到他上一排最高的item的值
+                                    preItemHeightArr = [cards[index-4].clientHeight,cards[index-3].clientHeight,cards[index-2].clientHeight]
+                                    preItemHeightArr.map((item) => {
+                                        if(item > preHeightestHeight){
+                                            preHeightestHeight=item 
+                                        }
+                                    })
+                                    cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
+                                    console.log(preItemHeightSum)
+                                }
+                                    cardListItem[index].top = topNum2  //设置cardItem的top
+                                    topNum2 +=  cards[index].clientHeight
+                                    break
+                                }
+                                case 2:{
+                                    if(index > 2){
+                                    //需要找到他上一排最高的item的值
+                                    preItemHeightArr = [cards[index-5].clientHeight,cards[index-4].clientHeight,cards[index-3].clientHeight]
+                                    preItemHeightArr.map((item) => {
+                                        if(item > preHeightestHeight){
+                                            preHeightestHeight=item 
+                                        }
+                                    })
+                                    cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
+                                    preItemHeightSum = preItemHeightSum + preHeightestHeight
+
+                                    console.log(preItemHeightSum)
+                                }
+                                    cardListItem[index].top = topNum3 //设置cardItem的top
+                                    topNum3 +=  cards[index].clientHeight
+                                    break
+                                }
+                            }
+
+
+                    })
+                        btns[0].style.top = topNum1 + 20 + "px"
+                        btns[1].style.top = topNum2 + 20 + "px"
+                        btns[2].style.top = topNum3 + 20 + "px"
+                       Array.from(btns).map((item,index) => {
+                           item.style.left = (index%3)*321 + "px"
+                       })
+                    console.log(cardList)
+                    this.setState({cardList,topNum1,topNum2,topNum3,preItemHeightSum})
+            }
+        }
+    }
+
+    //main组件的topNumClear清0函数
+    //需要在textarea中调用
+    topNumClear = () => {
+        this.setState({topNum1:0,topNum2:0,topNum3:0})
     }
 
     // amapEvents = {
@@ -355,109 +411,110 @@ class Main extends Component{
     loadMore = () => {
         let objectCardListIndex = this.state.cardListIndex + 1  //目标cardlist页数
         //调用获取cardList的函数
-        getCardListAjax(objectCardListIndex)
-            .then(val => {
-                let cardListItem = val.data.data
-                let cardList = this.state.cardList
-                cardList.push(cardListItem) //给cardList添加一个数组项，也就是新的一页的数据
-                this.setState({cardList,cardListIndex:objectCardListIndex},() => {
-                    let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card img`)
-                    //注意的一个问题就是在card内的图片尚未加载完毕的时候，
-                    //card的clientHeight是不包括img的高度的，
-                    //所以我在一批card的img加载完毕后再获取其高度，累加计算目前的top值。
-                    let promiseArr = []
-                    // 这里将每张图片加载完毕生成Promise对象，最后使用Promise.all方法统一进行结果代码执行。
-                    Array.from(imgs).map((item,index) => {
-                        let promise = new Promise((resolve,reject) => {
-                            item.addEventListener("load",() => {
-                                resolve("done")
-                            })
-                            item.addEventListener("error",() => {
-                                reject("error")
-                            })
-                        })
-                        promiseArr.push(promise)
-                    })
+        this.getcardList(objectCardListIndex)
+        // getCardListAjax(objectCardListIndex)
+        //     .then(val => {
+        //         let cardListItem = val.data.data
+        //         let cardList = this.state.cardList
+        //         cardList.push(cardListItem) //给cardList添加一个数组项，也就是新的一页的数据
+        //         this.setState({cardList,cardListIndex:objectCardListIndex},() => {
+        //             let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card img`)
+        //             //注意的一个问题就是在card内的图片尚未加载完毕的时候，
+        //             //card的clientHeight是不包括img的高度的，
+        //             //所以我在一批card的img加载完毕后再获取其高度，累加计算目前的top值。
+        //             let promiseArr = []
+        //             // 这里将每张图片加载完毕生成Promise对象，最后使用Promise.all方法统一进行结果代码执行。
+        //             Array.from(imgs).map((item,index) => {
+        //                 let promise = new Promise((resolve,reject) => {
+        //                     item.addEventListener("load",() => {
+        //                         resolve("done")
+        //                     })
+        //                     item.addEventListener("error",() => {
+        //                         reject("error")
+        //                     })
+        //                 })
+        //                 promiseArr.push(promise)
+        //             })
 
-                    Promise.all(promiseArr)
-                        .then(() => {
-                            let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
-                            console.log(cards)
-                            let btns = document.querySelectorAll(".more-card-btn")
-                            let {cardList} = this.state
-                            let {topNum1,topNum2,topNum3} = this.state
-                            Array.from(cards).map((item,index) => {
+        //             Promise.all(promiseArr)
+        //                 .then(() => {
+        //                     let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
+        //                     console.log(cards)
+        //                     let btns = document.querySelectorAll(".more-card-btn")
+        //                     let {cardList} = this.state
+        //                     let {topNum1,topNum2,topNum3} = this.state
+        //                     Array.from(cards).map((item,index) => {
 
-                                    let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-                                    console.log(cardListItem)
-                                    cardListItem[index].left = (index%3)*320 
-                                    switch(index%3){
-                                        case 0:{
-                                            cardListItem[index].top = topNum1 + 20
-                                            topNum1 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 1:{
-                                            cardListItem[index].top = topNum2 + 20
-                                            topNum2 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 2:{
-                                            cardListItem[index].top = topNum3 + 20
-                                            topNum3 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                    }
-                            })
-                                btns[0].style.top = topNum1 + 20 + "px"
-                                btns[1].style.top = topNum2 + 20 + "px"
-                                btns[2].style.top = topNum3 + 20 + "px"
-                               Array.from(btns).map((item,index) => {
-                                   item.style.left = (index%3)*321 + "px"
-                               })
-                               this.setState({cardList,topNum1,topNum2,topNum3})
-                        })
-                        .catch((err) => {
-                            // console.log(err)
-                            // message.warning("某图片加载失败，将影响瀑布流布局")
-                            let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
-                            let btns = document.querySelectorAll(".more-card-btn")
-                            let {cardList} = this.state
-                            let {topNum1,topNum2,topNum3} = this.state
-                            Array.from(cards).map((item,index) => {
-                                    let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-                                    cardListItem[index].left = (index%3)*320 
-                                    switch(index%3){
-                                        case 0:{
-                                            cardListItem[index].top = topNum1 + 20
-                                            topNum1 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 1:{
-                                            cardListItem[index].top = topNum2 + 20
-                                            topNum2 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                        case 2:{
-                                            cardListItem[index].top = topNum3 + 20
-                                            topNum3 +=  cards[index].clientHeight +20
-                                            break
-                                        }
-                                    }
-                            })
-                                btns[0].style.top = topNum1 + 20 + "px"
-                                btns[1].style.top = topNum2 + 20 + "px"
-                                btns[2].style.top = topNum3 + 20 + "px"
-                               Array.from(btns).map((item,index) => {
-                                   item.style.left = (index%3)*321 + "px"
-                               })
-                            this.setState({cardList,topNum1,topNum2,topNum3})
-                        })
-                })
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        //                             let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
+        //                             console.log(cardListItem)
+        //                             cardListItem[index].left = (index%3)*320 
+        //                             switch(index%3){
+        //                                 case 0:{
+        //                                     cardListItem[index].top = topNum1 + 20
+        //                                     topNum1 +=  cards[index].clientHeight +20
+        //                                     break
+        //                                 }
+        //                                 case 1:{
+        //                                     cardListItem[index].top = topNum2 + 20
+        //                                     topNum2 +=  cards[index].clientHeight +20
+        //                                     break
+        //                                 }
+        //                                 case 2:{
+        //                                     cardListItem[index].top = topNum3 + 20
+        //                                     topNum3 +=  cards[index].clientHeight +20
+        //                                     break
+        //                                 }
+        //                             }
+        //                     })
+        //                         btns[0].style.top = topNum1 + 20 + "px"
+        //                         btns[1].style.top = topNum2 + 20 + "px"
+        //                         btns[2].style.top = topNum3 + 20 + "px"
+        //                        Array.from(btns).map((item,index) => {
+        //                            item.style.left = (index%3)*321 + "px"
+        //                        })
+        //                        this.setState({cardList,topNum1,topNum2,topNum3})
+        //                 })
+        //                 .catch((err) => {
+        //                     // console.log(err)
+        //                     // message.warning("某图片加载失败，将影响瀑布流布局")
+        //                     let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
+        //                     let btns = document.querySelectorAll(".more-card-btn")
+        //                     let {cardList} = this.state
+        //                     let {topNum1,topNum2,topNum3} = this.state
+        //                     Array.from(cards).map((item,index) => {
+        //                             let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
+        //                             cardListItem[index].left = (index%3)*320 
+        //                             switch(index%3){
+        //                                 case 0:{
+        //                                     cardListItem[index].top = topNum1 + 20
+        //                                     topNum1 +=  cards[index].clientHeight +20
+        //                                     break
+        //                                 }
+        //                                 case 1:{
+        //                                     cardListItem[index].top = topNum2 + 20
+        //                                     topNum2 +=  cards[index].clientHeight +20
+        //                                     break
+        //                                 }
+        //                                 case 2:{
+        //                                     cardListItem[index].top = topNum3 + 20
+        //                                     topNum3 +=  cards[index].clientHeight +20
+        //                                     break
+        //                                 }
+        //                             }
+        //                     })
+        //                         btns[0].style.top = topNum1 + 20 + "px"
+        //                         btns[1].style.top = topNum2 + 20 + "px"
+        //                         btns[2].style.top = topNum3 + 20 + "px"
+        //                        Array.from(btns).map((item,index) => {
+        //                            item.style.left = (index%3)*321 + "px"
+        //                        })
+        //                     this.setState({cardList,topNum1,topNum2,topNum3})
+        //                 })
+        //         })
+        //     })
+        //     .catch(err => {
+        //         console.log(err)
+        //     })
     }
 
 
@@ -827,6 +884,7 @@ class Main extends Component{
 
 
     render() {
+        let arr =[11,22,33,44,55,66,77,88]
         return (
             <div className="main clearfix">
                 <Header
@@ -861,7 +919,9 @@ class Main extends Component{
 
                    <div className="main-textarea-box">
                    <p className="main-card-box-textarea-title">Textarea:</p>
-                        <Textarea
+                        <Textarea   
+                            topNumClear={this.topNumClear}//用于topNum清零
+                            getcardList={this.getcardList} //获取cardList函数
                             mainGetCard={this.mainGetCard}
                             loginCheck={this.loginCheck}//登入检查函数
                         />
@@ -889,15 +949,19 @@ class Main extends Component{
                                 )
                             })
                         } */}
-                        <div className="main-card-inner-box clearfix" >
-                            {
+                        {/* <div className={this.state.allImgLoadDone ? "main-card-inner-box clearfix" : "mian-card-loading-box clearfix"} > */}
+                            <div className="main-card-inner-box clearfix">  
+                          {
                                 this.state.cardList.map((item1,index1) => {
                                     return(
-                                        <div key={index1} className={`cardListItem${index1+1}`}>
+                                        // <div style={this.state.cardListLoading ? {display:"none"} : {}} key={index1} className={this.state.allImgLoadDone ? `cardListItem${index1+1}` : `cardListItem${index1+1} cardListItemLoading`}>
+                                        <div style={this.state.cardListLoading ? {display:"none"} : {}} key={index1} className={`cardListItem${index1+1} cardListItemLoading`}>
                                             {
                                                 item1.map((item2,index2) => {
                                                     return(
                                                         <Card  
+                                                            preItemHeightSum={this.state.preItemHeightSum}//
+                                                            allImgLoadDone = {this.state.allImgLoadDone }//图片是否加载完毕的标识
                                                             onCard = {this.onCard} //用于main组件得到card组件的this
                                                             onlineList={this.state.onlineList}//当前在线用户列表
                                                             socket = {this.state.socket}//用于emit一个点赞事件
@@ -916,6 +980,13 @@ class Main extends Component{
                                         </div>
                                     )
                                 })
+                            }
+                            {
+                                this.state.cardListLoading
+                                ?
+                                <Skeleton active/>
+                                :
+                                null
                             }
                         {/* 加载更多的按钮 */}
                         <Button type="primary" className="more-card-btn" onClick={this.loadMore}>

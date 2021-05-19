@@ -1,6 +1,6 @@
 import ajax from './ajax'
 
-const baseUrl = "http://localhost:3000"
+const baseUrl = "http://localhost:3030"
 const loginRoute = baseUrl+"/user/login"
 const registerRoute = baseUrl+"/user/register"
 const usernameCheckRoute = baseUrl+"/user/username_check"
@@ -30,6 +30,7 @@ const getMessageListRouter = baseUrl + "/message/msglist"
 const noticeSubmitRouter = baseUrl + "/notice/submit"
 const getNoticeListRouter = baseUrl + "/notice/noticelist"
 const updateNoticeListReadRouter = baseUrl + "/notice/updateRead"
+const clearNoticeRouter = baseUrl + "/notice/clear"
 
 //登入路由
 export const loginAjax = (data) => {
@@ -174,6 +175,11 @@ export const getNoticeListAjax = (data) =>{
 //更新数据库某条notice的noticeList的read标志位
 export const updateNoticeListReadAjax = (data) => {
     return ajax(updateNoticeListReadRouter,"POST",data)
+}
+
+//一键清除所有notice
+export const clearNoticeListAjax = (data) => {
+    return ajax(clearNoticeRouter,"POST",data)
 }
 
 //test 

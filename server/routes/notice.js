@@ -101,7 +101,6 @@ notice.post("/updateRead",async (ctx,next) => {
         //更新noticeList
         await NoticeModel.updateOne({userId},{$set:{noticeList}})
           .then(doc => {
-            console.log(doc)
             ctx.body = {code:200,data:"success"}
           })
           .catch(err => {
@@ -143,6 +142,21 @@ notice.post("/updateRead",async (ctx,next) => {
       })
   }
 
+})
+
+//一键清除某用户所有notice
+notice.post("/clear",async (ctx,next) => {
+  let {userId} = ctx.request.body //获取post数据
+
+  //操作数据库
+  await NoticeModel.updateOne({userId},{$set:{noticeList:[]}})
+    .then(doc => {
+      ctx.body = {code:200,data:"success"}
+    })
+    .catch(err => {
+      console.log(err)
+      ctx.body = {code:100,msg:"err"}
+    })
 })
 
 

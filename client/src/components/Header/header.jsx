@@ -19,7 +19,7 @@ import {
     getNoticeListAjax,//根据userId获取其所属noticeList
     updateNoticeListReadAjax,//更新noticeList的read标志位
     getCardDataById,//根据cardId获取cardData
-    
+    clearNoticeListAjax,//根据userID清除对应noticeList
 } from '../../api/index'
 
 import './header.css'
@@ -153,6 +153,17 @@ class Header extends Component{
         return result
     }
 
+    //一键清除用户所有noticeList函数
+    clearNoticeList = () => {
+        clearNoticeListAjax({userId:this.props.userInfo.userId})
+            .then(val => {
+                this.setState({noticeList:[]})
+            })
+            .catch(err => {
+                message.warning("清除通知列表错误")
+            })
+    }
+
     render(){
         let content = (
             <div>
@@ -172,6 +183,11 @@ class Header extends Component{
                         }
                     })
                 }
+                {
+                    <p onClick={this.clearNoticeList} className="notice-list" style={Object.keys(this.state.noticeList).length ? {display:"block"} : {display:"none"}}>
+                        一键清除
+                    </p>
+                }
             </div>           
         )
         return (
@@ -185,7 +201,7 @@ class Header extends Component{
                         <ul className="main-header-item">
                                 <li >
                                     <Popover overlayClassName="header-popover" placement="bottom" title={<p>消息通知</p>} content={content} trigger="hover">
-                                        <MailTwoTone  className={this.rotate() ? " notice-icon-rotate   notice-icon" : "notice-icon"} />
+                                        <MailTwoTone className={this.rotate() ? " notice-icon-rotate   notice-icon" : "notice-icon"} />
                                     </Popover>
                                 </li>
                             <li>item2</li>

@@ -69,6 +69,11 @@
     left: 50%;
     transform: translateX(-50%);
 }
+/* 图片仍在加载时的样式 */
+.mian-card-loading-box{
+    display: flex;
+    background-color: green;
+}
 .main-card-box-textarea-title,
 .main-card-box-title{
     width: 100%;
@@ -80,6 +85,11 @@
 }
 .main-card-box-textarea-title{
     margin-bottom: 10px;
+}
+
+.cardListItemLoading{
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .loading{

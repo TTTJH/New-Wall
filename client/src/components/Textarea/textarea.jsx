@@ -99,6 +99,10 @@ class Textarea extends Component{
           this.setState({cardId:""})
           message.success("发布成功！")
           this.setState({content:"",fileList:[],cardTypeIndex:0,imgArr:[]})
+          //首先对main组件中的topNum清零
+          this.props.topNumClear()
+          //发布成功后通过调用main组件传递的cardList更新函数来更新main组件中的cardList
+          this.props.getcardList(1)
         })
         .catch(err => {
           this.setState({cardId:""})

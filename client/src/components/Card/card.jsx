@@ -5,6 +5,7 @@ import {
         Button,
         Modal,
         message,
+        Skeleton,
 } from 'antd';
 import { EditOutlined,
          MessageOutlined, 
@@ -187,7 +188,11 @@ class Mycard extends Component{
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
 
-
+        //登入检查
+        if(!(Object.keys(this.props.userInfo).length)){
+          message.warning("同学，尚未登入哦！")
+          return false
+        }
 
         //点赞反转
         this.setState({likeChoose:!this.state.likeChoose},async () => {
@@ -349,110 +354,110 @@ class Mycard extends Component{
         this.props.showModal(this.props.index1,this.props.index2)//表明该情况是main中获取carddetail
     }
     render() {
-      let {content,date,img,userId,type,top,left} = this.props.cardData
-
-        return (
-          //   <Card
-            
-          //   className="card"
-          //   style={{ borderRadius:"10px",margin:"10px" }}
-          //   cover={
-          //     <img
-          //       alt="example"
-          //       // src={this.props.cardImgsArray ? this.props.cardImgsArray[0] : "http://www.tttjh.com.cn/imgs/aaa.png"}
-          //       src="http://www.tttjh.com.cn/imgs/aaa.png"
-          //     />
-          //   }
-          //   actions={[
-          //   <span><LikeOutlined  key="likes"/>&nbsp;&nbsp;</span>,
-          //   <span><MessageOutlined key="comments" />&nbsp;&nbsp;</span>,
-          //   ]}
-          // >
-          //   <Meta
-          //     avatar={<Avatar src="http://www.tttjh.com.cn/imgs/girl.gif" />}
-          //     title="标题"
-          //     description="描述"
-          //   />
-          // </Card>
-
-        <React.Fragment>
-        {/* <div className='cards-wrapper'> */}
-          {/* 图片放大显示的弹窗 */}
-          <Modal title="" visible={this.state.ModalVisible} onCancel={this.handleCancel} footer={null} closable={false} >
-            <img className="largeImg" src={this.state.largeImgUrl} alt=""/>
-          </Modal>
-          {/* <div className='cards-container'> */}
-                  <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : "post-card"} style={{"left":left,"top":top}}>
-                  <div className='card-tag'>
-                    {this.state.cardType[type]}
-                  </div>
-                  <div className="card-content-img-Box">
-                  <div className='post-content'>
-                   {content}
-                  </div>
-                  {/* 卡片的图片渲染 */}
-                  {
-                    img.length != 0 && userId 
-                    ?
-                    <div className='post-img-Box'>
+          
+          let {content,date,img,userId,type,top,left,preItemHeight,preHeightestHeight} = this.props.cardData
+          return (
+            //   <Card
+            //   className="card"
+            //   style={{ borderRadius:"10px",margin:"10px" }}
+            //   cover={
+            //     <img
+            //       alt="example"
+            //       // src={this.props.cardImgsArray ? this.props.cardImgsArray[0] : "http://www.tttjh.com.cn/imgs/aaa.png"}
+            //       src="http://www.tttjh.com.cn/imgs/aaa.png"
+            //     />
+            //   }
+            //   actions={[
+            //   <span><LikeOutlined  key="likes"/>&nbsp;&nbsp;</span>,
+            //   <span><MessageOutlined key="comments" />&nbsp;&nbsp;</span>,
+            //   ]}
+            // >
+            //   <Meta
+            //     avatar={<Avatar src="http://www.tttjh.com.cn/imgs/girl.gif" />}
+            //     title="标题"
+            //     description="描述"
+            //   />
+            // </Card>
+  
+          <React.Fragment>
+          {/* <div className='cards-wrapper'> */}
+            {/* 图片放大显示的弹窗 */}
+            <Modal title="" visible={this.state.ModalVisible} onCancel={this.handleCancel} footer={null} closable={false} >
+              <img className="largeImg" src={this.state.largeImgUrl} alt=""/>
+            </Modal>
+            {/* <div className='cards-container'> */}
+            {/* <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card" : "post-card-loading"} style={{"left":left,"top":top}}> */}
+            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card-loading" : "post-card-loading"} style={preItemHeight ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
+                    <div className='card-tag'>
+                      {this.state.cardType[type]}
+                    </div>
+                    <div className="card-content-img-Box">
+                    <div className='post-content'>
+                     {content}
+                    </div>
+                    {/* 卡片的图片渲染 */}
                     {
-                      img.map((item,index) => {
-                        return(
-                          <div key={index}  className='post-img-box'>
-                          <img  src={`http://localhost:3030/${item}`} alt="" onClick={this.showModal}/>
-                          </div>
-                        )
-                      })
+                      img.length != 0 && userId 
+                      ?
+                      <div className='post-img-Box'>
+                      {
+                        img.map((item,index) => {
+                          return(
+                            <div key={index}  className='post-img-box'>
+                            <img  src={`http://localhost:3030/${item}`} alt="" onClick={this.showModal}/>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                    :
+                    //当card没有图片的时候触发
+                    this.cardOnload()
                     }
-                  </div>
-                  :
-                  //当card没有图片的时候触发
-                  this.cardOnload()
-                  }
-                  </div>
-
-                  <div className='post-avatar-box' >
-                          <div  className='post-avatar'>
-                            {/* //需要将被点击的user的userInfo传递 */}
-                          <img onClick={(e) => this.props.showModal2(this.state.userInfo,e)} src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
-                          </div>
-                          <span onClick={(e) => this.props.showModal2(this.state.userInfo,e)} >{this.state.userInfo.nickname}</span>
-                          <p className="card-date">{date}</p>
-                  </div>
-                  <div className='post-handles'>
-                      <div className="post-handle" onClick={this.like} style={this.state.likeChoose ? {color:"#fddb3a"} : {}}><LikeOutlined />&nbsp;<span>{this.state.likesCount}</span></div>
-                      <div className="post-handle" ><MessageOutlined/>&nbsp;<span>{this.state.commentsCount}</span></div>
-                      <div className="post-handle" ><StarOutlined />&nbsp;<span>{this.state.starsCount}</span></div>
-                  </div>
-              </div>
-              {/* //     <div onClick={() => {this.toUser(item._id)}} key={index} className='cards-box'>
-              //       <div className='cards-content'>
-              //         <div className='cards-content-avatar'>
-              //           <img src={item.avatarUrl} alt=""/>
-              //         </div>
-              //          <p className='cards-nickName'>{item.nickName}&nbsp;{item.sex === 'male' ?  <MyIcon type="icon-male" /> :  <MyIcon type="icon-female" />}</p> 
-              //       </div>
-              //       <div className='personal-info'>
-              //       <div className="personal-info-box" >
-              //         <p className='personal-info-num'>{item.cards ? item.cards.length : 0}</p>
-              //         <p className='personal-info-txt'>关注</p>
-              //       </div>
-              //       <div className='personal-line'></div>
-              //       <div className="personal-info-box ">
-              //         <p className='personal-info-num'>5</p>
-              //         <p className='personal-info-txt'>粉丝</p>
-              //       </div>
-              //       <div className='personal-line'></div>
-              //       <div className="personal-info-box">
-              //         <p className='personal-info-num'>5</p>
-              //         <p className='personal-info-txt'>卡片</p>
-              //       </div>
-              //     </div>
-              // </div>       */}
+                    </div>
+  
+                    <div className='post-avatar-box' >
+                            <div  className='post-avatar'>
+                              {/* //需要将被点击的user的userInfo传递 */}
+                            <img onClick={(e) => this.props.showModal2(this.state.userInfo,e)} src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
+                            </div>
+                            <span onClick={(e) => this.props.showModal2(this.state.userInfo,e)} >{this.state.userInfo.nickname}</span>
+                            <p className="card-date">{date}</p>
+                    </div>
+                    <div className='post-handles'>
+                        <div className="post-handle" onClick={this.like} style={this.state.likeChoose ? {color:"#fddb3a"} : {}}><LikeOutlined className={this.state.likeChoose ? "like-icon-active" : ""} />&nbsp;<span>{this.state.likesCount}</span></div>
+                        <div className="post-handle" ><MessageOutlined/>&nbsp;<span>{this.state.commentsCount}</span></div>
+                        <div className="post-handle" ><StarOutlined />&nbsp;<span>{this.state.starsCount}</span></div>
+                    </div>
+                </div>
+                {/* //     <div onClick={() => {this.toUser(item._id)}} key={index} className='cards-box'>
+                //       <div className='cards-content'>
+                //         <div className='cards-content-avatar'>
+                //           <img src={item.avatarUrl} alt=""/>
+                //         </div>
+                //          <p className='cards-nickName'>{item.nickName}&nbsp;{item.sex === 'male' ?  <MyIcon type="icon-male" /> :  <MyIcon type="icon-female" />}</p> 
+                //       </div>
+                //       <div className='personal-info'>
+                //       <div className="personal-info-box" >
+                //         <p className='personal-info-num'>{item.cards ? item.cards.length : 0}</p>
+                //         <p className='personal-info-txt'>关注</p>
+                //       </div>
+                //       <div className='personal-line'></div>
+                //       <div className="personal-info-box ">
+                //         <p className='personal-info-num'>5</p>
+                //         <p className='personal-info-txt'>粉丝</p>
+                //       </div>
+                //       <div className='personal-line'></div>
+                //       <div className="personal-info-box">
+                //         <p className='personal-info-num'>5</p>
+                //         <p className='personal-info-txt'>卡片</p>
+                //       </div>
+                //     </div>
+                // </div>       */}
+            {/* </div> */}
           {/* </div> */}
-        {/* </div> */}
-        </React.Fragment>
-        )
+          </React.Fragment>
+          )
     }
 }
 
