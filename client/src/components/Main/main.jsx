@@ -62,14 +62,12 @@ class Main extends Component{
      allImgLoadDone:false,//cardList中所有卡片是否加载完毕标识
      preItemHeightSum:0,//最高值总和
      scrollY:0,//用于保存滚动距离，判断是向上滚动还是向下滚动
-     loadingMore:false,//加载更多标识位
+     loadingMore:true,//加载更多标识位
      rootHeight:0,//用于存储网页高度
     }
     componentDidMount(){
-
         //初次获取cardList
         this.getcardList(1)
-
         //这里需要采集用户信息传递给后端
         console.log(navigator)
         let os = ""
@@ -123,7 +121,7 @@ class Main extends Component{
     getcardList = (page) => {
         //获取cardList之前将标识置为false
         this.setState({allImgLoadDone:false})
-
+        let windowWidth = window.innerWidth
         //首次调用getCardListAjax
         getCardListAjax(page)
             .then(val => {
@@ -134,10 +132,18 @@ class Main extends Component{
                     let cardListItem = val.data.data
                     let cardList = JSON.parse(JSON.stringify(this.state.cardList))
                     cardList.push(cardListItem) //给cardList添加一个数组项，也就是新的一页的数据
+                    windowWidth > 1100
+                    ?
                     this.setState({cardList,cardListIndex:page,cardListLoading:false},callback)
+                    :
+                    this.setState({cardList,cardListIndex:page,cardListLoading:false})
                 }else{
                     // 第一页
+                    windowWidth > 1100
+                    ?
                     this.setState({cardList:[val.data.data],cardListLoading:false},callback)
+                    :
+                    this.setState({cardList:[val.data.data],cardListLoading:false})
                 }
             })
             .catch(err => {
@@ -936,6 +942,10 @@ class Main extends Component{
     mainUpdateNoticeList = (data) => {
            // //触发header子组件更新其noticeList函数
             this.header.updateNoticeList(data)
+    }
+
+    test = () => {
+        message.warning("!!!!")
     }
 
 

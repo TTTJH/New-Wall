@@ -97,3 +97,45 @@
 .carddetail-comment-btn2{
     margin-right: 5px;
 }
+
+@media screen and (max-width:1100px){
+    .main-carddetail-box{
+        padding: 0 10px !important;
+    }
+
+    .carddetail{
+        display: block;
+    }
+
+    .carddetail-right-box{
+        margin: 0;
+        min-height: 160px;
+    }
+
+    .carddetail-comment-Box{
+        /* max-height: unset; */
+    }
+
+    /* .carddetail-comment-box{
+        align-items: flex-start;
+    }
+
+    .carddetail-comment-box-left-box{
+        display: flex;
+        align-items: center;
+    } */
+    .carddetail-comment-box-right-box{
+        display: block;
+    }
+    .carddetail-comment-box-right-box button{
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+    .carddetail-comment-content{
+        max-width: 150px;
+        display: inline-block;
+    }
+    .carddetail-comment-box-special{
+        display: block;
+    }
+}

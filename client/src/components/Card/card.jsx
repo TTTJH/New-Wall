@@ -1,4 +1,5 @@
 import React,{Component} from 'react'
+import {withRouter,} from 'react-router-dom'
 import { 
         Card,
         Avatar,
@@ -24,6 +25,7 @@ import { EditOutlined,
          DislikeOutlined,
          StarOutlined,
          FileOutlined,
+         notification,
          } from '@ant-design/icons';
 import {
   getUserInfoByIdAjax,
@@ -31,7 +33,8 @@ import {
   cardCheckLikeAjax,
   cardDelLikeAjax,
   getcardLikeCountAjax,
-  noticeSubmitAjax,//notice提交ajax
+  noticeSubmitAjax,
+  test,//notice提交ajax
 } from '../../api'
 import "./card.css"
 
@@ -190,7 +193,8 @@ class Mycard extends Component{
 
         //登入检查
         if(!(Object.keys(this.props.userInfo).length)){
-          message.warning("同学，尚未登入哦！")
+          message.warning({content:"同学，尚未登入哦！"})
+          this.props.history.push("/login")
           return false
         }
 
@@ -461,4 +465,4 @@ class Mycard extends Component{
     }
 }
 
-export default Mycard
+export default  withRouter(Mycard)

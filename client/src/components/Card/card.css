@@ -21,7 +21,7 @@
 /* ------------------------------------------------------ */
 .post-card{
     position: absolute;
-    width: 300px;
+    /* width: 300px; */
     vertical-align: top;
     /* min-height: 160px; */
     border-radius: 20px;

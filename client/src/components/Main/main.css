@@ -140,3 +140,17 @@
 .userDetailModal .ant-modal-content .ant-modal-header{
     border-radius: 10px !important;
 }
+
+@media screen and (max-width:1100px){
+    .main-card-inner-box{
+        position: unset;
+        width: unset;
+        transform: translate(0);
+    }
+    .cardListItemLoading{
+        display: unset;
+    }
+    .post-card-loading{
+        margin: 20px auto;
+    }
+}

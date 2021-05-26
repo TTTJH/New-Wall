@@ -1,4 +1,5 @@
 import React,{Component} from 'react'
+import {withRouter,} from 'react-router-dom'
 import {
     Tooltip,
     Button,
@@ -56,11 +57,12 @@ class CardDetail extends Component{
     
     //评论提交函数-----来自main组件
     commentSubmit = () => {
-        //登入检查
-        if(!this.props.loginCheck()){
-            message.warning("同学，尚未登入哦！")
-            return false
-        }
+    //登入检查
+    if(!(Object.keys(this.props.userInfo).length)){
+        message.warning({content:"同学，尚未登入哦！"})
+        this.props.history.push("/login")
+        return false
+    }
 
         //socketEvent事件函数
         this.socketEventCarddetail()
@@ -71,11 +73,12 @@ class CardDetail extends Component{
 
     //评论点赞函数------来自main组件
     commentLike = (commentIndex) => {
-        //登入检查
-        if(!this.props.loginCheck()){
-            message.warning("同学，尚未登入哦！")
-            return false
-        }
+    //登入检查
+    if(!(Object.keys(this.props.userInfo).length)){
+        message.warning({content:"同学，尚未登入哦！"})
+        this.props.history.push("/login")
+        return false
+    }
         this.props.cardCommentLike(this.props.cardData._id,commentIndex)
     }
 
@@ -86,11 +89,12 @@ class CardDetail extends Component{
 
     //评论回复函数------来自main组件
     commentReply = async () => {
-        //登入检查
-      if(!this.props.loginCheck()){
-        message.warning("同学，尚未登入哦！")
+    //登入检查
+    if(!(Object.keys(this.props.userInfo).length)){
+        message.warning({content:"同学，尚未登入哦！"})
+        this.props.history.push("/login")
         return false
-      }
+    }
 
         //socketEvent事件函数
         this.socketEventCarddetail()
@@ -177,11 +181,12 @@ class CardDetail extends Component{
 
     //回复对象选择函数
     toUserIdChange = (index) => {
-        //登入检查
-      if(!this.props.loginCheck()){
-        message.warning("同学，尚未登入哦！")
-        return false
-      }
+//登入检查
+if(!(Object.keys(this.props.userInfo).length)){
+    message.warning({content:"同学，尚未登入哦！"})
+    this.props.history.push("/login")
+    return false
+  }
       
         let toUserId = this.props.cardData.comments[index].userId
         let toUserNickname = this.props.cardData.comments[index].userInfo.nickname
@@ -251,7 +256,7 @@ class CardDetail extends Component{
                                         )
                                     }else{//该条评论为评论之间的回复
                                         return(
-                                                <div key={index} className="carddetail-comment-box">
+                                                <div key={index} className="carddetail-comment-box carddetail-comment-box-special">
                                                     <div className="carddetail-comment-box-left-box">
                                                     <Tooltip title={item.userInfo.nickname} color="gold">
                                                          <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
@@ -267,6 +272,7 @@ class CardDetail extends Component{
                                                         <p className="carddetail-comment-content">
                                                             {item.content}
                                                         </p>
+                                                        <div className="carddetial-comment-btn-box">
                                                         {
                                                             //点赞检查
                                                             item.likes.includes(this.props.userInfo.userId)
@@ -276,6 +282,8 @@ class CardDetail extends Component{
                                                             <Button onClick={() => this.commentLike(index)} className="carddetail-comment-btn2"  size="small" shape="round" icon={< LikeOutlined/>} > {item.likes.length}</Button>
                                                         }
                                                         <Button onClick={() => this.toUserIdChange(index)} className="carddetail-comment-btn1" size="small" shape="circle" icon={< MessageOutlined/>} />
+                                                        </div>
+                                                       
                                                     </div>
                                                 </div>
 
@@ -332,4 +340,4 @@ class CardDetail extends Component{
     }
 }
 
-export default CardDetail
+export default  withRouter(CardDetail)

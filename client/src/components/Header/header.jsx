@@ -204,8 +204,8 @@ class Header extends Component{
                                         <MailTwoTone className={this.rotate() ? " notice-icon-rotate   notice-icon" : "notice-icon"} />
                                     </Popover>
                                 </li>
-                            <li>item2</li>
-                            <li>item3</li> 
+                            {/* <li>item2</li>
+                            <li>item3</li>  */}
                         </ul>
                 </div>
             </div>
