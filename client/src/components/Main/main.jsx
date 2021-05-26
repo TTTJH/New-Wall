@@ -61,6 +61,9 @@ class Main extends Component{
      cardListLoading:true,//卡片列表加载中标识
      allImgLoadDone:false,//cardList中所有卡片是否加载完毕标识
      preItemHeightSum:0,//最高值总和
+     scrollY:0,//用于保存滚动距离，判断是向上滚动还是向下滚动
+     loadingMore:false,//加载更多标识位
+     rootHeight:0,//用于存储网页高度
     }
     componentDidMount(){
 
@@ -92,6 +95,26 @@ class Main extends Component{
             .catch(err => {
                 // console.log(err)
             })
+
+        //滚动事件
+        window.onscroll = () => {        
+            //变量scrollTop是滚动条滚动时，距离顶部的距离       
+             var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;     
+             //变量windowHeight是可视区的高度      
+             var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;  
+             //变量scrollHeight是滚动条的总高度
+             var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;  
+             //滚动条到底部的条件
+                if (scrollHeight - (scrollTop + windowHeight) < 400) {  
+                //写后台加载数据的函数         
+                    if(!this.state.loadingMore){
+                        this.setState({loadingMore:true},() => {
+                            this.loadMore()
+                        })
+                    }
+                    }    
+                }
+        
     }
 
     //获取cartList函数
@@ -157,17 +180,45 @@ class Main extends Component{
 
             let setHeight = () => {
                 let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card-loading`)
-                    let btns = document.querySelectorAll(".more-card-btn")
+                // let btns = document.querySelectorAll(".more-card-btn")
                     let {cardList} = this.state
                     let {topNum1,topNum2,topNum3,preItemHeightSum} = this.state
+                    let lastCards = []
+                    if(this.state.cardListIndex != 1){
+                        //非第一页的卡片，需要获取一下其上一页的cards的dom
+                        lastCards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex-1} .post-card-loading`)
+                    }
                     Array.from(cards).map((item,index) => {
                             let preItemHeightArr = []
                             let preHeightestHeight = 0
                             let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
                             cardListItem[index].left = (index%3)*320 
                             if(index > 2){ //排除前三个
-                                
                                 cardListItem[index].preItemHeight = cards[index-3].clientHeight+40 //获取cardItem正上方元素的高
+                            }else if(index < 3 && this.state.cardListIndex != 1){
+                                //非第一页的前三个卡片
+                                //需要让其获取上一页的末尾三张卡片的高度
+                                let lastCardsIndex = 0
+                                if(index == 0){
+                                    lastCardsIndex = lastCards.length - 3
+                                }else if(index == 1){
+                                    lastCardsIndex = lastCards.length - 2
+                                }else{
+                                    lastCardsIndex = lastCards.length - 1
+                                }
+
+                                cardListItem[index].preItemHeight = lastCards[lastCardsIndex].clientHeight+40
+                                 //需要找到他上一排最高的item的值
+                                 preItemHeightArr = [lastCards[lastCards.length-3].clientHeight,lastCards[lastCards.length-2].clientHeight,lastCards[lastCards.length-1].clientHeight]
+                                 preItemHeightArr.map((item) => {
+                                     if(item > preHeightestHeight){
+                                         preHeightestHeight=item 
+                                     }
+                                 })
+                                 cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
+                                 if(index == 2){
+                                    preItemHeightSum = preItemHeightSum + preHeightestHeight
+                                 }
                             }
                             switch(index%3){
                                 case 0:{
@@ -180,7 +231,6 @@ class Main extends Component{
                                         }
                                     })
                                     cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
-                                    console.log(preItemHeightSum)
                                     }
 
                                     cardListItem[index].top = topNum1 //设置cardItem的top
@@ -197,14 +247,13 @@ class Main extends Component{
                                         }
                                     })
                                     cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
-                                    console.log(preItemHeightSum)
                                 }
                                     cardListItem[index].top = topNum2  //设置cardItem的top
                                     topNum2 +=  cards[index].clientHeight
                                     break
                                 }
                                 case 2:{
-                                    if(index > 2){
+                                    if(index > 2 ){
                                     //需要找到他上一排最高的item的值
                                     preItemHeightArr = [cards[index-5].clientHeight,cards[index-4].clientHeight,cards[index-3].clientHeight]
                                     preItemHeightArr.map((item) => {
@@ -215,7 +264,6 @@ class Main extends Component{
                                     cardListItem[index].preHeightestHeight =preItemHeightSum + preHeightestHeight
                                     preItemHeightSum = preItemHeightSum + preHeightestHeight
 
-                                    console.log(preItemHeightSum)
                                 }
                                     cardListItem[index].top = topNum3 //设置cardItem的top
                                     topNum3 +=  cards[index].clientHeight
@@ -225,14 +273,13 @@ class Main extends Component{
 
 
                     })
-                        btns[0].style.top = topNum1 + 20 + "px"
-                        btns[1].style.top = topNum2 + 20 + "px"
-                        btns[2].style.top = topNum3 + 20 + "px"
-                       Array.from(btns).map((item,index) => {
-                           item.style.left = (index%3)*321 + "px"
-                       })
-                    console.log(cardList)
-                    this.setState({cardList,topNum1,topNum2,topNum3,preItemHeightSum})
+                    //     btns[0].style.top = topNum1 + 20 + "px"
+                    //     btns[1].style.top = topNum2 + 20 + "px"
+                    //     btns[2].style.top = topNum3 + 20 + "px"
+                    //    Array.from(btns).map((item,index) => {
+                    //        item.style.left = (index%3)*321 + "px"
+                    //    })
+                    this.setState({cardList,topNum1,topNum2,topNum3,preItemHeightSum,loadingMore:false})
             }
         }
     }
@@ -409,9 +456,18 @@ class Main extends Component{
 
     //加载更多函数
     loadMore = () => {
-        let objectCardListIndex = this.state.cardListIndex + 1  //目标cardlist页数
-        //调用获取cardList的函数
-        this.getcardList(objectCardListIndex)
+        // if(!loadingMore){
+        //     this.setState({loadMore:true},() => {
+                let objectCardListIndex = this.state.cardListIndex + 1  //目标cardlist页数
+                //调用获取cardList的函数
+                this.getcardList(objectCardListIndex)
+        //         this.setState({loadMore:false})
+        //     })
+
+        // }
+
+
+
         // getCardListAjax(objectCardListIndex)
         //     .then(val => {
         //         let cardListItem = val.data.data
@@ -989,7 +1045,7 @@ class Main extends Component{
                                 null
                             }
                         {/* 加载更多的按钮 */}
-                        <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
+                        {/* <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
                         <DownCircleOutlined />加载更多
                         </Button>
                         <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
@@ -997,7 +1053,7 @@ class Main extends Component{
                         </Button>
                         <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
                         <DownCircleOutlined />加载更多
-                        </Button>
+                        </Button> */}
                         </div>
                         
 

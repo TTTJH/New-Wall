@@ -387,7 +387,7 @@ class Mycard extends Component{
             </Modal>
             {/* <div className='cards-container'> */}
             {/* <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card" : "post-card-loading"} style={{"left":left,"top":top}}> */}
-            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card-loading" : "post-card-loading"} style={preItemHeight ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
+            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card-loading" : "post-card-loading"} style={!this.props.special ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
                     <div className='card-tag'>
                       {this.state.cardType[type]}
                     </div>
