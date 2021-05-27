@@ -36,6 +36,7 @@ import {
   noticeSubmitAjax,
   test,//notice提交ajax
 } from '../../api'
+import url from '../../api/url'
 import "./card.css"
 
 const { Meta } = Card;
@@ -408,7 +409,7 @@ class Mycard extends Component{
                         img.map((item,index) => {
                           return(
                             <div key={index}  className='post-img-box'>
-                            <img  src={`http://localhost:3030/${item}`} alt="" onClick={this.showModal}/>
+                            <img  src={`${url}/${item}`} alt="" onClick={this.showModal}/>
                             </div>
                           )
                         })
@@ -423,7 +424,7 @@ class Mycard extends Component{
                     <div className='post-avatar-box' >
                             <div  className='post-avatar'>
                               {/* //需要将被点击的user的userInfo传递 */}
-                            <img onClick={(e) => this.props.showModal2(this.state.userInfo,e)} src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
+                            <img onClick={(e) => this.props.showModal2(this.state.userInfo,e)} src={`${url}/${this.state.userInfo.avatar}`} alt=""/>
                             </div>
                             <span onClick={(e) => this.props.showModal2(this.state.userInfo,e)} >{this.state.userInfo.nickname}</span>
                             <p className="card-date">{date}</p>

@@ -1,6 +1,7 @@
 import ajax from './ajax'
+import url from './url'
 
-const baseUrl = "http://localhost:3030"
+const baseUrl = url
 const loginRoute = baseUrl+"/user/login"
 const registerRoute = baseUrl+"/user/register"
 const usernameCheckRoute = baseUrl+"/user/username_check"

@@ -33,6 +33,7 @@ import {
     postAnalysisDevice,
     test,
 } from '../../api/index'
+import url from "../../api/url"
 
 import "./main.css"
 import { Switch } from 'react-router'
@@ -62,7 +63,7 @@ class Main extends Component{
      allImgLoadDone:false,//cardList中所有卡片是否加载完毕标识
      preItemHeightSum:0,//最高值总和
      scrollY:0,//用于保存滚动距离，判断是向上滚动还是向下滚动
-     loadingMore:true,//加载更多标识位
+     loadingMore:false,//加载更多标识位
      rootHeight:0,//用于存储网页高度
     }
     componentDidMount(){
@@ -136,19 +137,22 @@ class Main extends Component{
                     ?
                     this.setState({cardList,cardListIndex:page,cardListLoading:false},callback)
                     :
-                    this.setState({cardList,cardListIndex:page,cardListLoading:false})
+                    this.setState({cardList,cardListIndex:page,cardListLoading:false},callback2)
                 }else{
                     // 第一页
                     windowWidth > 1100
                     ?
                     this.setState({cardList:[val.data.data],cardListLoading:false},callback)
                     :
-                    this.setState({cardList:[val.data.data],cardListLoading:false})
+                    this.setState({cardList:[val.data.data],cardListLoading:false},callback2)
                 }
             })
             .catch(err => {
                 message.error("获取卡片列表失败请重试")
             })
+        let callback2 = () => {
+            this.setState({loadingMore:false})
+        }
         let callback = () => {
             let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card-loading img`)
             //注意的一个问题就是在card内的图片尚未加载完毕的时候，
@@ -285,7 +289,9 @@ class Main extends Component{
                     //    Array.from(btns).map((item,index) => {
                     //        item.style.left = (index%3)*321 + "px"
                     //    })
-                    this.setState({cardList,topNum1,topNum2,topNum3,preItemHeightSum,loadingMore:false})
+                    this.setState({cardList,topNum1,topNum2,topNum3,preItemHeightSum},() => {
+                        this.setState({loadingMore:false})
+                    })
             }
         }
     }
@@ -462,17 +468,10 @@ class Main extends Component{
 
     //加载更多函数
     loadMore = () => {
-        // if(!loadingMore){
-        //     this.setState({loadMore:true},() => {
+
                 let objectCardListIndex = this.state.cardListIndex + 1  //目标cardlist页数
                 //调用获取cardList的函数
                 this.getcardList(objectCardListIndex)
-        //         this.setState({loadMore:false})
-        //     })
-
-        // }
-
-
 
         // getCardListAjax(objectCardListIndex)
         //     .then(val => {
@@ -796,7 +795,7 @@ class Main extends Component{
     //由main组件---->userBox组件--->login组件和register组件
     socketInit = () => {
         //如果登入了才连接websocket
-        let socket =  io("http://localhost:3030",{
+        let socket =  io(`${url}`,{
             query:{userInfo:JSON.stringify(this.state.userInfo)}//将userInfo传递过去
         })
         this.setState({socket},() => {

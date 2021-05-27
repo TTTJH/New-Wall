@@ -22,6 +22,7 @@ import {
     getUserInfoByIdAjax,//通过id获取userInfo
     noticeSubmitAjax,//notice提交ajax
 } from '../../../api/index'
+import url from "../../../api/url"
 
 import Card from '../../Card/card'
 
@@ -113,6 +114,14 @@ class UserDetail extends Component{
 
     //消息发送
     submit = async () => {
+
+        //登入检查
+        if(!(Object.keys(this.props.myUserInfo).length)){
+            message.warning({content:"同学，尚未登入哦！"})
+            // this.props.history.push("/login")
+            return false
+          }
+
         let toUserId = this.props.userInfo._id //目标id
         let socketId = ""
         let fromUserInfo = ""
@@ -228,7 +237,7 @@ class UserDetail extends Component{
                     this.state.mode == 'standard'
                     ?
                     <div className= {`userdetail-box-1 userdetail-box-1-${this.state.mode}-mode`}>
-                    <img src={`http://localhost:3030/${this.state.userInfo.avatar}`} alt=""/>
+                    <img src={`${url}/${this.state.userInfo.avatar}`} alt=""/>
                         <p className="userdetail-nickname-box">{this.state.userInfo.nickname}</p>
                         <div className="userdetail-tag-box">
                             {
@@ -277,7 +286,7 @@ class UserDetail extends Component{
 
                     <div className="userdetail-message-box">
                     <div className="userdetail-chat-box-box1">
-                        与 tutu 的聊天
+                        与 <span>{this.props.userInfo.nickname}</span> 的聊天
                     </div>
                         
 
@@ -288,7 +297,7 @@ class UserDetail extends Component{
                                    //他人的消息
                                    return(
                                         <div key={index} className="userdetail-chat-box-from">
-                                            <img src={`http://localhost:3030/${item.fromUserInfo.avatar}`} alt=""/>
+                                            <img src={`${url}/${item.toUserInfo.avatar}`} alt=""/>
                                             <p>{item.content}</p> 
                                             <div>
                                             {/* <span>10:48AM</span> */}
@@ -303,7 +312,7 @@ class UserDetail extends Component{
                                         {/* <span>10:48AM</span> */}
                                         </div>
                                         <p>{item.content}</p> 
-                                        <img src={`http://localhost:3030/${item.toUserInfo.avatar}`} alt=""/>
+                                        <img src={`${url}/${item.fromUserInfo.avatar}`} alt=""/>
                                     </div>
                                    )
                                }

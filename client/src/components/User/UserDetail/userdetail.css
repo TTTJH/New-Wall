@@ -258,3 +258,26 @@
     top: 5px;
     left: 5px;
 }
+
+@media screen and (max-width:1100px){
+
+    .userDetailModal .ant-modal-content{
+        width: 80vw !important;
+    }
+    .userdetail{
+        display: block;
+    }
+    .userdetail-box{
+        padding: 0 !important;
+    }
+    .userdetail-box-1{
+        display: block;
+    }
+    .userdetail-standard-mode{
+        width: unset;
+    }
+
+    .userdetail-chat-box{
+        min-height: 300px;
+    }
+}

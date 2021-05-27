@@ -30,6 +30,8 @@ import {
   cardSubmiAjax,
   cardDelUploadAjax,
 } from '../../api/index'
+import url from "../../api/url"
+
 import './textarea.css'
 
 const { TextArea } = Input;
@@ -228,7 +230,7 @@ class Textarea extends Component{
       <>
         <Upload
           {...props}
-          action={`http://localhost:3030/card/upload${this.state.cardId ? `?cardId=${this.state.cardId}` : ""}`}
+          action={`${url}/card/upload${this.state.cardId ? `?cardId=${this.state.cardId}` : ""}`}
           listType="picture-card"
           fileList={fileList}
           onPreview={this.handlePreview}

@@ -21,6 +21,7 @@ import {
     getCardDataById,//根据cardId获取cardData
     clearNoticeListAjax,//根据userID清除对应noticeList
 } from '../../api/index'
+import url from "../../api/url"
 
 import './header.css'
 

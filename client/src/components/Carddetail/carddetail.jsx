@@ -19,7 +19,7 @@ import {
     cardCommentLikeAjax,//卡片评论点赞ajax
     noticeSubmitAjax,//notice提交ajax
 } from '../../api/index'
-
+import url from "../../api/url"
 import './carddetail.css'
 import Card from '../Card/card'
 
@@ -235,7 +235,7 @@ if(!(Object.keys(this.props.userInfo).length)){
                                             <div key={index} className="carddetail-comment-box">
                                                 <div className="carddetail-comment-box-left-box">
                                                 <Tooltip title={item.userInfo.nickname} color="gold">
-                                                                <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
+                                                                <img className="carddetail-comment-avatar" src={`${url}/${item.userInfo.avatar}`} alt=""/>
                                                  </Tooltip>  
                                                 </div>
                                                 <div className="carddetail-comment-box-right-box">
@@ -259,13 +259,13 @@ if(!(Object.keys(this.props.userInfo).length)){
                                                 <div key={index} className="carddetail-comment-box carddetail-comment-box-special">
                                                     <div className="carddetail-comment-box-left-box">
                                                     <Tooltip title={item.userInfo.nickname} color="gold">
-                                                         <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
+                                                         <img className="carddetail-comment-avatar" src={`${url}/${item.userInfo.avatar}`} alt=""/>
                                                     </Tooltip>  
                                                     <Tooltip title={` ${item.userInfo.nickname} 回复 ${item.toUserInfo.nickname}`} color="gold">
                                                         <SendOutlined   className="carddetail-comment-talk-icon"/>
                                                     </Tooltip>
                                                     <Tooltip title={item.userInfo.nickname} color="gold">
-                                                        <img className="carddetail-comment-avatar" src={`http://localhost:3030/${item.toUserInfo.avatar}`} alt=""/>
+                                                        <img className="carddetail-comment-avatar" src={`${url}/${item.toUserInfo.avatar}`} alt=""/>
                                                     </Tooltip>
                                                     </div>
                                                     <div className="carddetail-comment-box-right-box">

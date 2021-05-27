@@ -11,7 +11,7 @@ class Jwt {
         let secret = this.sercet
         let endTime = Math.floor(Date.now()/1000)
         // let token = jwt.sign(data,secret,{expiresIn:"3h"})
-        let token = jwt.sign({data,exp:endTime + 3600},secret)
+        let token = jwt.sign({data,exp:endTime + 3600 * 24 * 3},secret)
         return token
     }
 

@@ -26,6 +26,7 @@ import {
     getTagsAjax,
     tagHandleAjax,
 } from '../../api/index'
+import url from "../../api/url"
 
 import "./userbox.css"
 
@@ -211,7 +212,7 @@ class Userbox extends Component{
      render() {
         const props = {
             name: 'file',
-            action: 'http://localhost:3030/user/avatar',
+            action: `${url}/user/avatar`,
             headers:{
                 token:localStorage.getItem("token")//在上传图片的headers中添加token字段进行用户验证
             },
@@ -245,7 +246,7 @@ class Userbox extends Component{
                     ?
                     <ImgCrop rotate>
                         <Upload {...props} onChange={this.uploadChange}>
-                            <img className="user-avatar-img" src={"http://localhost:3030/"+this.state.userInfo.avatar} alt=""/>
+                            <img className="user-avatar-img" src={`${url}/`+this.state.userInfo.avatar} alt=""/>
                         </Upload>
                     </ImgCrop>
                     :

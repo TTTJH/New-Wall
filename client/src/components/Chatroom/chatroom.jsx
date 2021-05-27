@@ -8,6 +8,7 @@ import {
 import {
     CaretLeftOutlined,
 } from '@ant-design/icons'
+import url from "../../api/url"
 
 
 import './chatroom.css'
@@ -86,14 +87,14 @@ class Chatroom extends Component{
                                                 {/* <span>10:48AM</span> */}
                                             </div>
                                             <p>{item.content}</p>
-                                            <img src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
+                                            <img src={`${url}/${item.userInfo.avatar}`} alt=""/>
                                         </div>
                                     )
                                 }else{
                                     //他人的发言
                                     return(
                                         <div className="chatroom-chat-box-from">
-                                            <img onClick={(e) => this.props.showModal2(item.userInfo,e)} src={`http://localhost:3030/${item.userInfo.avatar}`} alt=""/>
+                                            <img onClick={(e) => this.props.showModal2(item.userInfo,e)} src={`${url}/${item.userInfo.avatar}`} alt=""/>
                                             <p>{item.content}</p> 
                                             <div>
                                             {/* <span>10:48AM</span> */}
