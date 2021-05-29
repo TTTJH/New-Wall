@@ -132,6 +132,18 @@ class Mycard extends Component{
       }else if(this.props.cardData.likeChoose != nextProps.cardData.likeChoose){
         this.setState({likeChoose:nextProps.cardData.likeChoose,likesCount:nextProps.cardData.likesCount,commentsCount:nextProps.cardData.commentsCount,starsCount:nextProps.cardData.starsCount})
       }
+
+      //这里需要判断一下this.props.cardData.userId有没有发生改变进而更新card的state中的userInfo
+      if(nextProps.cardData.userId != this.props.cardData.userId){
+        //触发getUserInfo的ajax
+        getUserInfoByIdAjax(nextProps.cardData.userId)
+        .then(val => {
+          this.setState({userInfo:val.data.data})
+        })
+        .catch(err => {
+          message.error("获取卡片发布者信息失败！请重试！")
+        })
+      }
       return true
     }
     
@@ -204,6 +216,10 @@ class Mycard extends Component{
           let cardId = this.props.cardData._id //准备传递数据
           let token = localStorage.getItem("token") //获取token
           if(this.state.likeChoose){//进行了点赞
+            //在carddetial中的点赞是需要main组件进行cardList更新的
+            if(this.props.special){//carddetial判断
+              this.props.cardListUpdate(1,this.props.index1,this.props.index2)
+            }
             cardLikeAjax({cardId},token)
               .then(val => {
                 //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行该改变
@@ -229,6 +245,11 @@ class Mycard extends Component{
                 console.log(err)
               })
           }else{//取消了点赞
+            //在carddetial中的点赞是需要main组件进行cardList更新的
+            if(this.props.special){//carddetial判断
+              this.props.cardListUpdate(0,this.props.index1,this.props.index2)
+            }
+
             cardDelLikeAjax({cardId},token)
             .then(val => {
               //触发点赞检查请求ajax来对this.state.likeChoose和likeCount进行该改变
@@ -392,7 +413,7 @@ class Mycard extends Component{
             </Modal>
             {/* <div className='cards-container'> */}
             {/* <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card" : "post-card-loading"} style={{"left":left,"top":top}}> */}
-            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card-loading" : "post-card-loading"} style={!this.props.special ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
+            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card-loading" : "post-card-loading"} test={preHeightestHeight-top} style={this.props.standard ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
                     <div className='card-tag'>
                       {this.state.cardType[type]}
                     </div>

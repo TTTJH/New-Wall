@@ -8,6 +8,7 @@ import Sidemenu from './components/Sidemenu/sidemenu'
 import Main from './components/Main/main'
 import Login from './components/User/Login/login'
 import Register from './components/User/Register/register'
+import CardDetail from './components/Carddetail/carddetail'
 
 import './index.less';
 
@@ -20,6 +21,7 @@ ReactDOM.render(
           <Route path="/" exact component={Main} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register}/>
+          
       </Router>
   </div>,
   // </React.StrictMode>,

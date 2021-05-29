@@ -89,6 +89,12 @@ class Textarea extends Component{
         return false
       }
 
+      //内容检查
+      if(!this.state.content && !this.state.fileList.length){
+        message.warning("尚未选择图片或编写文字哦！")
+        return false
+      }
+
       console.log(this.props.loginCheck())
       let token = localStorage.getItem("token")
       //提交card的contnet
@@ -103,8 +109,13 @@ class Textarea extends Component{
           this.setState({content:"",fileList:[],cardTypeIndex:0,imgArr:[]})
           //首先对main组件中的topNum清零
           this.props.topNumClear()
-          //发布成功后通过调用main组件传递的cardList更新函数来更新main组件中的cardList
-          this.props.getcardList(1)
+          //对main组件中的cardList清零
+          let clearCardListPromise = this.props.clearCardList()
+          clearCardListPromise.then(() => {
+            //发布成功后通过调用main组件传递的cardList更新函数来更新main组件中的cardList
+            this.props.getcardList(1)
+          })
+
         })
         .catch(err => {
           this.setState({cardId:""})

@@ -202,6 +202,11 @@ if(!(Object.keys(this.props.userInfo).length)){
                 <div className="carddetail">
                     <h3>{this.props.test}</h3>
                     <Card 
+                        cardListUpdate={this.props.cardListUpdate}//更新main组件的卡片列表函数
+                        index1={this.props.index1}//索引1
+                        index2={this.props.index2}//索引2
+                        socket = {this.props.socket}//用于emit一个点赞事件
+                        onlineList={this.props.onlineList}//传递在线人数
                         banShowModal={true}//用于标识目前是在carddetail中，showModal无效
                         userInfo={this.props.userInfo}
                         special="special"

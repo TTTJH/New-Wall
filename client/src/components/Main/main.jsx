@@ -63,8 +63,9 @@ class Main extends Component{
      allImgLoadDone:false,//cardList中所有卡片是否加载完毕标识
      preItemHeightSum:0,//最高值总和
      scrollY:0,//用于保存滚动距离，判断是向上滚动还是向下滚动
-     loadingMore:false,//加载更多标识位
+     loadingMore:true,//加载更多标识位
      rootHeight:0,//用于存储网页高度
+     cardetailShow:false,//carddetial显示标识
     }
     componentDidMount(){
         //初次获取cardList
@@ -126,7 +127,6 @@ class Main extends Component{
         //首次调用getCardListAjax
         getCardListAjax(page)
             .then(val => {
-                console.log(page)
                 if(page != 1){
                     //不是第一页的情况
                     //需要先更新一下state中的List
@@ -281,7 +281,6 @@ class Main extends Component{
                                 }
                             }
 
-
                     })
                     //     btns[0].style.top = topNum1 + 20 + "px"
                     //     btns[1].style.top = topNum2 + 20 + "px"
@@ -296,38 +295,22 @@ class Main extends Component{
         }
     }
 
+    //cardlist清除函数，以及与cardList布局相关的state都需要清空,在用户发布了自己的卡片后调用
+    clearCardList = () => {
+        let promise = new Promise((resolve,reject) => {
+            this.setState({cardList:[],topNum1:0,topNum2:0,topNum3:0,preItemHeightSum:0,cardListIndex:1},() => {
+                resolve("done")
+            })
+        })
+        return promise
+    }
+
     //main组件的topNumClear清0函数
     //需要在textarea中调用
     topNumClear = () => {
         this.setState({topNum1:0,topNum2:0,topNum3:0})
     }
 
-    // amapEvents = {
-    //     created: (mapInstance) => {
-    //       console.log('高德地图 Map 实例创建成功；如果你要亲自对实例进行操作，可以从这里开始。比如：');
-    //     //   let citysearch = new window.AMap.CitySearch()
-    //     let mapObj = new window.AMap.Map('iCenter');
-    //     mapObj.plugin('AMap.Geolocation', () => {
-    //         let geolocation = new window.AMap.Geolocation({
-    //             enableHighAccuracy: true,//是否使用高精度定位，默认:true
-    //             timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-    //             maximumAge: 0,           //定位结果缓存0毫秒，默认：0
-    //             convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-    //             showButton: true,        //显示定位按钮，默认：true
-    //             buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
-    //             buttonOffset: new window.AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-    //             showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
-    //             showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
-    //             panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
-    //             zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-    //         });
-    //         mapObj.addControl(geolocation);
-    //         geolocation.getCurrentPosition();
-    //         window.AMap.event.addListener(geolocation, 'complete', this.onComplete);//返回定位信息
-    //         window.AMap.event.addListener(geolocation, 'error', this.onError);      //返回定位出错信息
-    //     });
-    //     }
-    //   };
     onComplete = (data) => {
         console.log(data)
     }
@@ -468,114 +451,9 @@ class Main extends Component{
 
     //加载更多函数
     loadMore = () => {
-
-                let objectCardListIndex = this.state.cardListIndex + 1  //目标cardlist页数
-                //调用获取cardList的函数
-                this.getcardList(objectCardListIndex)
-
-        // getCardListAjax(objectCardListIndex)
-        //     .then(val => {
-        //         let cardListItem = val.data.data
-        //         let cardList = this.state.cardList
-        //         cardList.push(cardListItem) //给cardList添加一个数组项，也就是新的一页的数据
-        //         this.setState({cardList,cardListIndex:objectCardListIndex},() => {
-        //             let imgs = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card img`)
-        //             //注意的一个问题就是在card内的图片尚未加载完毕的时候，
-        //             //card的clientHeight是不包括img的高度的，
-        //             //所以我在一批card的img加载完毕后再获取其高度，累加计算目前的top值。
-        //             let promiseArr = []
-        //             // 这里将每张图片加载完毕生成Promise对象，最后使用Promise.all方法统一进行结果代码执行。
-        //             Array.from(imgs).map((item,index) => {
-        //                 let promise = new Promise((resolve,reject) => {
-        //                     item.addEventListener("load",() => {
-        //                         resolve("done")
-        //                     })
-        //                     item.addEventListener("error",() => {
-        //                         reject("error")
-        //                     })
-        //                 })
-        //                 promiseArr.push(promise)
-        //             })
-
-        //             Promise.all(promiseArr)
-        //                 .then(() => {
-        //                     let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
-        //                     console.log(cards)
-        //                     let btns = document.querySelectorAll(".more-card-btn")
-        //                     let {cardList} = this.state
-        //                     let {topNum1,topNum2,topNum3} = this.state
-        //                     Array.from(cards).map((item,index) => {
-
-        //                             let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-        //                             console.log(cardListItem)
-        //                             cardListItem[index].left = (index%3)*320 
-        //                             switch(index%3){
-        //                                 case 0:{
-        //                                     cardListItem[index].top = topNum1 + 20
-        //                                     topNum1 +=  cards[index].clientHeight +20
-        //                                     break
-        //                                 }
-        //                                 case 1:{
-        //                                     cardListItem[index].top = topNum2 + 20
-        //                                     topNum2 +=  cards[index].clientHeight +20
-        //                                     break
-        //                                 }
-        //                                 case 2:{
-        //                                     cardListItem[index].top = topNum3 + 20
-        //                                     topNum3 +=  cards[index].clientHeight +20
-        //                                     break
-        //                                 }
-        //                             }
-        //                     })
-        //                         btns[0].style.top = topNum1 + 20 + "px"
-        //                         btns[1].style.top = topNum2 + 20 + "px"
-        //                         btns[2].style.top = topNum3 + 20 + "px"
-        //                        Array.from(btns).map((item,index) => {
-        //                            item.style.left = (index%3)*321 + "px"
-        //                        })
-        //                        this.setState({cardList,topNum1,topNum2,topNum3})
-        //                 })
-        //                 .catch((err) => {
-        //                     // console.log(err)
-        //                     // message.warning("某图片加载失败，将影响瀑布流布局")
-        //                     let cards = document.querySelectorAll(`.main-card-inner-box .cardListItem${this.state.cardListIndex} .post-card`)
-        //                     let btns = document.querySelectorAll(".more-card-btn")
-        //                     let {cardList} = this.state
-        //                     let {topNum1,topNum2,topNum3} = this.state
-        //                     Array.from(cards).map((item,index) => {
-        //                             let cardListItem = cardList[this.state.cardListIndex-1] //获取到cardList的一项
-        //                             cardListItem[index].left = (index%3)*320 
-        //                             switch(index%3){
-        //                                 case 0:{
-        //                                     cardListItem[index].top = topNum1 + 20
-        //                                     topNum1 +=  cards[index].clientHeight +20
-        //                                     break
-        //                                 }
-        //                                 case 1:{
-        //                                     cardListItem[index].top = topNum2 + 20
-        //                                     topNum2 +=  cards[index].clientHeight +20
-        //                                     break
-        //                                 }
-        //                                 case 2:{
-        //                                     cardListItem[index].top = topNum3 + 20
-        //                                     topNum3 +=  cards[index].clientHeight +20
-        //                                     break
-        //                                 }
-        //                             }
-        //                     })
-        //                         btns[0].style.top = topNum1 + 20 + "px"
-        //                         btns[1].style.top = topNum2 + 20 + "px"
-        //                         btns[2].style.top = topNum3 + 20 + "px"
-        //                        Array.from(btns).map((item,index) => {
-        //                            item.style.left = (index%3)*321 + "px"
-        //                        })
-        //                     this.setState({cardList,topNum1,topNum2,topNum3})
-        //                 })
-        //         })
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //     })
+        let objectCardListIndex = this.state.cardListIndex + 1  //目标cardlist页数
+        //调用获取cardList的函数
+        this.getcardList(objectCardListIndex)
     }
 
 
@@ -943,9 +821,32 @@ class Main extends Component{
             this.header.updateNoticeList(data)
     }
 
+    //cardList列表更新函数
+    cardListUpdate = (type,index1,index2) => {
+        console.log(type,index1,index2)
+        if(type){
+            //点赞
+            let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+            console.log(cardList[index1][index2])
+            cardList[index1][index2].likes.push(this.state.userInfo.userId)
+            cardList[index1][index2].likeChoose = true
+            this.setState({cardList})
+        }else{
+            //取消点赞
+            let cardList = JSON.parse(JSON.stringify(this.state.cardList))
+            console.log(cardList[index1][index2])
+            let index = cardList[index1][index2].likes.indexOf(this.state.userInfo.userId)
+            cardList[index1][index2].likes.splice(index,1)
+            cardList[index1][index2].likeChoose = false
+            this.setState({cardList})
+        }
+    }
+
     test = () => {
         message.warning("!!!!")
     }
+
+
 
 
     render() {
@@ -985,6 +886,7 @@ class Main extends Component{
                    <div className="main-textarea-box">
                    <p className="main-card-box-textarea-title">Textarea:</p>
                         <Textarea   
+                            clearCardList={this.clearCardList}//cardList清零函数
                             topNumClear={this.topNumClear}//用于topNum清零
                             getcardList={this.getcardList} //获取cardList函数
                             mainGetCard={this.mainGetCard}
@@ -1002,6 +904,8 @@ class Main extends Component{
                             showModal2={this.showModal2}//用于打开用户详细  
                         />
                     </div>
+
+
 
                     <div className="main-card-box">
                             
@@ -1025,6 +929,7 @@ class Main extends Component{
                                                 item1.map((item2,index2) => {
                                                     return(
                                                         <Card  
+                                                            standard="standard"
                                                             preItemHeightSum={this.state.preItemHeightSum}//
                                                             allImgLoadDone = {this.state.allImgLoadDone }//图片是否加载完毕的标识
                                                             onCard = {this.onCard} //用于main组件得到card组件的this
@@ -1072,10 +977,19 @@ class Main extends Component{
                 </div>
 
                 {/* carddetail modal */}
-                <Modal zIndex={3000} wrapClassName="cardDetailModal" footer={null} closable={false} visible={this.state.modalVisible} onOk={this.handleOk} onCancel={this.handleCancel}>
+                <Modal 
+                    // zIndex={3000} 
+                    wrapClassName="cardDetailModal" 
+                    footer={null} closable={false} 
+                    visible={this.state.modalVisible} 
+                    onOk={this.handleOk} 
+                    onCancel={this.handleCancel}>
                     {/* 卡片详细模块 */}
                     <div className="main-carddetail-box">
                         <CardDetail 
+                            index1={this.state.chooseCardIndex1}//cardlist索引1
+                            index2={this.state.chooseCardIndex2}//cardlist索引2
+                            cardListUpdate={this.cardListUpdate}//cardDetial中更新main的卡片列表函数
                             onlineList={this.state.onlineList}//当前在线用户列表
                             socket={this.state.socket}//初始化的socket对象
                             loginCheck={this.loginCheck}//登入检查函数
