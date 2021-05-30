@@ -38,6 +38,7 @@ import {
 } from '../../api'
 import url from '../../api/url'
 import "./card.css"
+import "../../utils/animation.css"
 
 const { Meta } = Card;
 
@@ -413,7 +414,7 @@ class Mycard extends Component{
             </Modal>
             {/* <div className='cards-container'> */}
             {/* <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card" : "post-card-loading"} style={{"left":left,"top":top}}> */}
-            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card-loading" : "post-card-loading"} test={preHeightestHeight-top} style={this.props.standard ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
+            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card animation" : this.props.special2 ? "post-card special2-post-card animation" : this.props.allImgLoadDone ? "post-card-loading animation" : "post-card-loading animation"} test={preHeightestHeight-top} style={this.props.standard ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
                     <div className='card-tag'>
                       {this.state.cardType[type]}
                     </div>

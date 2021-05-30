@@ -9,6 +9,8 @@ import {
     loginAjax,
 } from '../../../api/index'
 import './login.css'
+import "../../../utils/animation.css"
+
 
 class Login extends Component{
     constructor(props){
@@ -48,7 +50,7 @@ class Login extends Component{
     };
     render() {
         return (
-            <div className="login-box">
+            <div className="login-box animation">
             <Form
                 name="basic"
                 initialValues={{ remember: true }}

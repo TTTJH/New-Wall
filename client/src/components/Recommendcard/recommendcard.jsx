@@ -8,6 +8,8 @@ import {
 import url from "../../api/url"
 
 import './recommendcard.css'
+import "../../utils/animation.css"
+
 
 class Recommendcard extends Component{
     state = {
@@ -34,7 +36,7 @@ class Recommendcard extends Component{
                     ?
                     this.state.classmateList.map((item,index) => {
                         return (
-                        <div className="recommend-card" key={item._id} onClick={(e) => this.props.showModal2(item,e)}>
+                        <div className="recommend-card animation" key={item._id} onClick={(e) => this.props.showModal2(item,e)}>
                             <img src={`${url}/${item.avatar}`} alt=""/>
                             <div className="recommend-txt-box">
                                 <p>{item.nickname}</p>

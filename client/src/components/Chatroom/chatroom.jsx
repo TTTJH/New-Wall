@@ -12,6 +12,8 @@ import url from "../../api/url"
 
 
 import './chatroom.css'
+import "../../utils/animation.css"
+
 
 class Chatroom extends Component{
     state = {
@@ -53,7 +55,7 @@ class Chatroom extends Component{
     render(){
         const { TextArea } = Input;
         return(
-            <div className="chatroom">
+            <div className="chatroom animation">
                   <div className="chatroom-chat-box">
                     <div className="chatroom-message-box">
                         <div className="chatroom-chat-box-box1">

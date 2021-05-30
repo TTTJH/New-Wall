@@ -24,6 +24,8 @@ import {
 } from '../../../api/index'
 import shakeProof from '../../../utils/shakeProof'
 import './register.css'
+import "../../../utils/animation.css"
+
 
 const RegistrationForm = () => {
   let history = useHistory();
@@ -121,7 +123,7 @@ const RegistrationForm = () => {
   }
 
   return (
-  <div className="register-box">
+  <div className="register-box animation">
     <Form
       form={form}
       name="register"

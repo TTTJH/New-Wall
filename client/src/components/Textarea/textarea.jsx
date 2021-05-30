@@ -33,6 +33,8 @@ import {
 import url from "../../api/url"
 
 import './textarea.css'
+import "../../utils/animation.css"
+
 
 const { TextArea } = Input;
 function getBase64(file) {
@@ -233,7 +235,7 @@ class Textarea extends Component{
             </div>
             );
         return (
-            <div className="textarea-box">
+            <div className="textarea-box animation">
                 {/* <form action={this.state.url} method="put">
                     <input type="file" onChange={this.myUploadChange}/>
                     <input onClick={this.myFormSubmit} value="submit"/>

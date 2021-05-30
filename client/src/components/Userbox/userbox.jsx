@@ -29,6 +29,7 @@ import {
 import url from "../../api/url"
 
 import "./userbox.css"
+import "../../utils/animation.css"
 
 class Userbox extends Component{
     constructor(props){
@@ -218,7 +219,7 @@ class Userbox extends Component{
             },
           };
         return (
-            <div className="user-box">
+            <div className="user-box animation">
             {
                 Object.keys(this.state.userInfo).length
                 ?
