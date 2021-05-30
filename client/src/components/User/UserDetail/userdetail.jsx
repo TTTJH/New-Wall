@@ -21,6 +21,7 @@ import {
     getMsgListAjax,//获取用户间的私聊消息
     getUserInfoByIdAjax,//通过id获取userInfo
     noticeSubmitAjax,//notice提交ajax
+    followAddAjax,//添加关注ajax
 } from '../../../api/index'
 import url from "../../../api/url"
 
@@ -229,6 +230,33 @@ class UserDetail extends Component{
         this.setState({content:e.target.value})
     }
 
+    //添加关注函数
+    addFollow = () => {
+        //登入检查
+        if(!(Object.keys(this.props.myUserInfo).length)){
+            message.warning({content:"同学，尚未登入哦！"})
+            // this.props.history.push("/login")
+            return false
+            }
+
+        let data = {
+            followedUserId:this.props.userInfo._id,
+            userId:this.props.myUserInfo.userId
+        }
+
+        //触发ajax
+        followAddAjax(data)
+            .then(val => {
+                if(val.data.code == 200){
+                    message.success("关注成功！")
+                }
+            })
+            .catch(err => {
+                message.warning("关注用户错误")
+                console.log(err)
+            })
+    }
+
     render(){
         const { TextArea } = Input;
         return(
@@ -269,7 +297,7 @@ class UserDetail extends Component{
                             <ProfileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                             <p>历史卡片</p>
                         </div>
-                        <div className="userdetail-box-2-box">
+                        <div className="userdetail-box-2-box" onClick={this.addFollow}>
                             <SmileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                             <p>添加关注</p>
                         </div>

@@ -32,6 +32,8 @@ const noticeSubmitRouter = baseUrl + "/notice/submit"
 const getNoticeListRouter = baseUrl + "/notice/noticelist"
 const updateNoticeListReadRouter = baseUrl + "/notice/updateRead"
 const clearNoticeRouter = baseUrl + "/notice/clear"
+const followAddRouter = baseUrl + "/follow/add"
+const followListRouter = baseUrl + "/follow/list"
 
 //登入路由
 export const loginAjax = (data) => {
@@ -188,3 +190,12 @@ export const test = () => {
     return ajax("/test","GET")
 }
 
+//添加关注路由
+export const followAddAjax = (data) => {
+    return ajax(followAddRouter,"POST",data)
+}
+
+//获取某用户关注列表
+export const getFollowListAjax = (data) => {
+    return ajax(followListRouter,"GET",data)
+}

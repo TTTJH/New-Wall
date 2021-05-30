@@ -31,6 +31,7 @@ import {
     cardCommentDelLikeAjax,
     cardCommentReplyAjax,
     postAnalysisDevice,
+    getFollowListAjax,//获取用户关注列表s
     test,
 } from '../../api/index'
 import url from "../../api/url"
@@ -330,6 +331,19 @@ class Main extends Component{
         this.setState({userInfo})//userInfo用于传递给card组件，card组件通过userid来判断是否点赞过
         //在此处调用socketinit初始化函数，应为此刻用户已经登入,userInfo不存在时表面用户进行了用户退出
         if(Object.keys(userInfo).length){
+            //获取用户关注列表
+            getFollowListAjax({userId:this.state.userInfo.userId})
+            .then(val => {
+                if(val.data.data){
+                    //该用户有关注列表,将followList保存
+                    this.setState({followList:val.data.data.followList})
+                }
+            })
+            .catch(err => {
+                message.warning("获取用户关注列表错误")
+                // console.log(err)
+            })
+
             this.socketInit()
         }
     }

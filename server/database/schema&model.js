@@ -39,6 +39,16 @@ const NoticeSchema = new Schema({
   noticeList:Array,//通知数组，结构:[{type,read,info,fromUserId}]
   // fromUserId:String,//操作用户的userId
 })
+
+const FollowSchema = new Schema({
+  userId:String,//该条关注列表的所属用户userId
+  followList:Array,//关注列表，结构[userId1,userId2,userId3,userId4]
+})
+
+const ShieldSchema = new Schema({
+  userId:String,//该条屏蔽列表的所属用户userId
+  shieldList:Array,//屏蔽列表,结构[userId1,userId2,userId3]
+})
 //---------------结束定义Schema------------------------
 
 //---------------开始定义Module------------------------
@@ -47,6 +57,7 @@ const CardModel = new mongoose.model("card",CardSchema)
 const AnalysisModel = new mongoose.model("analysis",AnalysisSchema)
 const MessageModel = new mongoose.model("message",MessageSchema)
 const NoticeModel = new mongoose.model("notice",NoticeSchema)
+const FollowModel = new mongoose.model("follow",FollowSchema)
 //---------------结束定义Module------------------------
 
 //---------------导出Model----------------------------
@@ -55,3 +66,4 @@ exports.CardModel = CardModel
 exports.AnalysisModel = AnalysisModel
 exports.MessageModel = MessageModel
 exports.NoticeModel = NoticeModel
+exports.FollowModel = FollowModel
