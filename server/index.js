@@ -48,7 +48,6 @@ io.on('connection', socket => {
         socket.on("like",(data) => {
           console.log("后端like事件被触发")
           let {to} = data
-          console.log(data)
           socket.to(to).emit("like",data)
         })
 

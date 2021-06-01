@@ -207,6 +207,10 @@
     font-size: 18px;
     cursor: pointer;
   }
+
+  .post-handle span{
+    vertical-align: middle;
+  }
   
   .post-handle i {
     vertical-align: middle;

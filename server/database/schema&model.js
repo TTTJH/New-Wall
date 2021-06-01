@@ -58,6 +58,7 @@ const AnalysisModel = new mongoose.model("analysis",AnalysisSchema)
 const MessageModel = new mongoose.model("message",MessageSchema)
 const NoticeModel = new mongoose.model("notice",NoticeSchema)
 const FollowModel = new mongoose.model("follow",FollowSchema)
+const ShieldModel = new mongoose.model("shield",ShieldSchema)
 //---------------结束定义Module------------------------
 
 //---------------导出Model----------------------------
@@ -67,3 +68,4 @@ exports.AnalysisModel = AnalysisModel
 exports.MessageModel = MessageModel
 exports.NoticeModel = NoticeModel
 exports.FollowModel = FollowModel
+exports.ShieldModel = ShieldModel

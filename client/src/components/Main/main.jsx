@@ -31,12 +31,14 @@ import {
     cardCommentDelLikeAjax,
     cardCommentReplyAjax,
     postAnalysisDevice,
-    getFollowListAjax,//获取用户关注列表s
+    getFollowListAjax,//获取用户关注列表
+    getShieldListAjax,//获取用户的屏蔽列表
     test,
 } from '../../api/index'
 import url from "../../api/url"
 
 import "./main.css"
+import "../../utils/animation.css"
 import { Switch } from 'react-router'
 
 class Main extends Component{
@@ -331,6 +333,7 @@ class Main extends Component{
         this.setState({userInfo})//userInfo用于传递给card组件，card组件通过userid来判断是否点赞过
         //在此处调用socketinit初始化函数，应为此刻用户已经登入,userInfo不存在时表面用户进行了用户退出
         if(Object.keys(userInfo).length){
+
             //获取用户关注列表
             getFollowListAjax({userId:this.state.userInfo.userId})
             .then(val => {
@@ -344,6 +347,19 @@ class Main extends Component{
                 // console.log(err)
             })
 
+            //获取用户的屏蔽列表
+            getShieldListAjax({userId:this.state.userInfo.userId})
+                .then(val => {
+                    if(val.data.data){
+                        //该用户有关注列表,将followList保存
+                        this.setState({shieldList:val.data.data.shieldList})
+                    } 
+                })
+                .catch(err => {
+                    message.warning("获取用户关注列表错误")
+                    // console.log(err)
+                })
+ 
             this.socketInit()
         }
     }
@@ -856,6 +872,22 @@ class Main extends Component{
         }
     }
 
+    //关注人数更新函数  需要传递给userdetial组件，当用户新点击关注按钮时触发
+    followListUpdate = (userId) => {
+        let followList = JSON.parse(JSON.stringify(this.state.followList))
+        //如果this.state.followList中有参数userId则表面进行的关注取消操作，
+        //如果followlist中没有该userId则表明进行的是关注增加操作
+        if(followList.includes(userId)){
+            //关注取消操作
+            let index = followList.indexOf(userId)
+            followList.splice(index,1)
+        }else{
+            //关注增加操作
+            followList.push(userId)
+        }
+        this.setState({followList})
+    }
+
     test = () => {
         message.warning("!!!!")
     }
@@ -887,7 +919,7 @@ class Main extends Component{
                         getUserInfoFromUserBox={this.getUserInfoFromUserBox}
                         socketInit={this.socketInit}
                         />
-                      <div className="recommend-box">
+                      <div className="recommend-box animation">
                         <p className="recommend-box-title">Classmate:</p>
                         <RecommendCard 
                             showModal2={this.showModal2}
@@ -1027,6 +1059,8 @@ class Main extends Component{
                    <div className="userdetail-box">
                                 {/* <p className="userdetail-box-title">UserDetail:</p> */}
                                 <UserDetail
+                                    followListUpdate={this.followListUpdate}//关注列表更新函数
+                                    followList={this.state.followList}//该用户的关注列表
                                     updateNoticeList={this.mainUpdateNoticeList}
                                     onRef={this.onUserdetail}//用于将自己整个组件this交给main组件
                                     updatePrivateMsgList={this.updatePrivateMsgList}//更新私聊列表函数

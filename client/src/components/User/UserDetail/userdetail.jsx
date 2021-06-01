@@ -3,7 +3,7 @@ import {
     Input,
     Button,
     message,
-
+    Popconfirm,
 } from 'antd'
 import {
     CommentOutlined,
@@ -22,6 +22,8 @@ import {
     getUserInfoByIdAjax,//通过id获取userInfo
     noticeSubmitAjax,//notice提交ajax
     followAddAjax,//添加关注ajax
+    followDelAjax,//删除某关注
+    shieldAddAjax,//添加屏蔽
 } from '../../../api/index'
 import url from "../../../api/url"
 
@@ -249,6 +251,8 @@ class UserDetail extends Component{
             .then(val => {
                 if(val.data.code == 200){
                     message.success("关注成功！")
+                    //触发来自main组件的followList更新函数
+                    this.props.followListUpdate(this.props.userInfo._id)
                 }
             })
             .catch(err => {
@@ -257,6 +261,56 @@ class UserDetail extends Component{
             })
     }
 
+    //取消关注函数
+    delFollow = () => {
+        let data = {
+            followedUserId:this.props.userInfo._id,
+            userId:this.props.myUserInfo.userId
+        }
+
+        //触发ajax
+        followDelAjax(data)
+        .then(val => {
+            if(val.data.code == 200){
+                message.success("取消关注成功！")
+                //触发来自main组件的followList更新函数
+                this.props.followListUpdate(this.props.userInfo._id)
+            }
+        })
+        .catch(err => {
+            message.warning("关注用户错误")
+            console.log(err)
+        })
+    }
+
+    //添加屏蔽函数
+    addShield = () => {
+        //登入检查
+        if(!(Object.keys(this.props.myUserInfo).length)){
+            message.warning({content:"同学，尚未登入哦！"})
+            // this.props.history.push("/login")
+            return false
+            }
+        
+        let data = {
+            shieldedUserId:this.props.userInfo._id,
+            userId:this.props.myUserInfo.userId
+        }
+
+        //触发ajax
+        shieldAddAjax(data)
+        .then(val => {
+            if(val.data.code == 200){
+                message.success("屏蔽成功！")
+                //触发来自main组件的followList更新函数
+                // this.props.followListUpdate(this.props.userInfo._id)
+            }
+        })
+        .catch(err => {
+            message.warning("屏蔽用户错误")
+            console.log(err)
+        })
+    }
     render(){
         const { TextArea } = Input;
         return(
@@ -297,14 +351,26 @@ class UserDetail extends Component{
                             <ProfileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                             <p>历史卡片</p>
                         </div>
-                        <div className="userdetail-box-2-box" onClick={this.addFollow}>
-                            <SmileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
-                            <p>添加关注</p>
-                        </div>
+                            {
+                                this.props.followList.includes(this.props.userInfo._id)
+                                ?
+                                //该用户在登入用户的关注列表中
+                                <div className="userdetail-box-2-box" onClick={this.delFollow} style={{"backgroundColor":"#fddb3a"}}>
+                                    <SmileOutlined style={{"color":"white"}} className="userdetail-box-2-box-icon"/>
+                                    <p style={{"color":"white"}}>已关注</p>
+                                </div>
+                                :
+                                <div className="userdetail-box-2-box" onClick={this.addFollow}>
+                                    <SmileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
+                                    <p>添加关注</p>
+                                </div>
+                            }
+                    <Popconfirm placement="bottom" title="确定要屏蔽该用户？" onConfirm={this.addShield}  okText="Yes" cancelText="No">
                         <div className="userdetail-box-2-box">
                             <FrownOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                             <p>屏蔽用户</p>
                         </div>
+                    </Popconfirm>
                     </div>
                     :
                     this.state.mode == 'chatroom'

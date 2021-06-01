@@ -7,6 +7,7 @@ const analysis = require("./analysis") //导入analysis子路由
 const message = require("./message") //导入message子路由
 const notice = require("./notice") //导入notice子路由
 const follow = require("./follow")//导入follow子路由
+const shield = require("./shield")//导入shield子路由
 
 const router = new Router()
 router.use("/user",user.routes(),user.allowedMethods())//router.js装载user子路由
@@ -15,4 +16,5 @@ router.use("/analysis",analysis.routes(),analysis.allowedMethods()) //router.js�
 router.use("/message",message.routes(),message.allowedMethods()) //router.js装载message子路由
 router.use("/notice",notice.routes(),notice.allowedMethods()) //router.js装载notice子路由
 router.use("/follow",follow.routes(),follow.allowedMethods()) //router.js装载notice子路由
+router.use("/shield",shield.routes(),shield.allowedMethods()) //router.js装载shield子路由
 module.exports = router

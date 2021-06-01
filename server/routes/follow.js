@@ -48,6 +48,29 @@ follow.post("/add",async (ctx,next) => {
     })
 })
 
+//删除关注接口
+follow.post("/del",async (ctx,next) => {
+  let {followedUserId,userId} = ctx.request.body
+  //操作数据库
+  await FollowModel.findOne({userId})
+    .then(async doc => {
+      let {followList} = doc
+      let index = followList.indexOf(followedUserId)
+      followList.splice(index,1)
+      //操作数据库
+      await FollowModel.update({userId},{$set:{followList}})
+        .then(doc => {
+          ctx.body = {code:200,data:"success"}
+        })
+        .catch(err => {
+          ctx.body = {code:100,msg:"err"}
+        })
+    })
+    .catch(err => {
+      ctx.body = {code:100,msg:"err"}
+    })
+})
+
 //获取关注列表
 follow.get("/list",async (ctx,next) => {
     let {userId} = ctx.request.query

@@ -34,6 +34,9 @@ const updateNoticeListReadRouter = baseUrl + "/notice/updateRead"
 const clearNoticeRouter = baseUrl + "/notice/clear"
 const followAddRouter = baseUrl + "/follow/add"
 const followListRouter = baseUrl + "/follow/list"
+const followDelRouter = baseUrl + "/follow/del"
+const shieldAddRouter = baseUrl + "/shield/add"
+const shieldListRouter = baseUrl + "/shield/list"
 
 //登入路由
 export const loginAjax = (data) => {
@@ -198,4 +201,19 @@ export const followAddAjax = (data) => {
 //获取某用户关注列表
 export const getFollowListAjax = (data) => {
     return ajax(followListRouter,"GET",data)
+}
+
+//删除用户关注的某用户
+export const followDelAjax = (data) => {
+    return ajax(followDelRouter,"POST",data)
+}
+
+//屏蔽用户
+export const shieldAddAjax = (data) => {
+    return ajax(shieldAddRouter,"POST",data)
+}
+
+//获取屏蔽列表
+export const getShieldListAjax = (data) => {
+    return ajax(shieldListRouter,"GET",data)
 }
