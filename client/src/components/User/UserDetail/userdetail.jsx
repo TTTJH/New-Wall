@@ -352,7 +352,7 @@ class UserDetail extends Component{
                             <p>历史卡片</p>
                         </div>
                             {
-                                Object.keys(this.props.followList).length
+                                this.props.followList
                                 ?
                                 this.props.followList.includes(this.props.userInfo._id)
                                 ?
