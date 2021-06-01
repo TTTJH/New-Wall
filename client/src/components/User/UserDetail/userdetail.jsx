@@ -367,7 +367,10 @@ class UserDetail extends Component{
                                     <p>添加关注</p>
                                 </div>
                                 :
-                                null
+                                <div className="userdetail-box-2-box" onClick={this.addFollow}>
+                                    <SmileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
+                                    <p>添加关注</p>
+                                </div>
                             }
                     <Popconfirm placement="bottom" title="确定要屏蔽该用户？" onConfirm={this.addShield}  okText="Yes" cancelText="No">
                         <div className="userdetail-box-2-box">
