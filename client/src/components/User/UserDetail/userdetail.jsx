@@ -352,6 +352,8 @@ class UserDetail extends Component{
                             <p>历史卡片</p>
                         </div>
                             {
+                                Object.keys(this.props.followList).length
+                                ?
                                 this.props.followList.includes(this.props.userInfo._id)
                                 ?
                                 //该用户在登入用户的关注列表中
@@ -364,6 +366,8 @@ class UserDetail extends Component{
                                     <SmileOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                                     <p>添加关注</p>
                                 </div>
+                                :
+                                null
                             }
                     <Popconfirm placement="bottom" title="确定要屏蔽该用户？" onConfirm={this.addShield}  okText="Yes" cancelText="No">
                         <div className="userdetail-box-2-box">
