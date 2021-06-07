@@ -291,8 +291,14 @@ class Main extends Component{
                     //    Array.from(btns).map((item,index) => {
                     //        item.style.left = (index%3)*321 + "px"
                     //    })
+            
+
                     this.setState({cardList,topNum1,topNum2,topNum3,preItemHeightSum},() => {
                         this.setState({loadingMore:false})
+                                //每次获取cardList之后都进行一次对main-card-box的高度的设置
+                    let mainCardInnerBox = document.querySelector(".main-card-inner-box")
+                    let mainCardBox = document.querySelector(".main-card-box")
+                    mainCardBox.style.height = mainCardInnerBox.clientHeight+30+"px"
                     })
             }
         }
@@ -896,7 +902,6 @@ class Main extends Component{
 
 
     render() {
-        let arr =[11,22,33,44,55,66,77,88]
         return (
             <div className="main clearfix">
                 <Header
@@ -1014,13 +1019,22 @@ class Main extends Component{
                         <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
                         <DownCircleOutlined />加载更多
                         </Button> */}
+
                         </div>
                         
+
 
                         {/* </div> */}
                     </div>
                 </div>
+
+                <div className="main-footer">
+                    豫ICP备20015516号
                 </div>
+                
+                </div>
+
+
 
                 {/* carddetail modal */}
                 <Modal 
