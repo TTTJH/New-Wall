@@ -16,12 +16,9 @@ ReactDOM.render(
   // <React.StrictMode>
   <div className="container">
       <Router  className="Index">
-          {/* <Header/> */}
-          {/* <Sidemenu/> */}
           <Route path="/" exact component={Main} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register}/>
-          
       </Router>
   </div>,
   // </React.StrictMode>,

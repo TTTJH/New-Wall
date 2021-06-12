@@ -2,7 +2,7 @@
   "name": "aaa",
   "homepage": ".",
   "version": "0.1.0",
-  "private": true,
+  "private": true,  
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
     "@craco/craco": "^5.7.0",
@@ -48,4 +48,5 @@
       "last 1 safari version"
     ]
   }
+
 }

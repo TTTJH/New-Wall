@@ -33,7 +33,6 @@ import {
     postAnalysisDevice,
     getFollowListAjax,//获取用户关注列表
     getShieldListAjax,//获取用户的屏蔽列表
-    test,
 } from '../../api/index'
 import url from "../../api/url"
 
@@ -74,7 +73,6 @@ class Main extends Component{
         //初次获取cardList
         this.getcardList(1)
         //这里需要采集用户信息传递给后端
-        console.log(navigator)
         let os = ""
         if(navigator.userAgent.includes("Windows NT")){
             os = "windows"
@@ -910,16 +908,10 @@ class Main extends Component{
                     userInfo = {this.state.userInfo}//当前用户userInfo
                     onRef={this.onHeader}//用于main父组件调用header子组件
                 />
-                {/* <div id="iCenter" style={{width:"500px",height:"500px"}}>
-                <Map amapkey="59e84b3980cb9f86930d92eb90d9e204" events={this.amapEvents}>
-                    <Marker position={this.markerPosition} events={this.markerEvents} />
-                </Map>
-                </div> */}
-
                 <div className="main-container">
                     <div className="main-left-box">
                       <Userbox 
-                        socketDisconnected={this.socketDisconnected}//用于断开socket连接
+                        socketDisconnected={this.socketDisconnected}
                         history={this.props.history}
                         getUserInfoFromUserBox={this.getUserInfoFromUserBox}
                         socketInit={this.socketInit}
@@ -944,7 +936,6 @@ class Main extends Component{
                             loginCheck={this.loginCheck}//登入检查函数
                         />
                    </div>
-
                     <div className="main-chatroom-box">
                         <p className="main-card-box-textarea-title">Chatroom:</p>
                         <Chatroom
@@ -955,26 +946,12 @@ class Main extends Component{
                             showModal2={this.showModal2}//用于打开用户详细  
                         />
                     </div>
-
-
-
                     <div className="main-card-box">
-                            
-                        {/* <div className="card-box"> */}
                         <p className="main-card-box-title">Card:</p>
-                        {/* {
-                            new Array(1,2,3,4,5,6,7,8,9,10).map((item,index) => {
-                                return (
-                                    <Card key={index}/>
-                                )
-                            })
-                        } */}
-                        {/* <div className={this.state.allImgLoadDone ? "main-card-inner-box clearfix" : "mian-card-loading-box clearfix"} > */}
                             <div className="main-card-inner-box clearfix">  
                           {
                                 this.state.cardList.map((item1,index1) => {
                                     return(
-                                        // <div style={this.state.cardListLoading ? {display:"none"} : {}} key={index1} className={this.state.allImgLoadDone ? `cardListItem${index1+1}` : `cardListItem${index1+1} cardListItemLoading`}>
                                         <div style={this.state.cardListLoading ? {display:"none"} : {}} key={index1} className={`cardListItem${index1+1} cardListItemLoading`}>
                                             {
                                                 item1.map((item2,index2) => {
@@ -1009,36 +986,21 @@ class Main extends Component{
                                 :
                                 null
                             }
-                        {/* 加载更多的按钮 */}
-                        {/* <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
-                        <DownCircleOutlined />加载更多
-                        </Button>
-                        <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
-                        <DownCircleOutlined />加载更多
-                        </Button>
-                        <Button type="primary" className="more-card-btn" onClick={this.loadMore}>
-                        <DownCircleOutlined />加载更多
-                        </Button> */}
-
                         </div>
-                        
-
-
-                        {/* </div> */}
                     </div>
                 </div>
 
                 <div className="main-footer">
-                    豫ICP备20015516号
+                    <a href="https://beian.miit.gov.cn/?spm=a2c4g.11174386.n2.4.3b8361db2lAVNq#/Integrated/index">
+                    豫ICP备20015516号-1
+                    </a>
                 </div>
                 
                 </div>
 
 
 
-                {/* carddetail modal */}
                 <Modal 
-                    // zIndex={3000} 
                     wrapClassName="cardDetailModal" 
                     footer={null} closable={false} 
                     visible={this.state.modalVisible} 

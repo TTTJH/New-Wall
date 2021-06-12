@@ -188,10 +188,6 @@ export const clearNoticeListAjax = (data) => {
     return ajax(clearNoticeRouter,"POST",data)
 }
 
-//test 
-export const test = () => {
-    return ajax("/test","GET")
-}
 
 //添加关注路由
 export const followAddAjax = (data) => {
