@@ -18,7 +18,7 @@ app.use((ctx,next) => tokenVerify(ctx,next)) //启用编写的token验证中间�
 app.use(koaStatic(__dirname+"/uploads"))//加载koa-static静态文件目录中间件
 
 const server = http.createServer(app.callback())
-const io = require('socket.io')(server,{cors:{origin:['http://localhost:3000']}})
+const io = require('socket.io')(server,{cors:{origin:['http://www.tttjh.com.cn']}})
 io.on('connection', socket => {
         console.log("user connect!")
         //将目前在线用户发送给前端
