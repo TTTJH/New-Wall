@@ -111,7 +111,8 @@
 }
 
 .main-footer a{
-    color: white;
+    color: black;
+    transition-duration: 0s;
 }
 
 /* 修改了antd的button */
