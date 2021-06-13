@@ -115,6 +115,10 @@
     transition-duration: 0s;
 }
 
+.main-footer a:active{
+    color: black;
+}
+
 /* 修改了antd的button */
 .more-card-btn{
     border-radius: 30px !important;
