@@ -110,6 +110,10 @@
     background-color: #fddb3a;
 }
 
+.main-footer a{
+    color: white;
+}
+
 /* 修改了antd的button */
 .more-card-btn{
     border-radius: 30px !important;
