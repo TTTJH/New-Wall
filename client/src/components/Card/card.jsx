@@ -383,29 +383,22 @@ class Mycard extends Component{
     render() {
           
           let {content,date,img,userId,type,top,left,preItemHeight,preHeightestHeight} = this.props.cardData
+
+          let style = () => {
+            let result
+            if(this.props.standard){
+              result = {"transform":`translateY(-${preHeightestHeight-top}px)`}
+            }
+            if(this.props.follow){
+              result.boxShadow = "0 0 30px #fcf876"
+              result.border = "1px solid #fcf876"
+              // result.backgroundImage = "linear-gradient(to top, #e14fad 0%, #f9d423 100%)"
+            }
+
+            return result
+          }
+
           return (
-            //   <Card
-            //   className="card"
-            //   style={{ borderRadius:"10px",margin:"10px" }}
-            //   cover={
-            //     <img
-            //       alt="example"
-            //       // src={this.props.cardImgsArray ? this.props.cardImgsArray[0] : "http://www.tttjh.com.cn/imgs/aaa.png"}
-            //       src="http://www.tttjh.com.cn/imgs/aaa.png"
-            //     />
-            //   }
-            //   actions={[
-            //   <span><LikeOutlined  key="likes"/>&nbsp;&nbsp;</span>,
-            //   <span><MessageOutlined key="comments" />&nbsp;&nbsp;</span>,
-            //   ]}
-            // >
-            //   <Meta
-            //     avatar={<Avatar src="http://www.tttjh.com.cn/imgs/girl.gif" />}
-            //     title="标题"
-            //     description="描述"
-            //   />
-            // </Card>
-  
           <React.Fragment>
           {/* <div className='cards-wrapper'> */}
             {/* 图片放大显示的弹窗 */}
@@ -414,7 +407,17 @@ class Mycard extends Component{
             </Modal>
             {/* <div className='cards-container'> */}
             {/* <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card" : this.props.special2 ? "post-card special2-post-card" : this.props.allImgLoadDone ? "post-card" : "post-card-loading"} style={{"left":left,"top":top}}> */}
-            <div onClick={this.openCardDetail} className={this.props.special ? "post-card special-post-card animation" : this.props.special2 ? "post-card special2-post-card animation" : this.props.allImgLoadDone ? "post-card-loading animation" : "post-card-loading animation"} test={preHeightestHeight-top} style={this.props.standard ? {"transform":`translateY(-${preHeightestHeight-top}px)`} : {}}>
+            <div onClick={this.openCardDetail}
+                 className={this.props.special
+                  ? "post-card special-post-card animation" 
+                  : this.props.special2
+                  ? "post-card special2-post-card animation"
+                  : this.props.allImgLoadDone
+                  ? "post-card-loading animation"
+                  : "post-card-loading animation"}
+                  test={preHeightestHeight-top}
+                  style={style()} 
+            >
                     <div className='card-tag'>
                       {this.state.cardType[type]}
                     </div>

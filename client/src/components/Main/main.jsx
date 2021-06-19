@@ -68,6 +68,7 @@ class Main extends Component{
      loadingMore:true,//加载更多标识位
      rootHeight:0,//用于存储网页高度
      cardetailShow:false,//carddetial显示标识
+     followList:[]//初始化跟随者列表
     }
     componentDidMount(){
         //初次获取cardList
@@ -296,7 +297,7 @@ class Main extends Component{
                                 //每次获取cardList之后都进行一次对main-card-box的高度的设置
                     let mainCardInnerBox = document.querySelector(".main-card-inner-box")
                     let mainCardBox = document.querySelector(".main-card-box")
-                    mainCardBox.style.height = mainCardInnerBox.clientHeight+30+"px"
+                    mainCardBox.style.height = mainCardInnerBox.clientHeight+"px"
                     })
             }
         }
@@ -671,7 +672,10 @@ class Main extends Component{
 
     //更新私人聊天列表数据函数，需要传递给userdetail组件
     updatePrivateMsgList = (privateMsgList) => {
-        this.setState({privateMsgList})
+        this.setState({privateMsgList}, () => {
+            //在privateMsgList渲染完毕之后更新userdetial的UI模式
+            this.userdetail.chatroomMode()
+        })
     }
 
     //获取header组件this函数
@@ -760,9 +764,9 @@ class Main extends Component{
             })
 
             //接收私人消息
-            this.state.socket.on("privateMsg",({content,from,fromUserInfo,toUserInfo}) => {
+            this.state.socket.on("privateMsg",({content,from,fromUserInfo,toUserInfo,fromUserId}) => {
                 let privateMsgList = JSON.parse(JSON.stringify(this.state.privateMsgList))
-                privateMsgList.push({content,from,fromUserInfo,toUserInfo})
+                privateMsgList.push({content,from,fromUserInfo,toUserInfo,fromUserId})
                 this.setState({privateMsgList})
                 
                 //在线的情况在这里触发，不在线的情况在userdetial
@@ -955,8 +959,13 @@ class Main extends Component{
                                         <div style={this.state.cardListLoading ? {display:"none"} : {}} key={index1} className={`cardListItem${index1+1} cardListItemLoading`}>
                                             {
                                                 item1.map((item2,index2) => {
+                                                    let follow = null
+                                                    if(this.state.followList){
+                                                         follow = this.state.followList.includes(item2.userId)
+                                                    }
                                                     return(
                                                         <Card  
+                                                            follow={follow ? true : null}
                                                             standard="standard"
                                                             preItemHeightSum={this.state.preItemHeightSum}//
                                                             allImgLoadDone = {this.state.allImgLoadDone }//图片是否加载完毕的标识

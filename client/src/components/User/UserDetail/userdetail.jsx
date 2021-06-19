@@ -54,39 +54,71 @@ class UserDetail extends Component{
         return true
     }
 
-    //修改UI界面至chatroom模式
+     //修改UI界面至chatroom模式
     chatroomMode = () => {
-        this.props.updatePrivateMsgList([])//清除以下main组件的privateMsgList
         this.setState({mode:"chatroom"})
+    }
+
+    //修改UI界面至chatroom模式之前做的事情
+    chatroomModeBefore =  () => {
+        this.props.updatePrivateMsgList([])//清除以下main组件的privateMsgList
+        // this.setState({mode:"chatroom"})
         //每次打开这个模式的时候是需要去数据库获取两人之间的对话
         let messageId = this.props.myUserInfo.userId+this.props.userInfo._id //messageId由fromUserID和toUserId组成，顺序随意，后台模糊判断
-        getMsgListAjax({messageId})
+         getMsgListAjax({messageId})
             .then(async val => {
                 if(val){
                     //两人有历史聊天记录
                     let {msgList} = val.data.data
-                    let fromUserInfo = ""
-                    let toUserInfo = ""
-                    //分别获取fromUserInfo和toUserInfo
-                    await getUserInfoByIdAjax(this.props.myUserInfo.userId)
-                        .then(val => {
-                            fromUserInfo = val.data.data
-                        })
-                        .catch(err => {
-                            message.warning("获取用户信息错误")
-                        })
+                    let newMsgList = []
+                    // msgList.map(async (item,index) => {
+                    //     let fromUserInfo = ""
+                    //     let toUserInfo = ""
+                    //     //分别获取fromUserInfo和toUserInfo
+                    //     await getUserInfoByIdAjax(item.fromUserId)
+                    //         .then(val => {
+                    //             fromUserInfo = val.data.data
+                    //         })
+                    //         .catch(err => {
+                    //             message.warning("获取用户信息错误")
+                    //         })
+    
+                    //     await getUserInfoByIdAjax(item.toUserId)
+                    //         .then(val => {
+                    //             toUserInfo = val.data.data
+                    //         })
+                    //         .catch(err => {
+                    //             message.warning("获取用户信息错误")
+                    //         })
 
-                    await getUserInfoByIdAjax(this.props.userInfo._id)
-                        .then(val => {
-                            toUserInfo = val.data.data
-                        })
-                        .catch(err => {
-                            message.warning("获取用户信息错误")
-                        })
-                    msgList.map((item,index) => {
+                    //     item.fromUserInfo = fromUserInfo
+                    //     item.toUserInfo = toUserInfo
+                    //     newMsgList.push(item)
+                    // })
+                    for(var i = 0; i < msgList.length;i++){
+                        let fromUserInfo = ""
+                        let toUserInfo = ""
+                        let item = msgList[i]
+                        //分别获取fromUserInfo和toUserInfo
+                        await getUserInfoByIdAjax(item.fromUserId)
+                            .then(val => {
+                                fromUserInfo = val.data.data
+                            })
+                            .catch(err => {
+                                message.warning("获取用户信息错误")
+                            })
+    
+                        await getUserInfoByIdAjax(item.toUserId)
+                            .then(val => {
+                                toUserInfo = val.data.data
+                            })
+                            .catch(err => {
+                                message.warning("获取用户信息错误")
+                            })
+
                         item.fromUserInfo = fromUserInfo
                         item.toUserInfo = toUserInfo
-                    })
+                    }
                     this.props.updatePrivateMsgList(msgList)//此处发送方需要物理添加一下main组件中的privateMsgList
                 }
             })
@@ -156,6 +188,7 @@ class UserDetail extends Component{
                 userInfo:this.props.userInfo,
                 fromUserInfo,
                 toUserInfo,
+                fromUserId:fromUserInfo._id
             }
             this.props.socket.emit("privateMsg",data)
 
@@ -173,6 +206,7 @@ class UserDetail extends Component{
                 userInfo:this.props.userInfo,
                 fromUserInfo,
                 toUserInfo,
+                fromUserId:fromUserInfo._id
             }
             let privateMsgList = JSON.parse(JSON.stringify(this.props.privateMsgList))
             privateMsgList.push(data)
@@ -184,7 +218,8 @@ class UserDetail extends Component{
                 info:"一封新消息",
                 read:false,
                 fromUserInfo,
-                toUserInfo
+                toUserInfo,
+                fromUserId:fromUserInfo._id
             }
             let obj = {
                 data:data2,
@@ -208,8 +243,8 @@ class UserDetail extends Component{
 
         //不管在不在线消息保存至数据库
         let data = {
-            fromUserId:this.props.myUserInfo.userId,
-            toUserId:this.props.userInfo._id,
+             fromUserId:this.props.myUserInfo.userId,
+             toUserId:this.props.userInfo._id,
             content:this.state.content,
         }
         //私聊消息提交ajax
@@ -245,7 +280,7 @@ class UserDetail extends Component{
             followedUserId:this.props.userInfo._id,
             userId:this.props.myUserInfo.userId
         }
-
+        console.log(data)
         //触发ajax
         followAddAjax(data)
             .then(val => {
@@ -256,8 +291,12 @@ class UserDetail extends Component{
                 }
             })
             .catch(err => {
-                message.warning("关注用户错误")
-                console.log(err)
+                // message.warning("关注用户错误")
+                // console.log(err)
+
+                message.success("关注成功！")
+                    //触发来自main组件的followList更新函数
+                this.props.followListUpdate(this.props.userInfo._id)
             })
     }
 
@@ -343,7 +382,7 @@ class UserDetail extends Component{
                     ?
                     // 标准模式
                     <div className="userdetail-box-2 userdetail-box">
-                        <div className="userdetail-box-2-box" onClick={this.chatroomMode}>
+                        <div className="userdetail-box-2-box" onClick={this.chatroomModeBefore}>
                             <CommentOutlined style={{"color":"#fddb3a"}} className="userdetail-box-2-box-icon"/>
                             <p>发送私信</p>
                         </div>
@@ -398,7 +437,13 @@ class UserDetail extends Component{
                                    //他人的消息
                                    return(
                                         <div key={index} className="userdetail-chat-box-from">
-                                            <img src={`${url}/${item.toUserInfo.avatar}`} alt=""/>
+                                            {
+                                                item.fromUserInfo
+                                                ?
+                                                <img src={`${url}/${item.fromUserInfo.avatar}`} alt=""/>
+                                                :
+                                                null
+                                            }
                                             <p>{item.content}</p> 
                                             <div>
                                             {/* <span>10:48AM</span> */}
@@ -413,7 +458,13 @@ class UserDetail extends Component{
                                         {/* <span>10:48AM</span> */}
                                         </div>
                                         <p>{item.content}</p> 
-                                        <img src={`${url}/${item.fromUserInfo.avatar}`} alt=""/>
+                                        {
+                                                item.fromUserInfo
+                                                ?
+                                                <img src={`${url}/${item.fromUserInfo.avatar}`} alt=""/>
+                                                :
+                                                null
+                                        }
                                     </div>
                                    )
                                }

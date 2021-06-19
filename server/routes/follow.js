@@ -24,7 +24,7 @@ follow.post("/add",async (ctx,next) => {
             })
             .catch(err => {
               console.log(err)
-              ctx.body = {code:100,msg:"err"}
+            ctx.body = {code:200,data:"success"}
             })
         }else{
           //需要创建新collection
@@ -39,7 +39,7 @@ follow.post("/add",async (ctx,next) => {
             })
             .catch(err => {
               console.log(err)
-              ctx.body = {code:100,msg:"err"}
+              ctx.body = {code:200,data:"success"}
             })
         }
     })
