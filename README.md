@@ -1,10 +1,10 @@
 #### 在线体验
 <a href="http://www.tttjh.com.cn">校园社区卡片墙</a>
 #### 效果展示
-<img src='./test1.png' width="560px" />
-<img src='./test2.png' width="560px" />
-<img src='./test3.png' width="560px" />
-<img src='./test4.png' width="560px" />
+<img src='./test1.png' width="80vw" />
+<img src='./test2.png' width="80vw" />
+<img src='./test3.png' width="80vw" />
+<img src='./test4.png' width="80vw" />
 <a name="xbIoQ"></a>
 ### React
 <a name="kPDAe"></a>
